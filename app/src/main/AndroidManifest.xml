@@ -18,7 +18,7 @@
 
         <!-- APENAS as activities que EXISTEM -->
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.OrderMainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
