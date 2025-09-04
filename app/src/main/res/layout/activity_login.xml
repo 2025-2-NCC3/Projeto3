@@ -5,18 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".LoginActivity"
     android:background="@color/beige">
 
 
     <LinearLayout
-        android:layout_width="410dp"
-        android:layout_height="850dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="155dp"
         tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toTopOf="@+id/guidelineLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         >
 
         <ImageView
@@ -31,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
-            android:text="Olá, seja bem vindo!"
+            android:text="Login"
             android:textAlignment="center"
             android:layout_gravity="center"
             android:textSize="24sp">
@@ -44,7 +47,7 @@
             android:layout_gravity="center"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/loginEmail"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -54,7 +57,7 @@
             </EditText>
 
             <EditText
-                android:id="@+id/loginpassword"
+                android:id="@+id/loginPassword"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,7 +66,7 @@
             </EditText>
 
             <TextView
-                android:id="@+id/forgetpassword"
+                android:id="@+id/forgetPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
@@ -79,7 +82,7 @@
 
 
         <Button
-            android:id="@+id/loginbutton"
+            android:id="@+id/btnLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -91,5 +94,12 @@
 
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
