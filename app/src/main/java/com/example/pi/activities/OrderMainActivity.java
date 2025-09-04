@@ -16,7 +16,7 @@ import com.example.pi.models.OrderStatus;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class OrderMainActivity extends AppCompatActivity {
 
     private Button btnTestOrder, btnViewOrders, btnClearOrders, btnViewProducts;
     private Button btnPendingOrders, btnPreparingOrders, btnReadyOrders;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_order_main);
 
         orderManager = new OrderManager(this);
         initializeViews();
