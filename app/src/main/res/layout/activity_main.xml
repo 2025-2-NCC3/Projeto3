@@ -1,126 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="@color/white">
+    tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:text="Hello World!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🍔 Cantina Facul"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="24dp" />
-
-        <TextView
-            android:id="@+id/tvOrderStats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Carregando estatísticas..."
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:padding="16dp"
-            android:background="@color/teal_200"
-            android:layout_marginBottom="24dp"
-            android:lineSpacingExtra="4sp" />
-
-        <Button
-            android:id="@+id/btnTestOrder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="➕ Criar Pedido de Teste"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/green"
-            android:textColor="@color/white"
-            android:layout_marginBottom="8dp"
-            android:padding="16dp" />
-
-        <Button
-            android:id="@+id/btnViewOrders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📋 Ver Todos os Pedidos"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/blue"
-            android:textColor="@color/white"
-            android:layout_marginBottom="8dp"
-            android:padding="16dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <Button
-                android:id="@+id/btnPendingOrders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="⏳ Pendentes"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/orange"
-                android:textColor="@color/white"
-                android:padding="12dp"
-                android:layout_marginEnd="4dp" />
-
-            <Button
-                android:id="@+id/btnPreparingOrders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="👨‍🍳 Preparando"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/blue"
-                android:textColor="@color/white"
-                android:padding="12dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp" />
-
-            <Button
-                android:id="@+id/btnReadyOrders"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="✅ Prontos"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/green"
-                android:textColor="@color/white"
-                android:padding="12dp"
-                android:layout_marginStart="4dp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnViewProducts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🍕 Ver Cardápio (Em Breve)"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@color/white"
-            android:layout_marginBottom="8dp"
-            android:padding="16dp" />
-
-        <Button
-            android:id="@+id/btnClearOrders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🗑️ Limpar Todos os Pedidos"
-            android:textAllCaps="false"
-            android:backgroundTint="@color/red"
-            android:textColor="@color/white"
-            android:padding="16dp" />
-
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
