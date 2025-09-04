@@ -8,6 +8,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<<<<<<< HEAD
 
     <!-- Cores personalizadas -->
     <color name="green">#4CAF50</color>
@@ -35,4 +36,8 @@
     <color name="status_ready">#4CAF50</color>
     <color name="status_delivered">#9E9E9E</color>
     <color name="status_cancelled">#F44336</color>
+=======
+    <color name="green">#2A5435</color>
+    <color name="beige">#ECE3DA</color>
+>>>>>>> b65a722c242c598e35045934a3d15175d89ce573
 </resources>

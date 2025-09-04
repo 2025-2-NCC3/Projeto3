@@ -18,7 +18,11 @@
 
         <!-- APENAS as activities que EXISTEM -->
         <activity
+<<<<<<< HEAD
             android:name=".activities.OrderMainActivity"
+=======
+            android:name=".LoginActivity"
+>>>>>>> b65a722c242c598e35045934a3d15175d89ce573
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
