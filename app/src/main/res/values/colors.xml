@@ -2,6 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<<<<<<< HEAD
+    <color name="red">#9D0000</color>
+    <color name="green">#2A5435</color>
+    <color name="beige">#ECE3DA</color>
+</resources>
+=======
 
     <!-- Cores personalizadas -->
     <color name="green">#4CAF50</color>
@@ -34,3 +40,4 @@
     <color name="beige">#ECE3DA</color>
 
 </resources>
+>>>>>>> 87378b548a49dbe2ecd64ab8f727207bf5997fc7

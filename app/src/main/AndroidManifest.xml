@@ -29,6 +29,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
+        <activity
+            android:name=".AddProductActivity"
+            android:exported="false"/>
+=======
 
         <activity
             android:name=".activities.OrderActivity"
@@ -39,6 +44,7 @@
             android:name=".activities.OrderDetailActivity"
             android:exported="false" />
 
+>>>>>>> 87378b548a49dbe2ecd64ab8f727207bf5997fc7
     </application>
 
 </manifest>
