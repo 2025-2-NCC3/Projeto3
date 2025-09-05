@@ -2,7 +2,42 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<<<<<<< HEAD
     <color name="red">#9D0000</color>
     <color name="green">#2A5435</color>
     <color name="beige">#ECE3DA</color>
 </resources>
+=======
+
+    <!-- Cores personalizadas -->
+    <color name="green">#4CAF50</color>
+    <color name="green_dark">#388E3C</color>
+    <color name="blue">#2196F3</color>
+    <color name="blue_dark">#1976D2</color>
+    <color name="red">#F44336</color>
+    <color name="red_dark">#D32F2F</color>
+    <color name="orange">#FF9800</color>
+    <color name="orange_dark">#F57C00</color>
+
+    <!-- Cores de texto -->
+    <color name="text_primary">#DE000000</color>
+    <color name="text_secondary">#8A000000</color>
+    <color name="text_hint">#61000000</color>
+
+    <!-- Cores de fundo -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="error">#B00020</color>
+
+    <!-- Cores de status do pedido -->
+    <color name="status_pending">#FF9800</color>
+    <color name="status_preparing">#2196F3</color>
+    <color name="status_ready">#4CAF50</color>
+    <color name="status_delivered">#9E9E9E</color>
+    <color name="status_cancelled">#F44336</color>
+
+    <color name="green">#2A5435</color>
+    <color name="beige">#ECE3DA</color>
+
+</resources>
+>>>>>>> 87378b548a49dbe2ecd64ab8f727207bf5997fc7
