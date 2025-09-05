@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".MainActivity"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideEsquerda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05"
+        />
+
+    <Button
+        android:id="@+id/botaoVoltar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo"
+        />
+
+    <TextView
+        android:id="@+id/tituloPagina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="Cardápio"
+        android:textSize="36sp"
+        app:layout_constraintStart_toEndOf="@id/botaoVoltar"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo"
+        />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tituloPagina"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        android:layout_marginTop="10dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/boxLista"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/boxProduto1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto3"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto4"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto5"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto6"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto7"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto8"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/boxProduto9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imagemProduto9"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="Coxinha"
+                    android:src="@drawable/coxinha_exemplo"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/infoProduto9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/tituloProduto9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Coxinha de frango"
+                        android:textSize="20sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/descricaoProduto9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:text="Deliciosa coxinha de frango fresquinha da Comendoria da Tia!\nIngredientes: 001, 002, 003, 004, 005, 006, 007"
+                        android:textSize="14sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
