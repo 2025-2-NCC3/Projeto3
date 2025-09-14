@@ -18,33 +18,34 @@
 
         <!-- APENAS as activities que EXISTEM -->
         <activity
-<<<<<<< HEAD
             android:name=".activities.OrderMainActivity"
-=======
-            android:name=".LoginActivity"
->>>>>>> b65a722c242c598e35045934a3d15175d89ce573
-            android:exported="true">
+            />
+        <activity
+            android:name=".MainActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-<<<<<<< HEAD
+
         <activity
             android:name=".AddProductActivity"
             android:exported="false"/>
-=======
 
         <activity
             android:name=".activities.OrderActivity"
             android:exported="false" />
 
-        <!-- Se OrderDetailActivity existir, deixe. Se não, COMENTE ou REMOVA -->
         <activity
             android:name=".activities.OrderDetailActivity"
             android:exported="false" />
 
->>>>>>> 87378b548a49dbe2ecd64ab8f727207bf5997fc7
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:exported="false" />
+        <activity android:name=".activities.LoginActivity"/>
     </application>
 
 </manifest>
