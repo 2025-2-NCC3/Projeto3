@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.OrderMainActivity"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +25,8 @@
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="24dp"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/tvOrderStats"
@@ -35,7 +37,7 @@
             android:textColor="@color/black"
             android:gravity="center"
             android:padding="16dp"
-            android:background="@color/teal_200"
+            android:background="@color/blue"
             android:layout_marginBottom="24dp"
             android:lineSpacingExtra="4sp" />
 
@@ -112,7 +114,7 @@
             android:layout_height="wrap_content"
             android:text="🍕 Ver Cardápio (Em Breve)"
             android:textAllCaps="false"
-            android:backgroundTint="@color/purple_500"
+            android:backgroundTint="@color/green"
             android:textColor="@color/white"
             android:layout_marginBottom="8dp"
             android:padding="16dp" />
@@ -127,9 +129,9 @@
             android:textColor="@color/white"
             android:padding="16dp" />
 
-    </LinearLayout>
 
-</ScrollView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

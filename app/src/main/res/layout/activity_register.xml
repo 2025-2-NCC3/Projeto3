@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context="com.example.pi.activities.RegisterActivity"
     android:background="@color/beige">
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineRegister"
@@ -53,7 +53,7 @@
             android:layout_gravity="center"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/registerName"
+                android:id="@+id/editTextNome"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -61,18 +61,9 @@
 
 
             </EditText>
-            <EditText
-                android:id="@+id/registerRA"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:hint="Digite seu RA"
-                android:inputType="number">
 
-
-            </EditText>
             <EditText
-                android:id="@+id/registerEmail"
+                android:id="@+id/editTextEmail"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -82,7 +73,7 @@
             </EditText>
 
             <EditText
-                android:id="@+id/registerPassword"
+                android:id="@+id/editTextSenha"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -91,16 +82,25 @@
             </EditText>
 
             <Button
-                android:id="@+id/btnRegister"
+                android:id="@+id/buttonRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/green"
                 android:text="Registrar"
                 android:textSize="20sp"
-                app:layout_constraintTop_toBottomOf="@id/registerPassword">
+                app:layout_constraintTop_toBottomOf="@id/editTextSenha">
 
             </Button>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </LinearLayout>
 
