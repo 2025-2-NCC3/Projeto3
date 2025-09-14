@@ -8,6 +8,7 @@ public class Product {
     private int stock;
     private String category;
     private String imageUrl;
+    private static int numInstancias;
 
     public Product() {}
 
@@ -18,9 +19,13 @@ public class Product {
         this.price = price;
         this.stock = stock;
         this.category = category;
+
+        numInstancias++;
     }
 
     // Getters e Setters
+    public static int getNumInstancias() { return numInstancias; }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
