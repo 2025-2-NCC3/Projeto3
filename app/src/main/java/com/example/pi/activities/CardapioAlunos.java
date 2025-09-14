@@ -1,4 +1,4 @@
-package com.example.pi;
+package com.example.pi.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,10 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.pi.MainActivity;
+import com.example.pi.R;
+import com.example.pi.models.Product;
 
 public class CardapioAlunos extends AppCompatActivity {
 
@@ -15,6 +19,8 @@ public class CardapioAlunos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cardapio_alunos);
+
+        Product produto1 = new Product("ABC123", "Coxinha", "Coxinha recheada de frango.", 1.99, 10, "Salgados");
 
         botaoVoltar = findViewById(R.id.botaoVoltar);
 
@@ -26,5 +32,11 @@ public class CardapioAlunos extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        int instancias = Product.getNumProdutos();
+
+        for (int i = 1; i <= instancias; i++) {
+
+        }
     }
 }
