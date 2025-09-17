@@ -1,21 +1,24 @@
 package com.example.myapplication;
 
+//Aqui é o modelo de cada item do pedido
 public class OrderItem {
+    private String productId;
     private String productName;
     private int quantity;
-    private double unitPrice;
+    private double price;
 
-    public OrderItem(String productName, int quantity, double unitPrice) {
+    public OrderItem(String productId, String productName, int quantity, double price) {
+        this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
+        this.price = price;
     }
 
-    public double getSubtotal() {
-        return quantity * unitPrice;
-    }
-
+    public String getProductId() { return productId; }
     public String getProductName() { return productName; }
     public int getQuantity() { return quantity; }
-    public double getUnitPrice() { return unitPrice; }
+    public double getPrice() { return price; }
+
+    //calcula o preço do item
+    public double getSubtotal() { return quantity * price; }
 }
