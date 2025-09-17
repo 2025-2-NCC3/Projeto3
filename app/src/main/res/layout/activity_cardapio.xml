@@ -57,7 +57,7 @@
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/tituloPagina"
         app:layout_constraintStart_toEndOf="@id/guideEsquerda"
@@ -71,51 +71,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
-
-            <LinearLayout
-                android:id="@+id/boxProduto1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                >
-
-                <ImageView
-                    android:id="@+id/imagemProduto1"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:contentDescription="exemplo"
-                    android:src="@drawable/coxinha_exemplo"
-                    />
-
-                <LinearLayout
-                    android:id="@+id/infoProduto1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-
-                    <TextView
-                        android:id="@+id/tituloProduto1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center"
-                        android:text="exemploNome"
-                        android:textSize="28sp"
-                        />
-
-                    <TextView
-                        android:id="@+id/descricaoProduto1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center"
-                        android:text="exemplo"
-                        android:textSize="28sp"
-                        />
-                </LinearLayout>
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

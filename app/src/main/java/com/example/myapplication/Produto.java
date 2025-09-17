@@ -8,9 +8,9 @@ public class Produto {
     private double preco;
     private int estoque;
     private int categoria;
-    private String caminhoImagem;
+    private int imagemId;
 
-    public Produto(int id, String nome, String descricao, String imagemDescricao, double preco, int estoque, int categoria, String caminhoImagem){
+    public Produto(int id, String nome, String descricao, String imagemDescricao, double preco, int estoque, int categoria, int imagemId){
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -18,7 +18,7 @@ public class Produto {
         this.preco = preco;
         this.estoque = estoque;
         this.categoria = categoria;
-        this.caminhoImagem = caminhoImagem;
+        this.imagemId = imagemId;
     }
 
     public int getId() {
@@ -46,7 +46,7 @@ public class Produto {
     }
 
     public String getImagemDescricao() {
-        return caminhoImagem;
+        return imagemDescricao;
     }
 
     public void setImagemDescricao(String imagemDescricao) {
@@ -77,12 +77,12 @@ public class Produto {
         this.categoria = categoria;
     }
 
-    public String getCaminhoImagem() {
-        return caminhoImagem;
+    public int getImagemId() {
+        return imagemId;
     }
 
-    public void setCaminhoImagem(String caminhoImagem) {
-        this.caminhoImagem = caminhoImagem;
+    public void setImagemId(int imagemId) {
+        this.imagemId = imagemId;
     }
 
 }
