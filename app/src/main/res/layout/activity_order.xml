@@ -7,42 +7,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:gravity="center">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fazer Pedido ebaaaa"
+            android:text="Fazer Pedido - Cantina"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="30dp"/>
 
-        <EditText
-            android:id="@+id/editStudentId"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Número de Matrícula"
-            android:inputType="number"
-            android:layout_marginBottom="16dp"/>
+            android:text="Selecione o produto:"
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:id="@+id/editStudentName"
+        <Spinner
+            android:id="@+id/spinnerProdutos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome do Aluno"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:id="@+id/textViewPreco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Preço: R$ 0,00"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
             android:layout_marginBottom="30dp"/>
 
-
         <Button
-            android:id="@+id/btnCreateOrder"
+            android:id="@+id/btnConfirmarPedido"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Confirmar Pedido"
+            android:text="Fazer Pedido"
             android:textSize="18sp"
-            android:padding="16dp"
-            android:background="@color/verdefecap"
-            />
+            android:padding="16dp"/>
 
     </LinearLayout>
 </ScrollView>

@@ -1,5 +1,5 @@
 package com.example.myapplication;
-
+import com.example.myapplication.Produto;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class OrderManager {
     //contador pra gerar códigos únicos
     private static int orderCounter = 0;
     //estoque da cantina
-    private static Map<String, Product> products = new HashMap<>();
+    private static Map<String, Produto> products = new HashMap<>();
     //pedidos em andamento
     private static Map<String, Order> orders = new HashMap<>();
 
@@ -24,11 +24,11 @@ public class OrderManager {
 
     // Inicializar produtos(simulação de estoque)
     static {
-        products.put("1", new Product("1", "Café", 2.50, 50));
-        products.put("2", new Product("2", "Sanduíche", 8.00, 20));
-        products.put("3", new Product("3", "Suco Natural", 5.00, 30));
-        products.put("4", new Product("4", "Salgado", 4.50, 25));
-        products.put("5", new Product("5", "Água", 3.00, 40));
+        products.put("1", new Produto("1", "Café", "Café quente", 2.50, 50, 1));
+        products.put("2", new Produto("2", "Sanduíche", "Sanduíche natural", 8.00, 20, 2));
+        products.put("3", new Produto("3", "Suco Natural", "Suco de laranja", 5.00, 30, 3));
+        products.put("4", new Produto("4", "Salgado", "Coxinha", 4.50, 25, 2));
+        products.put("5", new Produto("5", "Água", "Água mineral", 3.00, 40, 3));
     }
 
     // Gera código único e sequencial
@@ -41,11 +41,11 @@ public class OrderManager {
     // Verifica se tem quantidade suficiente de cada produto antes de confirmar o pedido
     public static String validateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Product product = products.get(item.getProductId());
-            if (product == null) {
+            Produto produto = products.get(item.getProductId());
+            if (produto == null) {
                 return "Produto não encontrado: " + item.getProductName();
             }
-            if (!product.hasStock(item.getQuantity())) {
+            if (produto.getEstoque() < item.getQuantity()) {
                 return "Estoque insuficiente para: " + item.getProductName();
             }
         }
@@ -55,9 +55,9 @@ public class OrderManager {
     // Atualiza estoque depois que o pedido é confirmado
     public static void updateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Product product = products.get(item.getProductId());
-            if (product != null) {
-                product.reduceStock(item.getQuantity());
+            Produto produto = products.get(item.getProductId());
+            if (produto != null) {
+                produto.setEstoque(produto.getEstoque() - item.getQuantity());
             }
         }
     }
@@ -71,13 +71,13 @@ public class OrderManager {
 
         // adiciona itens
         for (OrderItemRequest itemRequest : request.getItems()) {
-            Product product = products.get(itemRequest.getProductId());
-            if (product != null) {
+            Produto produto = products.get(itemRequest.getProductId());
+            if (produto != null) {
                 order.addItem(new OrderItem(
-                        product.getId(),
-                        product.getName(),
+                        produto.getId(),
+                        produto.getNome(),
                         itemRequest.getQuantity(),
-                        product.getPrice()
+                        produto.getPreco()
                 ));
             }
         }
