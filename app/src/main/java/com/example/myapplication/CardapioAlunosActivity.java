@@ -39,6 +39,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         produtos.add(new Produto(2, "Croissant", "Croissant de presunto e queijo.", "Foto do croissant", 2.99, 12, 1, R.drawable.croissant_exemplo));
         produtos.add(new Produto(3, "Brownie", "Brownie de chocolate.", "Foto do brownie", 2.49, 20, 2, R.drawable.brownie_exemplo));
 
+
         LayoutInflater inflater = LayoutInflater.from(this);
 
         for (Produto produto : produtos) {
@@ -46,6 +47,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             View productView = inflater.inflate(R.layout.produto, boxLista, false);
 
             // Pega referencias para cada elemento
+            LinearLayout boxProduto = productView.findViewById(R.id.boxProduto);
             ImageView imagemProduto = productView.findViewById(R.id.imagemProduto);
             TextView tituloProduto = productView.findViewById(R.id.tituloProduto);
             TextView precoProduto = productView.findViewById(R.id.precoProduto);
@@ -66,6 +68,15 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
             // Adiciona a visualização configurada no activity_cardapio
             boxLista.addView(productView);
+
+            boxProduto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(CardapioAlunosActivity.this, InfoProdutoActivity.class);
+                    intent.putExtra("produtoInfo", produto);
+                    startActivity(intent);
+                }
+            });
         }
     }
 }

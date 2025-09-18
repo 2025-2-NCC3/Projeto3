@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".MainActivity"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideEsquerda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05"
+        />
+
+    <Button
+        android:id="@+id/botaoVoltar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo"
+        />
+
+    <LinearLayout
+        android:id="@+id/boxProduto"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@+id/botaoVoltar"
+        >
+
+        <ImageView
+            android:id="@+id/imagemProduto"
+            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="Foto do delicioso produto"
+            tools:srcCompat="@drawable/coxinha_exemplo"
+            />
+
+
+            <TextView
+                android:id="@+id/nomeProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nome do Produto"
+                android:textSize="36dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/boxInfo"
+                />
+
+            <TextView
+                android:id="@+id/precoProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="R$0,00"
+                android:textSize="30dp"
+                android:textColor="@color/bright_green"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nomeProduto"
+                />
+
+            <TextView
+                android:id="@+id/descricaoProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição do produto"
+                android:textSize="22dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/precoProduto"
+                />
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
