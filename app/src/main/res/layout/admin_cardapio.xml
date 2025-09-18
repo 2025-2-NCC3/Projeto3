@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineAC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <Button
+        android:id="@+id/ButtonBackAC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="47dp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Produto"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineAC"
+        tools:layout_editor_absoluteX="124dp" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutAC"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="183dp">
+
+        <EditText
+            android:id="@+id/EditTextNomeProduto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome do Produto"
+            app:layout_constraintTop_toBottomOf="@+id/guidelineAC" />
+
+        <EditText
+            android:id="@+id/EditTextValorProduto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Valor do Produto"
+            app:layout_constraintTop_toBottomOf="@+id/EditTextNomeProduto" />
+
+        <EditText
+            android:id="@+id/EditTextDetalhesProduto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Descrição"
+            app:layout_constraintTop_toBottomOf="@+id/EditTextValorProduto" />
+
+        <Button
+            android:id="@+id/ButtonAddAC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Adicionar"
+            app:layout_constraintTop_toBottomOf="@+id/EditTextDetalhesProduto" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
