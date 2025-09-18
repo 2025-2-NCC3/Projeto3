@@ -10,4 +10,6 @@ public class MyApplication extends Application {
         // Inicializa o Firebase aqui, uma única vez para todo o app
         FirebaseApp.initializeApp(this);
     }
+
+
 }

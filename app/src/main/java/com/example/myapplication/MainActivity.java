@@ -46,5 +46,6 @@ public class MainActivity extends AppCompatActivity {
             }
     });
     }
+    System.out.println(Produto.getImageId());
 
 }
