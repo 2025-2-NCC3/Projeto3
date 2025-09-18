@@ -16,3 +16,14 @@ estoque int,
 categoria int,
 caminhoImagem varchar(300)
 );
+
+CREATE TABLE pedidos(
+id int primary key auto_increment,
+id_usuario int,
+preco float,
+id_produto int,
+status varchar(20),
+constraint fk_id_usuario foreign key(id_usuario) references users(id),
+constraint fk_preco foreign key(preco) references produtos(preco),
+constraint fk_id_produto foreign key(id_produto) references produtos(id)
+)
