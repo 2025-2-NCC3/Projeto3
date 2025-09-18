@@ -1,5 +1,4 @@
 package com.example.myapplication;
-import com.example.myapplication.Produto;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
