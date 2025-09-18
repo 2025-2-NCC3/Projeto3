@@ -1,29 +1,31 @@
 package com.example.myapplication;
 
 public class Produto {
-    private String id;
+    private int id;
     private String nome;
     private String descricao;
+    private String imagemDescricao;
     private double preco;
     private int estoque;
     private int categoria;
-    private static int numeroInstancias;
+    private int imagemId;
 
-    public Produto(String id, String nome, String descricao, double preco, int estoque, int categoria){
+    public Produto(int id, String nome, String descricao, String imagemDescricao, double preco, int estoque, int categoria, int imagemId){
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
+        this.imagemDescricao = imagemDescricao;
         this.preco = preco;
         this.estoque = estoque;
         this.categoria = categoria;
-        numeroInstancias++;
+        this.imagemId = imagemId;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -41,6 +43,14 @@ public class Produto {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public String getImagemDescricao() {
+        return imagemDescricao;
+    }
+
+    public void setImagemDescricao(String imagemDescricao) {
+        this.imagemDescricao = imagemDescricao;
     }
 
     public double getPreco() {
@@ -67,7 +77,12 @@ public class Produto {
         this.categoria = categoria;
     }
 
-    public static int getNumeroInstancias() {
-        return numeroInstancias;
+    public int getImagemId() {
+        return imagemId;
     }
+
+    public void setImagemId(int imagemId) {
+        this.imagemId = imagemId;
+    }
+
 }
