@@ -22,6 +22,7 @@ public class Produto implements Serializable {
         this.imagemId = imagemId;
     }
 
+    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -84,6 +85,17 @@ public class Produto implements Serializable {
 
     public void setImagemId(int imagemId) {
         this.imagemId = imagemId;
+    }
+
+    // Funções
+    public void reduceStock(int quantidade) {
+        if (estoque >= quantidade) {
+            estoque -= quantidade;
+        }
+    }
+
+    public void increaseStock(int quantidade) {
+        estoque += quantidade;
     }
 
 }

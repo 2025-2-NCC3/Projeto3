@@ -7,7 +7,7 @@ import java.util.UUID;
 
 //Aqui é o modelo do pedido
 public class Order {
-    private String id;
+    private int id;
     private String studentId;
     private String studentName;
     private List<OrderItem> items;
@@ -17,14 +17,14 @@ public class Order {
     private String code;
 
     public Order() {
-        this.id = UUID.randomUUID().toString();
+        this.id = Integer.parseInt(UUID.randomUUID().toString());
         this.status = "PENDENTE";
         this.createdAt = new Date();
         this.items = new ArrayList<>();
         this.code = OrderManager.generateOrderCode();
     }
 
-    public String getId() { return id; }
+    public int getId() { return id; }
     public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
     public String getStudentName() { return studentName; }
