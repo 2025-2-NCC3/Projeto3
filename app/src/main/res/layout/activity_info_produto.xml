@@ -63,40 +63,69 @@
             tools:srcCompat="@drawable/coxinha_exemplo"
             />
 
+        <ScrollView
+            android:id="@+id/scrollInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+            app:layout_constraintEnd_toStartOf="@id/guideDireita"
+            app:layout_constraintTop_toBottomOf="@+id/imagemProduto"
+            >
 
-            <TextView
-                android:id="@+id/nomeProduto"
+            <LinearLayout
+                android:id="@+id/boxInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome do Produto"
-                android:textSize="36dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/boxInfo"
-                />
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+                app:layout_constraintEnd_toStartOf="@id/guideDireita"
+                app:layout_constraintTop_toTopOf="@+id/botaoVoltar"
+                >
 
-            <TextView
-                android:id="@+id/precoProduto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="R$0,00"
-                android:textSize="30dp"
-                android:textColor="@color/bright_green"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nomeProduto"
-                />
+                <TextView
+                    android:id="@+id/nomeProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome do Produto"
+                    android:textSize="36dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/boxInfo"
+                    />
 
-            <TextView
-                android:id="@+id/descricaoProduto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Descrição do produto"
-                android:textSize="22dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/precoProduto"
-                />
+                <TextView
+                    android:id="@+id/precoProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="R$0,00"
+                    android:textSize="30dp"
+                    android:textColor="@color/bright_green"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nomeProduto"
+                    />
 
+                <TextView
+                    android:id="@+id/descricaoProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descrição do produto"
+                    android:textSize="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/precoProduto"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
     </LinearLayout>
 
-
+    <Button
+        android:id="@+id/botaoComprar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#0B9100"
+        android:text="Comprar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
