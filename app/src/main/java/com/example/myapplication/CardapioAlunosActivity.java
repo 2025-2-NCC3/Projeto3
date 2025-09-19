@@ -26,6 +26,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         botaoVoltar = findViewById(R.id.botaoVoltar);
         boxLista = findViewById(R.id.boxLista);
 
+        // Retornar à MainActivity
         botaoVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,6 +35,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             }
         });
 
+        // Instanciando produtos exemplo
         List<Produto> produtos = new ArrayList<>();
         produtos.add(new Produto(1, "Coxinha", "Coxinha recheada de frango.", "Foto da coxinha", 1.99, 10, 1, R.drawable.coxinha_exemplo));
         produtos.add(new Produto(2, "Croissant", "Croissant de presunto e queijo.", "Foto do croissant", 2.99, 12, 1, R.drawable.croissant_exemplo));
@@ -46,6 +48,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             View productView = inflater.inflate(R.layout.produto, boxLista, false);
 
             // Pega referencias para cada elemento
+            LinearLayout boxProduto = productView.findViewById(R.id.boxProduto);
             ImageView imagemProduto = productView.findViewById(R.id.imagemProduto);
             TextView tituloProduto = productView.findViewById(R.id.tituloProduto);
             TextView precoProduto = productView.findViewById(R.id.precoProduto);
@@ -66,6 +69,16 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
             // Adiciona a visualização configurada no activity_cardapio
             boxLista.addView(productView);
+
+            // Adiciona função para abrir a página de informações ao clicar no produto
+            boxProduto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(CardapioAlunosActivity.this, InfoProdutoActivity.class);
+                    intent.putExtra("produtoInfo", produto);
+                    startActivity(intent);
+                }
+            });
         }
     }
 }

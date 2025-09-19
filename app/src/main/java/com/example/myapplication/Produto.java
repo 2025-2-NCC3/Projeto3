@@ -1,6 +1,7 @@
 package com.example.myapplication;
+import java.io.Serializable;
 
-public class Produto {
+public class Produto implements Serializable {
     private int id;
     private String nome;
     private String descricao;
@@ -21,6 +22,7 @@ public class Produto {
         this.imagemId = imagemId;
     }
 
+    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -83,6 +85,17 @@ public class Produto {
 
     public void setImagemId(int imagemId) {
         this.imagemId = imagemId;
+    }
+
+    // Funções
+    public void reduceStock(int quantidade) {
+        if (estoque >= quantidade) {
+            estoque -= quantidade;
+        }
+    }
+
+    public void increaseStock(int quantidade) {
+        estoque += quantidade;
     }
 
 }
