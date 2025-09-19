@@ -1,13 +1,15 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -51,6 +53,7 @@ public class CreateOrderActivity extends AppCompatActivity {
 
     private void inicializarProdutos() {
         // Adiciona produtos disponíveis (simulados)
+
         produtosDisponiveis.add(new Produto(1, "Café", "Café quente", "descrição", 5.0, 1, 3, R.drawable.sem_imagem));
         produtosDisponiveis.add(new Produto(2, "Sanduíche", "Sanduíche natural", "descrição", 2.0, 2, 2, R.drawable.sem_imagem));
         produtosDisponiveis.add(new Produto(3, "Suco Natural", "Suco de laranja", "descrição", 3.0, 3, 3, R.drawable.sem_imagem));
@@ -108,7 +111,9 @@ public class CreateOrderActivity extends AppCompatActivity {
         List<OrderItemRequest> items = new ArrayList<>();
 
         OrderItemRequest item = new OrderItemRequest();
+
         item.setProductId(String.format(Locale.getDefault(), "%d", produtoSelecionado.getId()));
+
         item.setQuantity(1); // Apenas 1 unidade por enquanto
         items.add(item);
 

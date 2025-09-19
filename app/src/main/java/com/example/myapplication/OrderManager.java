@@ -30,6 +30,7 @@ public class OrderManager {
         products.put("5", new Produto(5, "Água", "Água mineral", "descrição", 4.0, 3, 3, R.drawable.sem_imagem));
     }
 
+
     // Gera código único e sequencial
     public static String generateOrderCode() {
         orderCounter++;
@@ -69,7 +70,7 @@ public class OrderManager {
         order.setStudentName(request.getStudentName());
 
         // adiciona itens
-        for (OrderItemRequest itemRequest : request.getItems()) {
+        /*for (OrderItemRequest itemRequest : request.getItems()) {
             Produto produto = products.get(itemRequest.getProductId());
             if (produto != null) {
                 order.addItem(new OrderItem(
@@ -79,7 +80,7 @@ public class OrderManager {
                         produto.getPreco()
                 ));
             }
-        }
+        }*/
 
         // valida estoque
         String stockError = validateStock(order);

@@ -1,13 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "1.8.20"
 
 }
 
 android {
     namespace = "com.example.myapplication"
     compileSdk = 34
-
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 34
@@ -15,7 +17,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "SUPABASE_URL", "\"https://vhmvsbhbjugfbhluhetx.supabase.co\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZobXZzYmhianVnZmJobHVoZXR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMzYxNDEsImV4cCI6MjA3MzgxMjE0MX0.VUj4g8YVv7cqzMDzXtk6jk8U9BKyR8nppNndLVOmtzQ\"")
     }
 
     buildTypes {
@@ -34,18 +39,20 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-auth")
-    implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
-    implementation ("mysql:mysql-connector-java:5.1.49")
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    implementation(libs.espresso.core)
-    implementation(libs.firebase.firestore)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    implementation ("androidx.appcompat:appcompat:1.7.0")
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("androidx.activity:activity:1.9.2")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.google.code.gson:gson:2.11.0")
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.google.code.gson:gson:2.11.0")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
+    implementation ("com.squareup.picasso:picasso:2.8")
+
+    implementation ("com.airbnb.android:lottie:6.4.0")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 
 
 }

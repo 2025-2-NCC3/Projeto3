@@ -9,16 +9,17 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT) // Mudar para PREFER_SETTINGS
     repositories {
         google()
         mavenCentral()
+        
     }
 }
 
 rootProject.name = "My Application"
 include(":app")
- 
