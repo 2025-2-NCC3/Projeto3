@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="supabase_url">https://vhmvsbhbjugfbhluhetx.supabase.co</string>
+    <string name="supabase_anon_key">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZobXZzYmhianVnZmJobHVoZXR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMzYxNDEsImV4cCI6MjA3MzgxMjE0MX0.VUj4g8YVv7cqzMDzXtk6jk8U9BKyR8nppNndLVOmtzQ</string>
 </resources>

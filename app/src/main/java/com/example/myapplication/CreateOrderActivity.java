@@ -1,13 +1,15 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +44,11 @@ public class CreateOrderActivity extends AppCompatActivity {
 
     private void inicializarProdutos() {
         // Adiciona produtos disponíveis (simulados)
-        produtosDisponiveis.add(new Produto("1", "Café", "Café quente", 2.50, 50, 1));
-        produtosDisponiveis.add(new Produto("2", "Sanduíche", "Sanduíche natural", 8.00, 20, 2));
-        produtosDisponiveis.add(new Produto("3", "Suco Natural", "Suco de laranja", 5.00, 30, 3));
-        produtosDisponiveis.add(new Produto("4", "Salgado", "Coxinha", 4.50, 25, 2));
-        produtosDisponiveis.add(new Produto("5", "Água", "Água mineral", 3.00, 40, 3));
+        /*produtosDisponiveis.add(new Produto(1, "Café", "Café quente", 2.50, 50, 1));
+        produtosDisponiveis.add(new Produto(2, "Sanduíche", "Sanduíche natural", 8.00, 20, 2));
+        produtosDisponiveis.add(new Produto(3, "Suco Natural", "Suco de laranja", 5.00, 30, 3));
+        produtosDisponiveis.add(new Produto(4, "Salgado", "Coxinha", 4.50, 25, 2));
+        produtosDisponiveis.add(new Produto(5, "Água", "Água mineral", 3.00, 40, 3));*/
 
         // Seleciona o primeiro produto por padrão
         produtoSelecionado = produtosDisponiveis.get(0);
@@ -99,7 +101,7 @@ public class CreateOrderActivity extends AppCompatActivity {
         List<OrderItemRequest> items = new ArrayList<>();
 
         OrderItemRequest item = new OrderItemRequest();
-        item.setProductId(produtoSelecionado.getId());
+
         item.setQuantity(1); // Apenas 1 unidade por enquanto
         items.add(item);
 

@@ -1,81 +1,193 @@
+// com/example/myapplication/LoginActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import okhttp3.Call;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText editTextEmail, editTextSenha;
-    private Button btnLogin;
-    private FirebaseAuth mAuth; // O objeto do Firebase Authentication
+    private static final String TAG = "LoginActivity";
+    private static final int REGISTER_REQUEST_CODE = 100;
+
+    private EditText editTextEmail;
+    private EditText editTextPassword;
+    private Button buttonLogin;
+    private TextView textViewRegister;
+    private ProgressBar progressBar;
+    private SupabaseClient supabaseClient;
+    private Call currentCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializa o Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        // Inicializar SupabaseClient
+        supabaseClient = SupabaseClient.getInstance(getApplicationContext());
 
-        editTextEmail = findViewById(R.id.editEmailLogin);
-        editTextSenha = findViewById(R.id.editSenhaLogin);
-        btnLogin = findViewById(R.id.btnLogin);
+        // Verificar configuração
+        if (!supabaseClient.isConfigured()) {
+            Toast.makeText(this, "Erro de configuração do Supabase", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Supabase não está configurado corretamente");
+            finish();
+            return;
+        }
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        initializeViews();
+        setupListeners();
+    }
+
+    private void initializeViews() {
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        buttonLogin = findViewById(R.id.buttonLogin);
+        textViewRegister = findViewById(R.id.textViewRegister);
+        progressBar = findViewById(R.id.progressBar);
+    }
+
+    private void setupListeners() {
+        buttonLogin.setOnClickListener(v -> {
+            hideKeyboard();
+            loginUser();
+        });
+
+        textViewRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivityForResult(intent, REGISTER_REQUEST_CODE);
+        });
+    }
+
+    private void loginUser() {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+
+        if (!validateInputs(email, password)) {
+            return;
+        }
+
+        showLoading(true);
+        cancelCurrentCall();
+
+        currentCall = supabaseClient.signIn(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
             @Override
-            public void onClick(View v) {
-                loginUsuario();
+            public void onSuccess(SupabaseClient.AuthResponse response) {
+                runOnUiThread(() -> handleLoginSuccess(response));
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> handleLoginError(error));
             }
         });
     }
 
-    private void loginUsuario() {
-        String email = editTextEmail.getText().toString().trim();
-        String senha = editTextSenha.getText().toString().trim();
+    private boolean validateInputs(String email, String password) {
+        editTextEmail.setError(null);
+        editTextPassword.setError(null);
 
-        if (email.isEmpty() || senha.isEmpty()) {
-            Toast.makeText(this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
-            return;
+        if (email.isEmpty()) {
+            editTextEmail.setError("Email é obrigatório");
+            editTextEmail.requestFocus();
+            return false;
         }
 
-        // --- NOVA VALIDAÇÃO AQUI ---
-        // Verifica se o texto do email corresponde ao padrão de um email válido
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Por favor, insira um email válido.", Toast.LENGTH_SHORT).show();
-            return;
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTextEmail.setError("Email inválido");
+            editTextEmail.requestFocus();
+            return false;
         }
 
-        // Se o email for válido, o código continua para tentar o login no Firebase
-        mAuth.signInWithEmailAndPassword(email, senha)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Login bem-sucedido!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Log.w("LOGIN_TEST", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Falha na autenticação. Verifique suas credenciais.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        if (password.isEmpty()) {
+            editTextPassword.setError("Senha é obrigatória");
+            editTextPassword.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void handleLoginSuccess(SupabaseClient.AuthResponse response) {
+        showLoading(false);
+        Log.d(TAG, "Login bem-sucedido para: " + response.user.email);
+
+        Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+
+        // Navegar para CardapioAlunosActivity
+        Intent intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
+        intent.putExtra("user_email", response.user.email);
+        intent.putExtra("user_id", response.user.id);
+        startActivity(intent);
+        finish(); // Finaliza a LoginActivity para que o usuário não possa voltar com o botão "voltar"
+    }
+
+    private void handleLoginError(String error) {
+        showLoading(false);
+        Log.e(TAG, "Erro no login: " + error);
+        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    private void showLoading(boolean loading) {
+        if (loading) {
+            progressBar.setVisibility(View.VISIBLE);
+            buttonLogin.setEnabled(false);
+            buttonLogin.setText("Entrando...");
+        } else {
+            progressBar.setVisibility(View.GONE);
+            buttonLogin.setEnabled(true);
+            buttonLogin.setText("Entrar");
+        }
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    private void cancelCurrentCall() {
+        if (currentCall != null && !currentCall.isCanceled()) {
+            currentCall.cancel();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REGISTER_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                String email = data.getStringExtra("email");
+                if (email != null) {
+                    editTextEmail.setText(email);
+                    Toast.makeText(this, "Conta criada! Agora faça login.", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelCurrentCall();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelCurrentCall();
     }
 }

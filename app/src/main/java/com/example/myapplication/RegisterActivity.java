@@ -1,103 +1,185 @@
+// com/example/myapplication/ui/RegisterActivity.java
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
+import okhttp3.Call;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    // 1. Variáveis para os componentes da UI e para o Firestore
-    private EditText editTextNome, editTextEmail, editTextSenha;
-    private Button btnRegister;
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
+    private static final String TAG = "RegisterActivity";
+
+    private EditText editTextEmail;
+    private EditText editTextPassword;
+    private EditText editTextConfirmPassword;
+    private Button buttonRegister;
+    private ProgressBar progressBar;
+    private SupabaseClient supabaseClient;
+    private Call currentCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // 2. Inicializar o Firestore
-        db = FirebaseFirestore.getInstance();
+        // Inicializar SupabaseClient
+        supabaseClient = SupabaseClient.getInstance(getApplicationContext());
 
+        // Verificar configuração
+        if (!supabaseClient.isConfigured()) {
+            Toast.makeText(this, "Erro de configuração do Supabase", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Supabase não está configurado corretamente");
+            finish();
+            return;
+        }
 
-        mAuth = FirebaseAuth.getInstance(); // Inicializar o Auth
+        initializeViews();
+        setupListeners();
+    }
 
-        // 3. Conectar as variáveis com os componentes do XML
-        editTextNome = findViewById(R.id.editNomeRegister); // Substitua pelo ID real
-        editTextEmail = findViewById(R.id.editEmailRegister); // Substitua pelo ID real
-        editTextSenha = findViewById(R.id.editSenhaRegister); // Substitua pelo ID real
-        btnRegister = findViewById(R.id.btnRegistrar); // Substitua pelo ID real
+    private void initializeViews() {
+        editTextEmail = findViewById(R.id.editTextEmail);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
+        buttonRegister = findViewById(R.id.buttonRegister);
+        progressBar = findViewById(R.id.progressBar);
+    }
 
-        // 4. Configurar o clique do botão
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+    private void setupListeners() {
+        buttonRegister.setOnClickListener(v -> {
+            hideKeyboard();
+            registerUser();
+        });
+    }
+
+    private void registerUser() {
+        String email = editTextEmail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+
+        if (!validateInputs(email, password, confirmPassword)) {
+            return;
+        }
+
+        showLoading(true);
+
+        cancelCurrentCall();
+
+        currentCall = supabaseClient.signUp(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
             @Override
-            public void onClick(View v) {
-                registrarUsuario();
+            public void onSuccess(SupabaseClient.AuthResponse response) {
+                runOnUiThread(() -> handleRegistrationSuccess(response));
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> handleRegistrationError(error));
             }
         });
     }
 
-    private void registrarUsuario() {
-        String nome = editTextNome.getText().toString().trim();
-        String email = editTextEmail.getText().toString().trim();
-        String senha = editTextSenha.getText().toString().trim();
+    private boolean validateInputs(String email, String password, String confirmPassword) {
+        editTextEmail.setError(null);
+        editTextPassword.setError(null);
+        editTextConfirmPassword.setError(null);
 
-        if (nome.isEmpty() || email.isEmpty() || senha.isEmpty()) {
-            Toast.makeText(this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
-            return;
+        if (email.isEmpty()) {
+            editTextEmail.setError("Email é obrigatório");
+            editTextEmail.requestFocus();
+            return false;
         }
 
-        // PASSO 1: Criar o usuário no Firebase Authentication
-        mAuth.createUserWithEmailAndPassword(email, senha)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Usuário criado com sucesso no Auth
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            String uid = firebaseUser.getUid();
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editTextEmail.setError("Email inválido");
+            editTextEmail.requestFocus();
+            return false;
+        }
 
-                            // PASSO 2: Salvar informações extras (nome) no Firestore
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("uid", uid); // Salva o ID único do usuário
-                            user.put("nome", nome);
-                            user.put("email", email);
+        if (password.isEmpty()) {
+            editTextPassword.setError("Senha é obrigatória");
+            editTextPassword.requestFocus();
+            return false;
+        }
 
-                            db.collection("users").document(uid).set(user)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(RegisterActivity.this, "Registro bem-sucedido!", Toast.LENGTH_SHORT).show();
-                                        finish(); // Volta para a tela de login
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(RegisterActivity.this, "Erro ao salvar dados do usuário.", Toast.LENGTH_SHORT).show();
-                                    });
+        if (password.length() < 6) {
+            editTextPassword.setError("Senha deve ter pelo menos 6 caracteres");
+            editTextPassword.requestFocus();
+            return false;
+        }
 
-                        } else {
-                            // Se o registro falhar (ex: email já existe), mostre uma mensagem
-                            Toast.makeText(RegisterActivity.this, "Falha no registro: " + task.getException().getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+        if (!password.equals(confirmPassword)) {
+            editTextConfirmPassword.setError("Senhas não coincidem");
+            editTextConfirmPassword.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void handleRegistrationSuccess(SupabaseClient.AuthResponse response) {
+        showLoading(false);
+        Log.d(TAG, "Registro bem-sucedido para: " + response.user.email);
+
+        Toast.makeText(RegisterActivity.this, "Registro realizado com sucesso!", Toast.LENGTH_SHORT).show();
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("email", response.user.email);
+        setResult(RESULT_OK, resultIntent);
+
+        finish();
+    }
+
+    private void handleRegistrationError(String error) {
+        showLoading(false);
+        Log.e(TAG, "Erro no registro: " + error);
+        Toast.makeText(RegisterActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    private void showLoading(boolean loading) {
+        if (loading) {
+            progressBar.setVisibility(View.VISIBLE);
+            buttonRegister.setEnabled(false);
+            buttonRegister.setText("Registrando...");
+        } else {
+            progressBar.setVisibility(View.GONE);
+            buttonRegister.setEnabled(true);
+            buttonRegister.setText("Registrar");
+        }
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    private void cancelCurrentCall() {
+        if (currentCall != null && !currentCall.isCanceled()) {
+            currentCall.cancel();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelCurrentCall();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelCurrentCall();
     }
 }

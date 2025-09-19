@@ -22,13 +22,13 @@ public class OrderManager {
     public static final String STATUS_CANCELLED = "CANCELADO";
 
     // Inicializar produtos(simulação de estoque)
-    static {
+    /*static {
         products.put("1", new Produto("1", "Café", "Café quente", 2.50, 50, 1));
         products.put("2", new Produto("2", "Sanduíche", "Sanduíche natural", 8.00, 20, 2));
         products.put("3", new Produto("3", "Suco Natural", "Suco de laranja", 5.00, 30, 3));
         products.put("4", new Produto("4", "Salgado", "Coxinha", 4.50, 25, 2));
         products.put("5", new Produto("5", "Água", "Água mineral", 3.00, 40, 3));
-    }
+    }*/
 
     // Gera código único e sequencial
     public static String generateOrderCode() {
@@ -69,7 +69,7 @@ public class OrderManager {
         order.setStudentName(request.getStudentName());
 
         // adiciona itens
-        for (OrderItemRequest itemRequest : request.getItems()) {
+        /*for (OrderItemRequest itemRequest : request.getItems()) {
             Produto produto = products.get(itemRequest.getProductId());
             if (produto != null) {
                 order.addItem(new OrderItem(
@@ -79,7 +79,7 @@ public class OrderManager {
                         produto.getPreco()
                 ));
             }
-        }
+        }*/
 
         // valida estoque
         String stockError = validateStock(order);
