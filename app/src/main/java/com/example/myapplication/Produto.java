@@ -5,21 +5,35 @@ public class Produto implements Serializable {
     private int id;
     private String nome;
     private String descricao;
-    private String imagemDescricao;
+    private String caminhoImagem;
     private double preco;
     private int estoque;
     private int categoria;
-    private int imagemId;
 
-    public Produto(int id, String nome, String descricao, String imagemDescricao, double preco, int estoque, int categoria, int imagemId){
+    // Construtor vazio - IMPORTANTE PARA RESOLVER O ERRO
+    public Produto() {
+        // Construtor vazio para criar produto e depois setar os valores
+    }
+
+    // Construtor completo (sem imagemId)
+    public Produto(int id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria){
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
-        this.imagemDescricao = imagemDescricao;
+        this.caminhoImagem = caminhoImagem;
         this.preco = preco;
         this.estoque = estoque;
         this.categoria = categoria;
-        this.imagemId = imagemId;
+    }
+
+    // Construtor sem ID (útil para inserir novos produtos)
+    public Produto(String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.caminhoImagem = caminhoImagem;
+        this.preco = preco;
+        this.estoque = estoque;
+        this.categoria = categoria;
     }
 
     // Getters e Setters
@@ -47,12 +61,12 @@ public class Produto implements Serializable {
         this.descricao = descricao;
     }
 
-    public String getImagemDescricao() {
-        return imagemDescricao;
+    public String getCaminhoImagem() {
+        return caminhoImagem;
     }
 
-    public void setImagemDescricao(String imagemDescricao) {
-        this.imagemDescricao = imagemDescricao;
+    public void setCaminhoImagem(String caminhoImagem) {
+        this.caminhoImagem = caminhoImagem;
     }
 
     public double getPreco() {
@@ -79,15 +93,7 @@ public class Produto implements Serializable {
         this.categoria = categoria;
     }
 
-    public int getImagemId() {
-        return imagemId;
-    }
-
-    public void setImagemId(int imagemId) {
-        this.imagemId = imagemId;
-    }
-
-    // Funções
+    // Funções úteis
     public void reduceStock(int quantidade) {
         if (estoque >= quantidade) {
             estoque -= quantidade;
@@ -98,4 +104,12 @@ public class Produto implements Serializable {
         estoque += quantidade;
     }
 
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", preco=" + preco +
+                '}';
+    }
 }

@@ -37,9 +37,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
         // Instanciando produtos exemplo
         List<Produto> produtos = new ArrayList<>();
-        produtos.add(new Produto(1, "Coxinha", "Coxinha recheada de frango.", "Foto da coxinha", 1.99, 10, 1, R.drawable.coxinha_exemplo));
-        produtos.add(new Produto(2, "Croissant", "Croissant de presunto e queijo.", "Foto do croissant", 2.99, 12, 1, R.drawable.croissant_exemplo));
-        produtos.add(new Produto(3, "Brownie", "Brownie de chocolate.", "Foto do brownie", 2.49, 20, 2, R.drawable.brownie_exemplo));
+        produtos.add(new Produto(1, "Coxinha", "Coxinha recheada de frango.", "coxinha_exemplo", 1.99, 10, 1));
+        produtos.add(new Produto(2, "Croissant", "Croissant de presunto e queijo.", "croissant_exemplo", 2.99, 12, 1));
+        produtos.add(new Produto(3, "Brownie", "Brownie de chocolate.", "brownie_exemplo", 2.49, 20, 2));
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -56,10 +56,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Altera a informação de cada elemento
             tituloProduto.setText(produto.getNome());
             precoProduto.setText(String.format(Locale.getDefault(), "R$%.2f", produto.getPreco()));
-            imagemProduto.setContentDescription(produto.getImagemDescricao());
 
             // Altera a imagem do produto
-            int imageResId = produto.getImagemId();
+            int imageResId = getResources().getIdentifier(produto.getCaminhoImagem(), "drawable", getPackageName());
             if (imageResId != 0) {
                 imagemProduto.setImageResource(imageResId);
             } else {

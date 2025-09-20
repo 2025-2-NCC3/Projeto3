@@ -54,11 +54,11 @@ public class CreateOrderActivity extends AppCompatActivity {
     private void inicializarProdutos() {
         // Adiciona produtos disponíveis (simulados)
 
-        produtosDisponiveis.add(new Produto(1, "Café", "Café quente", "descrição", 5.0, 1, 3, R.drawable.sem_imagem));
-        produtosDisponiveis.add(new Produto(2, "Sanduíche", "Sanduíche natural", "descrição", 2.0, 2, 2, R.drawable.sem_imagem));
-        produtosDisponiveis.add(new Produto(3, "Suco Natural", "Suco de laranja", "descrição", 3.0, 3, 3, R.drawable.sem_imagem));
-        produtosDisponiveis.add(new Produto(4, "Salgado", "Coxinha", "descrição", 2.5, 1, 1, R.drawable.coxinha_exemplo));
-        produtosDisponiveis.add(new Produto(5, "Água", "Água mineral", "descrição", 4.0, 3, 3, R.drawable.sem_imagem));
+        produtosDisponiveis.add(new Produto(1, "Café", "Café quente", "sem_imagem", 5.0, 1, 3));
+        produtosDisponiveis.add(new Produto(2, "Sanduíche", "Sanduíche natural", "sem_imagem", 2.0, 2, 2));
+        produtosDisponiveis.add(new Produto(3, "Suco Natural", "Suco de laranja", "sem_imagem", 3.0, 3, 3));
+        produtosDisponiveis.add(new Produto(4, "Salgado", "Coxinha", "coxinha_exemplo", 2.5, 1, 1));
+        produtosDisponiveis.add(new Produto(5, "Água", "Água mineral", "sem_imagem", 4.0, 3, 3));
 
         // Seleciona o primeiro produto por padrão
         produtoSelecionado = produtosDisponiveis.get(0);
