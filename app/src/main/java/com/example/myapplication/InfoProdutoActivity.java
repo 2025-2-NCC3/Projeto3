@@ -43,7 +43,13 @@ public class InfoProdutoActivity extends AppCompatActivity {
             Produto objetoRecebido = (Produto) bundle.getSerializable("produtoInfo", Produto.class);
 
             // Monta a página com as informações
-            imagemProduto.setImageResource(objetoRecebido.getImagemId());
+            int imageResId = getResources().getIdentifier(objetoRecebido.getCaminhoImagem(), "drawable", getPackageName());
+            if (imageResId != 0) {
+                imagemProduto.setImageResource(imageResId);
+            } else {
+                // Usa um placeholder caso o produto não tenha imagem
+                imagemProduto.setImageResource(R.drawable.sem_imagem);
+            }
             nomeProduto.setText(objetoRecebido.getNome());
             precoProduto.setText(String.format(Locale.getDefault(), "R$%.2f", objetoRecebido.getPreco()));
             descricaoProduto.setText(objetoRecebido.getDescricao());

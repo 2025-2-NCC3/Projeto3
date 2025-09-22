@@ -26,11 +26,11 @@
         </activity>
         <activity android:name=".RegisterActivity">
         </activity>
-        <activity android:name=".CardapioAlunosActivity">
-        </activity>
         <activity android:name=".LoginActivity">
         </activity>
         <activity android:name=".InfoProdutoActivity">
+        </activity>
+        <activity android:name=".CardapioAlunosActivity">
         </activity>
     </application>
 
