@@ -32,6 +32,8 @@
         </activity>
         <activity android:name=".CardapioAlunosActivity">
         </activity>
+        <activity android:name=".AdminCardapioActivity">
+        </activity>
     </application>
 
 </manifest>

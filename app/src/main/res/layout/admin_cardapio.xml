@@ -1,74 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:padding="24dp"
+    tools:context=".AdminCardapioActivity">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineAC"
+        android:id="@+id/guideEsquerda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25" />
+        app:layout_constraintGuide_percent="0.05" />
 
     <Button
-        android:id="@+id/ButtonBackAC"
+        android:id="@+id/botaoVoltar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Voltar"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="47dp"/>
-
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
 
     <TextView
+        android:id="@+id/tituloPagina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Adicionar Produto"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/guidelineAC"
-        tools:layout_editor_absoluteX="124dp" />
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="Adicionar ao Cardápio"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/botaoVoltar"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
 
-    <LinearLayout
-        android:id="@+id/LinearLayoutAC"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="80dp"
-        tools:layout_editor_absoluteY="183dp">
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tituloPagina"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/EditTextNomeProduto"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome do Produto"
-            app:layout_constraintTop_toBottomOf="@+id/guidelineAC" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <EditText
-            android:id="@+id/EditTextValorProduto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Valor do Produto"
-            app:layout_constraintTop_toBottomOf="@+id/EditTextNomeProduto" />
+            <!-- Nome do Produto -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Nome do Produto"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <EditText
-            android:id="@+id/EditTextDetalhesProduto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Descrição"
-            app:layout_constraintTop_toBottomOf="@+id/EditTextValorProduto" />
+                <EditText
+                    android:id="@+id/EditTextNomeProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:maxLength="100" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/ButtonAddAC"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Adicionar"
-            app:layout_constraintTop_toBottomOf="@+id/EditTextDetalhesProduto" />
+            <!-- Valor do Produto -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Valor (R$)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/EditTextValorProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Descrição/Detalhes -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Descrição do Produto"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <EditText
+                    android:id="@+id/EditTextDetalhesProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:maxLength="500" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Caminho da Imagem -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Nome da Imagem (ex: pizza_margherita)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <EditText
+                    android:id="@+id/EditTextImagemProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Estoque -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Estoque Disponível"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <EditText
+                    android:id="@+id/EditTextEstoque"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Categoria -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Categoria:"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"
+                android:textColor="@android:color/black" />
+
+            <Spinner
+                android:id="@+id/SpinnerCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:padding="12dp" />
+
+            <Button
+                android:id="@+id/buttonSelecionarImagem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecionar Imagem"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+            <ImageView
+                android:id="@+id/imageViewPreview"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Botão Adicionar -->
+            <Button
+                android:id="@+id/ButtonAddAC"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Adicionar Produto"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="16dp" />
 
 
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

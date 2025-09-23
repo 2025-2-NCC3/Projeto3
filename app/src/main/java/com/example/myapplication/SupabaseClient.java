@@ -6,9 +6,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.cert.CertificateException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -297,6 +300,224 @@ public class SupabaseClient {
         return call;
     }
 
+    // ===== MÉTODOS PARA PRODUTOS DO CARDÁPIO =====
+
+    // Buscar todos os produtos do cardápio
+    public Call getAllProducts(SupabaseCallback<List<Produto>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando todos os produtos: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produtos", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produtos - Código: " + response.code());
+                Log.d(TAG, "Resposta buscar produtos - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(produtos);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar lista de produtos", e);
+                        callback.onError("Erro ao processar dados dos produtos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar produtos (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar produtos por categoria
+    public Call getProductsByCategory(int categoria, SupabaseCallback<List<Produto>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?categoria=eq." + categoria + "&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando produtos por categoria: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produtos por categoria", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar por categoria - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(produtos);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar produtos por categoria", e);
+                        callback.onError("Erro ao processar dados dos produtos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar produtos por categoria (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar produto por ID
+    public Call getProductById(int id, SupabaseCallback<Produto> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?id=eq." + id + "&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando produto por ID: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produto por ID", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produto por ID - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+
+                        if (produtos != null && !produtos.isEmpty()) {
+                            callback.onSuccess(produtos.get(0));
+                        } else {
+                            callback.onError("Produto não encontrado");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar produto", e);
+                        callback.onError("Erro ao processar dados do produto");
+                    }
+                } else {
+                    callback.onError("Produto não encontrado (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Atualizar estoque de um produto (útil para pedidos)
+    public Call updateProductStock(int id, int novoEstoque, SupabaseCallback<Boolean> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        String json = "{\"estoque\":" + novoEstoque + "}";
+        Log.d(TAG, "Atualizando estoque do produto ID " + id + ": " + json);
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?id=eq." + id)
+                .patch(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao atualizar estoque", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                Log.d(TAG, "Resposta atualizar estoque - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    callback.onSuccess(true);
+                } else {
+                    callback.onError("Erro ao atualizar estoque (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
     // Classes de modelo para requisições
     private static class SignUpRequest {
         private final String email;
@@ -359,5 +580,199 @@ public class SupabaseClient {
     public interface SupabaseCallback<T> {
         void onSuccess(T response);
         void onError(String error);
+    }
+    // ADICIONE ESTES MÉTODOS AO SEU SupabaseClient.java
+// Coloque-os após os métodos existentes, antes das classes de modelo
+
+// ===== MÉTODOS PARA UPLOAD DE IMAGENS =====
+
+    // Upload de imagem para o Storage do Supabase
+    public Call uploadProductImage(byte[] imageBytes, String fileName, String bucketName, SupabaseCallback<ImageUploadResponse> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        // Gerar nome único para a imagem
+        long timestamp = System.currentTimeMillis();
+        String extension = getFileExtension(fileName);
+        String uniqueFileName = "produto_" + timestamp + "." + extension;
+
+        Log.d(TAG, "Fazendo upload da imagem: " + uniqueFileName + " para bucket: " + bucketName);
+
+        RequestBody body = RequestBody.create(imageBytes, MediaType.parse("image/*"));
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + uniqueFileName)
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "image/*")
+                .addHeader("x-upsert", "true")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro no upload da imagem", e);
+                    callback.onError("Erro ao fazer upload: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta upload - Código: " + response.code());
+                Log.d(TAG, "Resposta upload - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    // Construir a URL pública da imagem
+                    String publicUrl = supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + uniqueFileName;
+
+                    ImageUploadResponse uploadResponse = new ImageUploadResponse();
+                    uploadResponse.fileName = uniqueFileName;
+                    uploadResponse.publicUrl = publicUrl;
+                    uploadResponse.bucketName = bucketName;
+
+                    callback.onSuccess(uploadResponse);
+                } else {
+                    try {
+                        ErrorResponse errorResponse = gson.fromJson(responseBody, ErrorResponse.class);
+                        String errorMessage = "Erro no upload da imagem";
+
+                        if (errorResponse != null && errorResponse.error != null) {
+                            errorMessage = errorResponse.error;
+                        }
+
+                        callback.onError(errorMessage + " (Código: " + response.code() + ")");
+                    } catch (Exception e) {
+                        callback.onError("Erro no upload da imagem (Código: " + response.code() + ")");
+                    }
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Verificar se o bucket existe e criar se necessário
+    public Call createBucketIfNotExists(String bucketName, SupabaseCallback<Boolean> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        // Primeiro, tentar listar buckets para ver se já existe
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/bucket")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao verificar buckets", e);
+                    callback.onError("Erro ao verificar buckets: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Buckets existentes: " + responseBody);
+
+                // Se o bucket já existe, retorna sucesso
+                if (responseBody.contains("\"name\":\"" + bucketName + "\"")) {
+                    Log.d(TAG, "Bucket " + bucketName + " já existe");
+                    callback.onSuccess(true);
+                    return;
+                }
+
+                // Se não existe, criar o bucket
+                createBucket(bucketName, callback);
+            }
+        });
+
+        return call;
+    }
+
+    private void createBucket(String bucketName, SupabaseCallback<Boolean> callback) {
+        String bucketConfig = "{\"name\":\"" + bucketName + "\",\"public\":true}";
+
+        RequestBody body = RequestBody.create(bucketConfig, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/bucket")
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao criar bucket", e);
+                    callback.onError("Erro ao criar bucket: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                Log.d(TAG, "Resposta criar bucket - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Bucket " + bucketName + " criado com sucesso");
+                    callback.onSuccess(true);
+                } else {
+                    callback.onError("Erro ao criar bucket (Código: " + response.code() + ")");
+                }
+            }
+        });
+    }
+
+    // Método utilitário para obter extensão do arquivo
+    private String getFileExtension(String fileName) {
+        if (fileName != null && fileName.contains(".")) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        }
+        return "jpg"; // extensão padrão
+    }
+
+// ADICIONE ESTA CLASSE NO FINAL DO ARQUIVO, ANTES DO FECHAMENTO DA CLASSE SupabaseClient
+
+    // Classe para resposta do upload de imagem
+    public static class ImageUploadResponse {
+        public String fileName;
+        public String publicUrl;
+        public String bucketName;
+
+        @Override
+        public String toString() {
+            return "ImageUploadResponse{" +
+                    "fileName='" + fileName + '\'' +
+                    ", publicUrl='" + publicUrl + '\'' +
+                    ", bucketName='" + bucketName + '\'' +
+                    '}';
+        }
     }
 }
