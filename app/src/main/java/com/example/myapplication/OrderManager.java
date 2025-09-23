@@ -1,16 +1,16 @@
 package com.example.myapplication;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class OrderManager {
-    //contador pra gerar códigos únicos
     private static int orderCounter = 0;
-    //estoque da cantina
     private static Map<String, Produto> products = new HashMap<>();
-    //pedidos em andamento
     private static Map<Integer, Order> orders = new HashMap<>();
 
     // Status dos pedidos
@@ -21,98 +21,91 @@ public class OrderManager {
     public static final String STATUS_DELIVERED = "ENTREGUE";
     public static final String STATUS_CANCELLED = "CANCELADO";
 
-    // Inicializar produtos (simulação de estoque)
     static {
-        products.put("1", new Produto(1, "Café", "Café quente", "sem_imagem", 5.0, 1, 3));
-        products.put("2", new Produto(2, "Sanduíche", "Sanduíche natural", "sem_imagem", 2.0, 2, 2));
-        products.put("3", new Produto(3, "Suco Natural", "Suco de laranja", "sem_imagem", 3.0, 3, 3));
-        products.put("4", new Produto(4, "Salgado", "Coxinha", "coxinha_exemplo", 2.5, 1, 1));
-        products.put("5", new Produto(5, "Água", "Água mineral", "sem_imagem", 4.0, 3, 3));
+        // Inicializar produtos
+        products.put("1", new Produto(1, "Café", "Café quente", "sem_imagem", 5.0, 10, 3));
+        products.put("2", new Produto(2, "Sanduíche", "Sanduíche natural", "sem_imagem", 2.0, 15, 2));
+        products.put("3", new Produto(3, "Suco Natural", "Suco de laranja", "sem_imagem", 3.0, 8, 3));
+        products.put("4", new Produto(4, "Salgado", "Coxinha", "coxinha_exemplo", 2.5, 20, 1));
+        products.put("5", new Produto(5, "Água", "Água mineral", "sem_imagem", 4.0, 25, 3));
     }
 
-
-    // Gera código único e sequencial
     public static String generateOrderCode() {
         orderCounter++;
         String date = new SimpleDateFormat("ddMMyy", Locale.getDefault()).format(new Date());
         return "ORD" + date + String.format("%03d", orderCounter);
     }
 
-    // Verifica se tem quantidade suficiente de cada produto antes de confirmar o pedido
     public static String validateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Produto produto = products.get(item.getProductId());
+            Produto produto = products.get(String.valueOf(item.getProductId()));
             if (produto == null) {
                 return "Produto não encontrado: " + item.getProductName();
             }
             if (produto.getEstoque() < item.getQuantity()) {
-                return "Estoque insuficiente para: " + item.getProductName();
+                return "Estoque insuficiente para: " + item.getProductName() +
+                        " (Disponível: " + produto.getEstoque() + ", Solicitado: " + item.getQuantity() + ")";
             }
         }
         return null;
     }
 
-    // Atualiza estoque depois que o pedido é confirmado
     public static void updateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Produto produto = products.get(item.getProductId());
+            Produto produto = products.get(String.valueOf(item.getProductId()));
             if (produto != null) {
                 produto.setEstoque(produto.getEstoque() - item.getQuantity());
             }
         }
     }
 
-    // Endpoint POST/api/orders
     public static OrderResponse createOrder(OrderRequest request) {
-        //cria pedido
         Order order = new Order();
         order.setStudentId(request.getStudentId());
         order.setStudentName(request.getStudentName());
 
-        // adiciona itens
-        /*for (OrderItemRequest itemRequest : request.getItems()) {
+        // Adicionar itens ao pedido
+        for (OrderItemRequest itemRequest : request.getItems()) {
             Produto produto = products.get(itemRequest.getProductId());
             if (produto != null) {
-                order.addItem(new OrderItem(
+                OrderItem item = new OrderItem(
                         produto.getId(),
                         produto.getNome(),
                         itemRequest.getQuantity(),
                         produto.getPreco()
-                ));
+                );
+                order.addItem(item);
             }
-        }*/
+        }
 
-        // valida estoque
+        // Validar estoque
         String stockError = validateStock(order);
         if (stockError != null) {
             return new OrderResponse(false, stockError, null);
         }
 
-        // confirma pedido
+        // Confirmar pedido
         updateStock(order);
         order.setStatus(STATUS_CONFIRMED);
-        orders.put(order.getId(), order); //salva pedido
+        orders.put(order.getId(), order);
 
-        return new OrderResponse(true, "Pedido criado com sucesso", order);
+        return new OrderResponse(true, "Pedido criado com sucesso! Código: " + order.getCode(), order);
     }
 
-//Métodos de Consulta
-    // Buscar pedido por id
-    public static Order getOrder(String orderId) {
+    // Métodos de consulta
+    public static Order getOrder(int orderId) {
         return orders.get(orderId);
     }
 
-    // Atualizar status
-    public static boolean updateOrderStatus(String orderId, String newStatus) {
+    public static boolean updateOrderStatus(int orderId, String newStatus) {
         Order order = orders.get(orderId);
         if (order != null) {
             order.setStatus(newStatus);
             return true;
         }
-        return false; //pedido não encontrado
+        return false;
     }
 
-    // Buscar pedidos do aluno
     public static Map<Integer, Order> getStudentOrders(String studentId) {
         Map<Integer, Order> studentOrders = new HashMap<>();
         for (Order order : orders.values()) {
@@ -121,5 +114,33 @@ public class OrderManager {
             }
         }
         return studentOrders;
+    }
+
+    public static List<Order> getStudentOrdersList(String studentId) {
+        List<Order> studentOrders = new ArrayList<>();
+        for (Order order : orders.values()) {
+            if (studentId.equals(order.getStudentId())) {
+                studentOrders.add(order);
+            }
+        }
+        return studentOrders;
+    }
+
+    public static Produto getProduct(String productId) {
+        return products.get(productId);
+    }
+
+    public static Map<String, Produto> getAllProducts() {
+        return new HashMap<>(products);
+    }
+
+    public static List<Produto> getAvailableProducts() {
+        List<Produto> availableProducts = new ArrayList<>();
+        for (Produto produto : products.values()) {
+            if (produto.getEstoque() > 0) {
+                availableProducts.add(produto);
+            }
+        }
+        return availableProducts;
     }
 }
