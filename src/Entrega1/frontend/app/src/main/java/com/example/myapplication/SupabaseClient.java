@@ -34,7 +34,7 @@ public class SupabaseClient {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private static SupabaseClient instance;
-    private final OkHttpClient client;
+    final OkHttpClient client;
     private final Gson gson;
     private final String supabaseUrl;
     private final String supabaseKey;
