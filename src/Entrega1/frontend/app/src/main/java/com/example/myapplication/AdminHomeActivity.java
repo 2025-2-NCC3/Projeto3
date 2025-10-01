@@ -55,14 +55,6 @@ public class AdminHomeActivity extends AppCompatActivity {
         setupListeners();
     }
 
-    private void goToCardapio() {
-        Intent intent = new Intent(this, CardapioAlunosActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
-    }
-
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -91,7 +83,7 @@ public class AdminHomeActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
             startActivity(intent);
         });
-    /*
+        /*
         btnGerenciarPedidos.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, GerenciarPedidosActivity.class);
             startActivity(intent);
@@ -108,7 +100,7 @@ public class AdminHomeActivity extends AppCompatActivity {
             // Intent intent = new Intent(AdminHomeActivity.this, RelatoriosActivity.class);
             // startActivity(intent);
         });
-
+        */
         btnVerCardapio.setOnClickListener(v -> {
             // Admin pode ver o cardápio como usuário
             Intent intent = new Intent(AdminHomeActivity.this, CardapioAlunosActivity.class);
@@ -136,8 +128,7 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    */
-    }
+
     private void logout() {
         // Limpar sessões
         sessionManager.logout();
@@ -169,7 +160,3 @@ public class AdminHomeActivity extends AppCompatActivity {
         Toast.makeText(this, "Use o botão Sair para fazer logout", Toast.LENGTH_SHORT).show();
     }
 }
-
-    private void goToMain() {
-
-    }

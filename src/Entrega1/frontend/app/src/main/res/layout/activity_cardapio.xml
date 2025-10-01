@@ -58,14 +58,6 @@
             android:textSize="36sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/botaoAdmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Admin"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="16dp" />
-
     </LinearLayout>
 
     <!-- Filtros por categoria -->

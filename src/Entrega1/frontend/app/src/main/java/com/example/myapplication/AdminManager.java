@@ -80,6 +80,7 @@ public class AdminManager {
         String[] adminEmails = {
                 "admin@example.com",
                 "admin@cardapio.com",
+                "eric@gmail.com"
                 // Adicione mais emails de admin aqui
         };
 

@@ -36,22 +36,21 @@ public class SessionManager {
     }
 
     /**
-     * Salva a sessão do usuário após login/registro bem-sucedido
+     * Salva a sessão do usuário após login bem-sucedido
+     * Versão customizada para tabela users
      */
-    public void createLoginSession(SupabaseClient.AuthResponse authResponse) {
+    public void createLoginSession(String userId, String email, String role) {
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putString(KEY_USER_ID, authResponse.user.id);
-        editor.putString(KEY_USER_EMAIL, authResponse.user.email);
-        editor.putString(KEY_ACCESS_TOKEN, authResponse.accessToken);
-        editor.putString(KEY_REFRESH_TOKEN, authResponse.refreshToken);
+        editor.putString(KEY_USER_ID, userId);
+        editor.putString(KEY_USER_EMAIL, email);
 
-        // Calcula quando o token expira (timestamp atual + expiresIn em segundos)
-        long expiresAt = System.currentTimeMillis() + (authResponse.expiresIn * 1000L);
+        // Define expiração para 30 dias (em milissegundos)
+        long expiresAt = System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000);
         editor.putLong(KEY_TOKEN_EXPIRES_AT, expiresAt);
 
         editor.apply();
 
-        Log.d(TAG, "Sessão criada para: " + authResponse.user.email);
+        Log.d(TAG, "Sessão criada para: " + email + " (Role: " + role + ")");
     }
 
     /**

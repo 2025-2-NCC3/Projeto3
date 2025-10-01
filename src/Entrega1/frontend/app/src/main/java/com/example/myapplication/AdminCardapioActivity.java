@@ -91,7 +91,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
 
         // Botão voltar
         botaoVoltar.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminCardapioActivity.this, CardapioAlunosActivity.class);
+            Intent intent = new Intent(AdminCardapioActivity.this, AdminHomeActivity.class);
             startActivity(intent);
             finish();
         });
