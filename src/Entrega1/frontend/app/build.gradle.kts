@@ -9,6 +9,7 @@ android {
     compileSdk = 34
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
     defaultConfig {
         applicationId = "com.example.myapplication"
@@ -36,6 +37,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    dependenciesInfo {
+        includeInApk = true
+        includeInBundle = true
+    }
+    ndkVersion = "12"
+    buildToolsVersion = "36.0.0"
 }
 
 dependencies {

@@ -10,7 +10,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +48,7 @@ public class SupabaseClient {
         gson = new Gson();
 
         // Obtém as configurações do BuildConfig
+
         supabaseUrl = BuildConfig.SUPABASE_URL;
         supabaseKey = BuildConfig.SUPABASE_ANON_KEY;
 
@@ -67,23 +70,23 @@ public class SupabaseClient {
             final TrustManager[] trustAllCerts = new TrustManager[] {
                     new X509TrustManager() {
                         @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                         }
 
                         @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                         }
 
                         @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[]{};
                         }
                     }
             };
 
             // Instalar o all-trusting trust manager
             final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            sslContext.init(null, trustAllCerts, new SecureRandom());
 
             // Criar um ssl socket factory com nosso all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();

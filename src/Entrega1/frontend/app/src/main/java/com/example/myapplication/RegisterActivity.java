@@ -1,4 +1,4 @@
-// com/example/myapplication/ui/RegisterActivity.java
+// com/example/myapplication/RegisterActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +24,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextPassword;
     private EditText editTextConfirmPassword;
     private Button buttonRegister;
+    private TextView textViewLogin;
     private ProgressBar progressBar;
     private SupabaseClient supabaseClient;
+    private SessionManager sessionManager;
     private Call currentCall;
 
     @Override
@@ -32,8 +35,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Inicializar SupabaseClient
+        // Inicializar clientes
         supabaseClient = SupabaseClient.getInstance(getApplicationContext());
+        sessionManager = SessionManager.getInstance(getApplicationContext());
 
         // Verificar configuração
         if (!supabaseClient.isConfigured()) {
@@ -52,6 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
+
         progressBar = findViewById(R.id.progressBar);
     }
 
@@ -60,6 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
             hideKeyboard();
             registerUser();
         });
+
+
     }
 
     private void registerUser() {
@@ -72,18 +79,17 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         showLoading(true);
-
         cancelCurrentCall();
 
         currentCall = supabaseClient.signUp(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
             @Override
             public void onSuccess(SupabaseClient.AuthResponse response) {
-                runOnUiThread(() -> handleRegistrationSuccess(response));
+                runOnUiThread(() -> handleRegisterSuccess(response));
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> handleRegistrationError(error));
+                runOnUiThread(() -> handleRegisterError(error));
             }
         });
     }
@@ -112,13 +118,19 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (password.length() < 6) {
-            editTextPassword.setError("Senha deve ter pelo menos 6 caracteres");
+            editTextPassword.setError("A senha deve ter pelo menos 6 caracteres");
             editTextPassword.requestFocus();
             return false;
         }
 
+        if (confirmPassword.isEmpty()) {
+            editTextConfirmPassword.setError("Confirmação de senha é obrigatória");
+            editTextConfirmPassword.requestFocus();
+            return false;
+        }
+
         if (!password.equals(confirmPassword)) {
-            editTextConfirmPassword.setError("Senhas não coincidem");
+            editTextConfirmPassword.setError("As senhas não correspondem");
             editTextConfirmPassword.requestFocus();
             return false;
         }
@@ -126,34 +138,46 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    private void handleRegistrationSuccess(SupabaseClient.AuthResponse response) {
+    private void handleRegisterSuccess(SupabaseClient.AuthResponse response) {
         showLoading(false);
         Log.d(TAG, "Registro bem-sucedido para: " + response.user.email);
 
-        Toast.makeText(RegisterActivity.this, "Registro realizado com sucesso!", Toast.LENGTH_SHORT).show();
+        // Salvar a sessão do usuário
+        sessionManager.createLoginSession(response);
 
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("email", response.user.email);
-        setResult(RESULT_OK, resultIntent);
+        Toast.makeText(RegisterActivity.this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
 
-        finish();
+        // Ir direto para o cardápio (usuário já está autenticado)
+        goToCardapio();
     }
 
-    private void handleRegistrationError(String error) {
+    private void handleRegisterError(String error) {
         showLoading(false);
         Log.e(TAG, "Erro no registro: " + error);
         Toast.makeText(RegisterActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    private void goToCardapio() {
+        Intent intent = new Intent(RegisterActivity.this, CardapioAlunosActivity.class);
+        intent.putExtra("user_email", sessionManager.getUserEmail());
+        intent.putExtra("user_id", sessionManager.getUserId());
+
+        // Remove todas as activities anteriores da pilha
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
     }
 
     private void showLoading(boolean loading) {
         if (loading) {
             progressBar.setVisibility(View.VISIBLE);
             buttonRegister.setEnabled(false);
-            buttonRegister.setText("Registrando...");
+            buttonRegister.setText("Criando conta...");
         } else {
             progressBar.setVisibility(View.GONE);
             buttonRegister.setEnabled(true);
-            buttonRegister.setText("Registrar");
+            buttonRegister.setText("Criar Conta");
         }
     }
 

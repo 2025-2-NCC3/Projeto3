@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView textViewRegister;
     private ProgressBar progressBar;
     private SupabaseClient supabaseClient;
+    private SessionManager sessionManager;
+    private AdminManager adminManager;
     private Call currentCall;
 
     @Override
@@ -34,10 +36,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar SupabaseClient
+        // Inicializar clientes
         supabaseClient = SupabaseClient.getInstance(getApplicationContext());
+        sessionManager = SessionManager.getInstance(getApplicationContext());
+        adminManager = AdminManager.getInstance(getApplicationContext());
 
-        // Verificar configuração
+        // Verificar se já está logado
+        if (sessionManager.isLoggedIn()) {
+            Log.d(TAG, "Usuário já está logado, redirecionando");
+            redirectToAppropriateScreen();
+            return;
+        }
+
+        // Verificar configuração do Supabase
         if (!supabaseClient.isConfigured()) {
             Toast.makeText(this, "Erro de configuração do Supabase", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Supabase não está configurado corretamente");
@@ -83,7 +94,13 @@ public class LoginActivity extends AppCompatActivity {
         currentCall = supabaseClient.signIn(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
             @Override
             public void onSuccess(SupabaseClient.AuthResponse response) {
-                runOnUiThread(() -> handleLoginSuccess(response));
+                runOnUiThread(() -> {
+                    // Salvar a sessão
+                    sessionManager.createLoginSession(response);
+
+                    // Verificar se é admin
+                    checkUserRole(response.user.email, response.user.id);
+                });
             }
 
             @Override
@@ -91,6 +108,44 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> handleLoginError(error));
             }
         });
+    }
+
+    private void checkUserRole(String email, String userId) {
+        // Verificar se o email é de admin (solução temporária)
+        if (AdminManager.isAdminEmail(email)) {
+            adminManager.setUserRole(AdminManager.ROLE_ADMIN);
+            handleLoginSuccess(email, true);
+            return;
+        }
+
+        // Opção avançada: Buscar role do banco de dados
+        // Descomente se você tiver a tabela profiles configurada
+        /*
+        supabaseClient.getUserProfile(userId, new SupabaseClient.SupabaseCallback<SupabaseClient.UserProfile>() {
+            @Override
+            public void onSuccess(SupabaseClient.UserProfile profile) {
+                runOnUiThread(() -> {
+                    adminManager.setUserRole(profile.role);
+                    boolean isAdmin = AdminManager.ROLE_ADMIN.equals(profile.role);
+                    handleLoginSuccess(email, isAdmin);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    // Se der erro ao buscar perfil, assume que é usuário comum
+                    Log.w(TAG, "Erro ao buscar perfil, assumindo role 'user': " + error);
+                    adminManager.setUserRole(AdminManager.ROLE_USER);
+                    handleLoginSuccess(email, false);
+                });
+            }
+        });
+        */
+
+        // Por padrão, usuário comum
+        adminManager.setUserRole(AdminManager.ROLE_USER);
+        handleLoginSuccess(email, false);
     }
 
     private boolean validateInputs(String email, String password) {
@@ -118,24 +173,40 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void handleLoginSuccess(SupabaseClient.AuthResponse response) {
+    private void handleLoginSuccess(String email, boolean isAdmin) {
         showLoading(false);
-        Log.d(TAG, "Login bem-sucedido para: " + response.user.email);
+        Log.d(TAG, "Login bem-sucedido para: " + email + " (Admin: " + isAdmin + ")");
 
-        Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+        String message = isAdmin ? "Bem-vindo, Administrador!" : "Login realizado com sucesso!";
+        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
 
-        // Navegar para CardapioAlunosActivity
-        Intent intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
-        intent.putExtra("user_email", response.user.email);
-        intent.putExtra("user_id", response.user.id);
-        startActivity(intent);
-        finish(); // Finaliza a LoginActivity para que o usuário não possa voltar com o botão "voltar"
+        // Redirecionar para tela apropriada
+        redirectToAppropriateScreen();
     }
 
     private void handleLoginError(String error) {
         showLoading(false);
         Log.e(TAG, "Erro no login: " + error);
         Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+    }
+
+    private void redirectToAppropriateScreen() {
+        Intent intent;
+
+        if (adminManager.isAdmin()) {
+            // Redirecionar para tela de admin
+            intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+        } else {
+            // Redirecionar para tela de usuário comum
+            intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
+        }
+
+        intent.putExtra("user_email", sessionManager.getUserEmail());
+        intent.putExtra("user_id", sessionManager.getUserId());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
     }
 
     private void showLoading(boolean loading) {
