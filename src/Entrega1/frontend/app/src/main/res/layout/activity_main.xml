@@ -5,57 +5,176 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
     tools:context=".MainActivity">
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".3" />
-    <TextView
+        app:layout_constraintGuide_percent="0.33" />
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="60dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/guidelineMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- logo provisória, mudar -->
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_app_logo"
+            app:tint="@color/dark_green" />
+
+        <TextView
+            android:id="@+id/titleWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seja bem-vindo!"
+            android:textColor="@color/dark_green"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:text="Entre ou crie sua conta"
+            android:textColor="@color/medium_green"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Buttons Section -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="40dp"
+        app:cardBackgroundColor="@color/light_beige"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineMain">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMainLogin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/dark_green"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_login"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMainRegister"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:backgroundTint="@color/light_green"
+                android:text="Register"
+                android:textAllCaps="false"
+                android:textColor="@color/dark_green"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_register"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/dark_green" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Footer Section -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Seja bem vindo!"
-        android:layout_marginBottom="10dp"
-        android:textSize="30dp"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/guidelineMain" />
-    <Button
-        android:id="@+id/btnMainLogin"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_marginTop="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guidelineMain"/>
-    <Button
-        android:id="@+id/btnMainRegister"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnMainLogin"/>
-    <Button
-        android:id="@+id/btnTests"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="btnTest"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status connection"
-        app:layout_constraintBottom_toTopOf="@id/btnTests"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent">
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/light_green"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_circle_status"
+                    app:tint="@color/dark_green" />
 
+                <TextView
+                    android:id="@+id/statusConnection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status connection"
+                    android:textColor="@color/dark_green"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tests"
+            android:textColor="@color/medium_green"
+            android:textStyle="normal"
+            app:icon="@drawable/ic_test"
+            app:iconGravity="textStart"
+            app:iconPadding="4dp"
+            app:iconTint="@color/medium_green" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
