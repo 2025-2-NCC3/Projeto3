@@ -1,4 +1,4 @@
-// com/example/myapplication/ui/RegisterActivity.java
+// com/example/myapplication/RegisterActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +20,16 @@ public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
 
+    private EditText editTextNome;
     private EditText editTextEmail;
     private EditText editTextPassword;
     private EditText editTextConfirmPassword;
     private Button buttonRegister;
+    private TextView textViewLogin;
     private ProgressBar progressBar;
     private SupabaseClient supabaseClient;
+    private SessionManager sessionManager;
+    private AdminManager adminManager;
     private Call currentCall;
 
     @Override
@@ -32,8 +37,10 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Inicializar SupabaseClient
+        // Inicializar clients
         supabaseClient = SupabaseClient.getInstance(getApplicationContext());
+        sessionManager = SessionManager.getInstance(getApplicationContext());
+        adminManager = AdminManager.getInstance(getApplicationContext());
 
         // Verificar configuração
         if (!supabaseClient.isConfigured()) {
@@ -48,10 +55,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        editTextNome = findViewById(R.id.editTextNome);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
+        textViewLogin = findViewById(R.id.textViewLogin);
         progressBar = findViewById(R.id.progressBar);
     }
 
@@ -60,38 +69,50 @@ public class RegisterActivity extends AppCompatActivity {
             hideKeyboard();
             registerUser();
         });
+
+        textViewLogin.setOnClickListener(v -> {
+            finish(); // Volta para LoginActivity
+        });
     }
 
     private void registerUser() {
+        String nome = editTextNome.getText().toString().trim();
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
-        if (!validateInputs(email, password, confirmPassword)) {
+        if (!validateInputs(nome, email, password, confirmPassword)) {
             return;
         }
 
         showLoading(true);
-
         cancelCurrentCall();
 
-        currentCall = supabaseClient.signUp(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
+        // Criar novo usuário na tabela users
+        currentCall = supabaseClient.createUser(nome, email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.UserData>() {
             @Override
-            public void onSuccess(SupabaseClient.AuthResponse response) {
-                runOnUiThread(() -> handleRegistrationSuccess(response));
+            public void onSuccess(SupabaseClient.UserData userData) {
+                runOnUiThread(() -> handleRegisterSuccess(userData));
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> handleRegistrationError(error));
+                runOnUiThread(() -> handleRegisterError(error));
             }
         });
     }
 
-    private boolean validateInputs(String email, String password, String confirmPassword) {
+    private boolean validateInputs(String nome, String email, String password, String confirmPassword) {
+        editTextNome.setError(null);
         editTextEmail.setError(null);
         editTextPassword.setError(null);
         editTextConfirmPassword.setError(null);
+
+        if (nome.isEmpty()) {
+            editTextNome.setError("Nome é obrigatório");
+            editTextNome.requestFocus();
+            return false;
+        }
 
         if (email.isEmpty()) {
             editTextEmail.setError("Email é obrigatório");
@@ -112,13 +133,19 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (password.length() < 6) {
-            editTextPassword.setError("Senha deve ter pelo menos 6 caracteres");
+            editTextPassword.setError("A senha deve ter pelo menos 6 caracteres");
             editTextPassword.requestFocus();
             return false;
         }
 
+        if (confirmPassword.isEmpty()) {
+            editTextConfirmPassword.setError("Confirmação de senha é obrigatória");
+            editTextConfirmPassword.requestFocus();
+            return false;
+        }
+
         if (!password.equals(confirmPassword)) {
-            editTextConfirmPassword.setError("Senhas não coincidem");
+            editTextConfirmPassword.setError("As senhas não correspondem");
             editTextConfirmPassword.requestFocus();
             return false;
         }
@@ -126,34 +153,61 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    private void handleRegistrationSuccess(SupabaseClient.AuthResponse response) {
+    private void handleRegisterSuccess(SupabaseClient.UserData userData) {
         showLoading(false);
-        Log.d(TAG, "Registro bem-sucedido para: " + response.user.email);
+        Log.d(TAG, "Registro bem-sucedido para: " + userData.email);
 
-        Toast.makeText(RegisterActivity.this, "Registro realizado com sucesso!", Toast.LENGTH_SHORT).show();
+        // Salvar sessão
+        sessionManager.createLoginSession(
+                userData.id.toString(),
+                userData.email,
+                "user"
+        );
 
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("email", response.user.email);
-        setResult(RESULT_OK, resultIntent);
+        // Define como usuário comum
+        adminManager.setUserRole("user");
 
-        finish();
+        Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
+
+        // Ir direto para o cardápio
+        goToCardapio();
     }
 
-    private void handleRegistrationError(String error) {
+    private void handleRegisterError(String error) {
         showLoading(false);
         Log.e(TAG, "Erro no registro: " + error);
-        Toast.makeText(RegisterActivity.this, error, Toast.LENGTH_LONG).show();
+
+        // Mensagens de erro amigáveis
+        String errorMessage = "Erro ao criar conta";
+
+        if (error.contains("duplicate") || error.contains("unique")) {
+            errorMessage = "Este email já está registrado";
+        } else if (error.contains("email")) {
+            errorMessage = "Email inválido";
+        }
+
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    private void goToCardapio() {
+        Intent intent = new Intent(RegisterActivity.this, CardapioAlunosActivity.class);
+        intent.putExtra("user_email", sessionManager.getUserEmail());
+        intent.putExtra("user_id", sessionManager.getUserId());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
     }
 
     private void showLoading(boolean loading) {
         if (loading) {
             progressBar.setVisibility(View.VISIBLE);
             buttonRegister.setEnabled(false);
-            buttonRegister.setText("Registrando...");
+            buttonRegister.setText("Criando conta...");
         } else {
             progressBar.setVisibility(View.GONE);
             buttonRegister.setEnabled(true);
-            buttonRegister.setText("Registrar");
+            buttonRegister.setText("Criar Conta");
         }
     }
 

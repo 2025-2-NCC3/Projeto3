@@ -34,6 +34,8 @@
         </activity>
         <activity android:name=".AdminCardapioActivity">
         </activity>
+         <activity android:name=".AdminHomeActivity"/>
+
     </application>
 
 </manifest>
