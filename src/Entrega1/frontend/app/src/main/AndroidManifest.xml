@@ -37,6 +37,8 @@
         <activity android:name=".PerfilActivity"
             android:exported="true">
         </activity>
+         <activity android:name=".AdminHomeActivity"/>
+
     </application>
 
 </manifest>
