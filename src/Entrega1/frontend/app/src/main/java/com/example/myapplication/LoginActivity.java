@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView textViewRegister;
     private ProgressBar progressBar;
     private SupabaseClient supabaseClient;
+    private SessionManager sessionManager;
+    private AdminManager adminManager;
     private Call currentCall;
 
     @Override
@@ -34,8 +36,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar SupabaseClient
+        // Inicializar managers
         supabaseClient = SupabaseClient.getInstance(getApplicationContext());
+        sessionManager = SessionManager.getInstance(getApplicationContext());
+        adminManager = AdminManager.getInstance(getApplicationContext());
+
+        // Verificar se já está logado
+        if (sessionManager.isLoggedIn()) {
+            Log.d(TAG, "Usuário já está logado, redirecionando");
+            redirectToAppropriateScreen();
+            return;
+        }
 
         // Verificar configuração
         if (!supabaseClient.isConfigured()) {
@@ -80,15 +91,30 @@ public class LoginActivity extends AppCompatActivity {
         showLoading(true);
         cancelCurrentCall();
 
-        currentCall = supabaseClient.signIn(email, password, new SupabaseClient.SupabaseCallback<SupabaseClient.AuthResponse>() {
+        // Buscar usuário por email na tabela users
+        currentCall = supabaseClient.getUserByEmail(email, new SupabaseClient.SupabaseCallback<SupabaseClient.UserData>() {
             @Override
-            public void onSuccess(SupabaseClient.AuthResponse response) {
-                runOnUiThread(() -> handleLoginSuccess(response));
+            public void onSuccess(SupabaseClient.UserData userData) {
+                runOnUiThread(() -> {
+                    // Verificar senha
+                    if (userData.senha != null && userData.senha.equals(password)) {
+                        // Login bem-sucedido
+                        handleLoginSuccess(userData);
+                    } else {
+                        showLoading(false);
+                        Toast.makeText(LoginActivity.this, "Email ou senha incorretos", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Senha incorreta para: " + email);
+                    }
+                });
             }
 
             @Override
             public void onError(String error) {
-                runOnUiThread(() -> handleLoginError(error));
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(LoginActivity.this, "Usuário não encontrado", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Usuário não encontrado: " + error);
+                });
             }
         });
     }
@@ -118,24 +144,42 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private void handleLoginSuccess(SupabaseClient.AuthResponse response) {
+    private void handleLoginSuccess(SupabaseClient.UserData userData) {
         showLoading(false);
-        Log.d(TAG, "Login bem-sucedido para: " + response.user.email);
+        Log.d(TAG, "Login bem-sucedido para: " + userData.email);
 
-        Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+        // Salvar sessão
+        sessionManager.createLoginSession(userData.id.toString(), userData.email, userData.role != null ? userData.role : "user");
 
-        // Navegar para CardapioAlunosActivity
-        Intent intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
-        intent.putExtra("user_email", response.user.email);
-        intent.putExtra("user_id", response.user.id);
-        startActivity(intent);
-        finish(); // Finaliza a LoginActivity para que o usuário não possa voltar com o botão "voltar"
+        // Definir role no AdminManager
+        String userRole = userData.role != null ? userData.role : "user";
+        adminManager.setUserRole(userRole);
+
+        boolean isAdmin = "admin".equals(userRole);
+        String message = isAdmin ? "Bem-vindo, Administrador!" : "Login realizado com sucesso!";
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+        // Redirecionar para tela apropriada
+        redirectToAppropriateScreen();
     }
 
-    private void handleLoginError(String error) {
-        showLoading(false);
-        Log.e(TAG, "Erro no login: " + error);
-        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+    private void redirectToAppropriateScreen() {
+        Intent intent;
+
+        if (adminManager.isAdmin()) {
+            // Admin vai para painel administrativo
+            intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
+        } else {
+            // Usuário comum vai para cardápio
+            intent = new Intent(LoginActivity.this, CardapioAlunosActivity.class);
+        }
+
+        intent.putExtra("user_email", sessionManager.getUserEmail());
+        intent.putExtra("user_id", sessionManager.getUserId());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
     }
 
     private void showLoading(boolean loading) {

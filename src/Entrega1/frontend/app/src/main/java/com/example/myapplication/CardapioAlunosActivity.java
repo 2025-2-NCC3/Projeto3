@@ -22,6 +22,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
     LinearLayout boxLista;
     private SupabaseClient supabaseClient;
     private List<Produto> produtos;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +31,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
         // Inicializar componentes
         botaoVoltar = findViewById(R.id.botaoVoltar);
-        botaoAdmin = findViewById(R.id.botaoAdmin);
         boxLista = findViewById(R.id.boxLista);
         produtos = new ArrayList<>();
+        sessionManager = SessionManager.getInstance(getApplicationContext());
 
         // Inicializar SupabaseClient
         supabaseClient = SupabaseClient.getInstance(this);
@@ -41,19 +42,11 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         botaoVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CardapioAlunosActivity.this, MainActivity.class);
-                startActivity(intent);
+                sessionManager.logout();
             }
         });
 
-        // Ir para página de administração do cardápio
-        botaoAdmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CardapioAlunosActivity.this, AdminCardapioActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         // Carregar produtos do banco de dados
         carregarProdutosDoSupabase();
