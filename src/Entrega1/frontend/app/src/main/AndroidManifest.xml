@@ -34,8 +34,7 @@
         </activity>
         <activity android:name=".AdminCardapioActivity">
         </activity>
-        <activity android:name=".PerfilActivity"
-            android:exported="true">
+        <activity android:name=".PerfilActivity">
         </activity>
          <activity android:name=".AdminHomeActivity"/>
 
