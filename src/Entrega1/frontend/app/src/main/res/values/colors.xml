@@ -2,7 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="verdefecap">#235135</color>
-    <color name="beige">#ece3da</color>
+    <color name="dark_green">#235135</color>
+    <color name="background_beige">#ece3da</color>
     <color name="bright_green">#1FE423</color>
+    <color name="medium_green">#4A7C59</color>
+    <color name="light_green">#A8C6A9</color>
+    <color name="light_beige">#F5F0EB</color>
+    <color name="warm_beige">#E8DBCE</color>
+    <color name="accent_gold">#D4AF37</color>
+    <color name="text_light">#8A8175</color>
 </resources>

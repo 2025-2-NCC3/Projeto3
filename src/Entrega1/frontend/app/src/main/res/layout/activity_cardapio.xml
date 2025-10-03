@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
+    android:background="@drawable/background_gradient"
     tools:context=".CardapioAlunosActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -46,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Voltar"
+            android:backgroundTint="@color/dark_green"
             android:layout_marginEnd="16dp" />
 
         <TextView
@@ -53,9 +55,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left"
+            android:layout_marginLeft="8dp"
             android:text="Cardápio"
-            android:textSize="36sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -82,6 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Todos"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarTudo"
                 android:layout_marginEnd="8dp" />
@@ -92,8 +96,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Bebidas"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarBebidas"
+                android:layout_marginEnd="8dp" />
+            <Button
+                android:id="@+id/btnSalgados"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:textColor="@color/dark_green"
+                android:text="Salgados"
+                android:textSize="12sp"
                 android:layout_marginEnd="8dp" />
 
             <Button
@@ -102,6 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Pratos"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarPratosPrincipais"
                 android:layout_marginEnd="8dp" />
@@ -112,6 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Sobremesas"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarSobremesas"
                 android:layout_marginEnd="8dp" />
@@ -122,6 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Entradas"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarEntradas"
                 android:layout_marginEnd="8dp" />
@@ -132,6 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:text="Lanches"
+                android:textColor="@color/dark_green"
                 android:textSize="12sp"
                 android:onClick="mostrarLanches" />
 
