@@ -20,7 +20,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
     Button botaoVoltar, botaoAdmin;
     LinearLayout boxLista;
-    LinearLayout btnNavHistorico, btnNavCarrinho, btnNavPerfil;
+    LinearLayout btnNavCardapio, btnNavHistorico, btnNavCarrinho, btnNavPerfil;
     private SupabaseClient supabaseClient;
     private List<Produto> produtos;
     private SessionManager sessionManager;
@@ -37,6 +37,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         sessionManager = SessionManager.getInstance(getApplicationContext());
 
         // Inicializar navbar
+        btnNavCardapio = findViewById(R.id.btnNavCardapio);
         btnNavHistorico = findViewById(R.id.btnNavHistorico);
         btnNavCarrinho = findViewById(R.id.btnNavCarrinho);
         btnNavPerfil = findViewById(R.id.btnNavPerfil);
@@ -60,6 +61,16 @@ public class CardapioAlunosActivity extends AppCompatActivity {
     }
 
     private void setupNavbar() {
+        // Botão Cardápio - já está nesta tela
+        btnNavCardapio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CardapioAlunosActivity.this,
+                        "Você já está no cardápio",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // Botão Histórico - placeholder
         btnNavHistorico.setOnClickListener(new View.OnClickListener() {
             @Override
