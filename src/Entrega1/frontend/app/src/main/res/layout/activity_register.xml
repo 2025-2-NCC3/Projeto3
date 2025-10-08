@@ -14,7 +14,7 @@
         android:layout_height="60dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_app_logo"
-        app:tint="@color/dark_green" />
+        app: tint="@color/dark_green" />
 
     <TextView
         android:layout_width="wrap_content"

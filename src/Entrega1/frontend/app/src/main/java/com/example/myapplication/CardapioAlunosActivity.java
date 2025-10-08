@@ -20,6 +20,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
     Button botaoVoltar, botaoAdmin;
     LinearLayout boxLista;
+    LinearLayout btnNavHistorico, btnNavCarrinho, btnNavPerfil;
     private SupabaseClient supabaseClient;
     private List<Produto> produtos;
     private SessionManager sessionManager;
@@ -35,6 +36,11 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         produtos = new ArrayList<>();
         sessionManager = SessionManager.getInstance(getApplicationContext());
 
+        // Inicializar navbar
+        btnNavHistorico = findViewById(R.id.btnNavHistorico);
+        btnNavCarrinho = findViewById(R.id.btnNavCarrinho);
+        btnNavPerfil = findViewById(R.id.btnNavPerfil);
+
         // Inicializar SupabaseClient
         supabaseClient = SupabaseClient.getInstance(this);
 
@@ -46,10 +52,55 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             }
         });
 
-
+        // Configurar listeners da navbar
+        setupNavbar();
 
         // Carregar produtos do banco de dados
         carregarProdutosDoSupabase();
+    }
+
+    private void setupNavbar() {
+        // Botão Histórico - placeholder
+        btnNavHistorico.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CardapioAlunosActivity.this,
+                        "Histórico de compras - Em desenvolvimento",
+                        Toast.LENGTH_SHORT).show();
+
+                // Quando a tela estiver pronta, use:
+                // Intent intent = new Intent(CardapioAlunosActivity.this, HistoricoActivity.class);
+                // startActivity(intent);
+            }
+        });
+
+        // Botão Carrinho - placeholder
+        btnNavCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CardapioAlunosActivity.this,
+                        "Carrinho de compras - Em desenvolvimento",
+                        Toast.LENGTH_SHORT).show();
+
+                // Quando a tela estiver pronta, use:
+                // Intent intent = new Intent(CardapioAlunosActivity.this, CarrinhoActivity.class);
+                // startActivity(intent);
+            }
+        });
+
+        // Botão Perfil - placeholder
+        btnNavPerfil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CardapioAlunosActivity.this,
+                        "Perfil do usuário - Em desenvolvimento",
+                        Toast.LENGTH_SHORT).show();
+
+                // Quando a tela estiver pronta, use:
+                // Intent intent = new Intent(CardapioAlunosActivity.this, PerfilActivity.class);
+                // startActivity(intent);
+            }
+        });
     }
 
     private void carregarProdutosDoSupabase() {
