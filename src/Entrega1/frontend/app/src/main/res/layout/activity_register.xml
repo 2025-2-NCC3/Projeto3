@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center_horizontal"
@@ -46,9 +47,10 @@
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
         app:hintTextColor="@color/dark_green"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-    android:fillViewport="true"
-    android:background="@android:color/white">
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:fillViewport="true"
+        android:background="@android:color/white">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -82,16 +84,19 @@
             android:hint="Email"
             android:inputType="textEmailAddress"
             android:maxLines="1"
-            android:textColor="@color/dark_green" />
-            android:layout_marginBottom="16dp"
-            android:hint="Nome Completo">
+            android:textColor="@color/dark_green"
+            />
+
 
             <EditText
                 android:id="@+id/editTextNome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:padding="16dp" />
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:hint="Nome Completo"/>
+    </LinearLayout>
 
     <!-- Formulário - Senha -->
     <com.google.android.material.textfield.TextInputLayout
@@ -119,15 +124,16 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:textColor="@color/dark_green" />
-            android:layout_marginBottom="16dp"
-            android:hint="Email">
+
 
             <EditText
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:padding="16dp" />
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:hint="Email"/>
 
     <!-- Formulário - Confirmar Senha -->
     <com.google.android.material.textfield.TextInputLayout
@@ -155,15 +161,15 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:textColor="@color/dark_green" />
-            android:layout_marginBottom="16dp"
-            android:hint="Senha">
 
             <EditText
                 android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:padding="16dp" />
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:hint="Senha"/>
 
     <!-- Botão de registro -->
     <com.google.android.material.button.MaterialButton
@@ -219,6 +225,7 @@
             android:focusable="true"
             android:background="?android:attr/selectableItemBackground"
             android:padding="8dp" />
+    </LinearLayout>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Confirmar Senha -->
@@ -237,50 +244,9 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- ProgressBar -->
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone" />
 
-        <!-- Botão Criar Conta -->
-        <Button
-            android:id="@+id/buttonRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Criar Conta"
-            android:textSize="16sp"
-            android:padding="16dp"
-             />
 
-        <!-- Link para Login -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Já tem uma conta? "
-                android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/textViewLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fazer Login"
-                android:textSize="14sp"
-
-                android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
 </ScrollView>
