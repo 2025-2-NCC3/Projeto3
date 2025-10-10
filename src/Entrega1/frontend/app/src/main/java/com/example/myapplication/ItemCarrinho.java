@@ -7,7 +7,7 @@ public class ItemCarrinho implements Serializable {
     private int quantidade;
 
     public ItemCarrinho() {
-        // Construtor vazio para Gson
+
     }
 
     public ItemCarrinho(Produto produto, int quantidade) {
