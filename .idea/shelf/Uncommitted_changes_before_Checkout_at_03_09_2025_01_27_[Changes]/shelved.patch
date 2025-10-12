@@ -1,0 +1,83 @@
+Index: .gradle/config.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Wed Aug 27 18:41:48 BRT 2025\njava.home=C\\:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/.gradle/config.properties b/.gradle/config.properties
+--- a/.gradle/config.properties	(revision ac3b252f620cf4e391264d234e036df4ce27c58d)
++++ b/.gradle/config.properties	(date 1756873223147)
+@@ -1,2 +1,2 @@
+-#Wed Aug 27 18:41:48 BRT 2025
+-java.home=C\:\\Program Files\\Android\\Android Studio\\jbr
++#Wed Sep 03 01:20:23 BRT 2025
++java.home=/home/eric/Downloads/android-studio/jbr
+Index: local.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>## This file must *NOT* be checked into Version Control Systems,\n# as it contains information specific to your local configuration.\n#\n# Location of the SDK. This is only used by Gradle.\n# For customization when using a Version Control System, please read the\n# header note.\n#Thu Aug 28 18:46:53 BRT 2025\nsdk.dir=C\\:\\\\Users\\\\24026751\\\\AppData\\\\Local\\\\Android\\\\Sdk\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/local.properties b/local.properties
+--- a/local.properties	(revision ac3b252f620cf4e391264d234e036df4ce27c58d)
++++ b/local.properties	(date 1756873287674)
+@@ -4,5 +4,5 @@
+ # Location of the SDK. This is only used by Gradle.
+ # For customization when using a Version Control System, please read the
+ # header note.
+-#Thu Aug 28 18:46:53 BRT 2025
+-sdk.dir=C\:\\Users\\24026751\\AppData\\Local\\Android\\Sdk
++#Wed Sep 03 01:21:27 BRT 2025
++sdk.dir=/home/eric/Android/Sdk
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Wed Aug 27 18:41:50 BRT 2025\ndistributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.9-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+--- a/gradle/wrapper/gradle-wrapper.properties	(revision ac3b252f620cf4e391264d234e036df4ce27c58d)
++++ b/gradle/wrapper/gradle-wrapper.properties	(date 1756873614795)
+@@ -1,6 +1,6 @@
+ #Wed Aug 27 18:41:50 BRT 2025
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.9-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[versions]\nagp = \"8.7.3\"\njunit = \"4.13.2\"\njunitVersion = \"1.3.0\"\nespressoCore = \"3.7.0\"\nappcompat = \"1.7.1\"\nmaterial = \"1.12.0\"\nactivity = \"1.10.1\"\nconstraintlayout = \"2.2.1\"\n\n[libraries]\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\next-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\nespresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\nappcompat = { group = \"androidx.appcompat\", name = \"appcompat\", version.ref = \"appcompat\" }\nmaterial = { group = \"com.google.android.material\", name = \"material\", version.ref = \"material\" }\nactivity = { group = \"androidx.activity\", name = \"activity\", version.ref = \"activity\" }\nconstraintlayout = { group = \"androidx.constraintlayout\", name = \"constraintlayout\", version.ref = \"constraintlayout\" }\n\n[plugins]\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+--- a/gradle/libs.versions.toml	(revision ac3b252f620cf4e391264d234e036df4ce27c58d)
++++ b/gradle/libs.versions.toml	(date 1756873614787)
+@@ -1,5 +1,5 @@
+ [versions]
+-agp = "8.7.3"
++agp = "8.12.2"
+ junit = "4.13.2"
+ junitVersion = "1.3.0"
+ espressoCore = "3.7.0"
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_21\">\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\n  </component>\n  <component name=\"ProjectType\">\n    <option name=\"id\" value=\"Android\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision ac3b252f620cf4e391264d234e036df4ce27c58d)
++++ b/.idea/misc.xml	(date 1756873221555)
+@@ -1,4 +1,3 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_21">
