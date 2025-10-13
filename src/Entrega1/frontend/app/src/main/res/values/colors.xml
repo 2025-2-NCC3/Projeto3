@@ -11,4 +11,15 @@
     <color name="warm_beige">#E8DBCE</color>
     <color name="accent_gold">#D4AF37</color>
     <color name="text_light">#8A8175</color>
+    <color name="gray">#FF808080</color>
+    <color name="light_gray">#FFCCCCCC</color>
+    <color name="orange">#FFFF8C00</color>
+    <color name="green">#FF008000</color>
+    <color name="red">#FFFF0000</color>
+    <!-- Cores para Status -->
+    <color name="status_pendente">#FFA500</color>
+    <color name="status_preparando">#4169E1</color>
+    <color name="status_pronto">#32CD32</color>
+    <color name="status_entregue">#228B22</color>
+    <color name="status_cancelado">#DC143C</color>
 </resources>

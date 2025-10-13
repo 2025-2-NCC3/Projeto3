@@ -67,7 +67,7 @@ public class InfoProdutoActivity extends AppCompatActivity {
                 botaoComprar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(InfoProdutoActivity.this, CreateOrderActivitySupabase.class);
+                        Intent intent = new Intent(InfoProdutoActivity.this, CriarPedidoActivity.class);
                         intent.putExtra("produtoComprado", objetoRecebido);
                         startActivity(intent);
                     }

@@ -9,45 +9,32 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import java.util.List;
 import java.util.Locale;
 
 public class CriarPedidoActivity extends AppCompatActivity {
 
-    // Views
     private ImageButton btnVoltar;
-    private TextView tvNomeCliente;
-    private TextView tvIdCliente;
-    private TextView tvQuantidadeItens;
-    private TextView tvListaProdutos;
-    private TextView tvValorTotal;
+    private TextView tvNomeCliente, tvIdCliente, tvQuantidadeItens;
+    private TextView tvListaProdutos, tvValorTotal;
     private EditText etObservacoes;
     private CardView cardStatus;
     private ProgressBar progressBar;
     private TextView tvStatus;
     private Button btnCriarPedido;
 
-    // Managers
     private CarrinhoHelper carrinhoHelper;
     private SupabaseOrderManager orderManager;
-
-    // Dados do usuário
-    private String studentId;
-    private String studentName;
-    private String accessToken;
+    private String studentId, studentName, accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_criar_pedido);
 
-        // Inicializar
         inicializarViews();
         inicializarDados();
         carregarDadosCarrinho();
@@ -69,59 +56,44 @@ public class CriarPedidoActivity extends AppCompatActivity {
     }
 
     private void inicializarDados() {
-        // Inicializar managers
         carrinhoHelper = CarrinhoHelper.getInstance(this);
         orderManager = SupabaseOrderManager.getInstance(this);
 
-        // Obter dados do usuário do SharedPreferences
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
         studentId = prefs.getString("student_id", "2023001");
         studentName = prefs.getString("student_name", "Cliente Cantina");
         accessToken = prefs.getString("access_token", "");
 
-        // Atualizar UI com dados do cliente
         tvNomeCliente.setText(studentName);
         tvIdCliente.setText(studentId);
 
-        // Verificar se está logado
         if (accessToken.isEmpty()) {
             new AlertDialog.Builder(this)
                     .setTitle("Não Autenticado")
-                    .setMessage("Você precisa fazer login para criar pedidos.")
-                    .setPositiveButton("Fazer Login", (dialog, which) -> {
-                        // Ir para tela de login
-                        Intent intent = new Intent(this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("Cancelar", (dialog, which) -> finish())
+                    .setMessage("Você precisa fazer login.")
+                    .setPositiveButton("OK", (dialog, which) -> finish())
                     .setCancelable(false)
                     .show();
         }
     }
 
     private void carregarDadosCarrinho() {
-        // Verificar se carrinho está vazio
         if (carrinhoHelper.isEmpty()) {
             new AlertDialog.Builder(this)
                     .setTitle("Carrinho Vazio")
-                    .setMessage("Adicione produtos ao carrinho antes de criar um pedido.")
+                    .setMessage("Adicione produtos ao carrinho.")
                     .setPositiveButton("OK", (dialog, which) -> finish())
                     .setCancelable(false)
                     .show();
             return;
         }
 
-        // Obter dados do carrinho
         List<ItemCarrinho> itens = carrinhoHelper.getItens();
-        int quantidadeTotal = carrinhoHelper.getQuantidadeTotal();
         double valorTotal = carrinhoHelper.getSubtotal();
 
-        // Atualizar UI
         tvQuantidadeItens.setText(String.valueOf(itens.size()));
         tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", valorTotal));
 
-        // Montar lista de produtos
         StringBuilder listaProdutos = new StringBuilder();
         for (ItemCarrinho item : itens) {
             listaProdutos.append("• ")
@@ -135,11 +107,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
     private void configurarListeners() {
         btnVoltar.setOnClickListener(v -> finish());
-
-        btnCriarPedido.setOnClickListener(v -> {
-            // Mostrar diálogo de confirmação
-            mostrarDialogoConfirmacao();
-        });
+        btnCriarPedido.setOnClickListener(v -> mostrarDialogoConfirmacao());
     }
 
     private void mostrarDialogoConfirmacao() {
@@ -150,15 +118,12 @@ public class CriarPedidoActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar Pedido")
                 .setMessage(mensagem)
-                .setPositiveButton("Sim, Confirmar", (dialog, which) -> {
-                    criarPedido();
-                })
+                .setPositiveButton("Sim, Confirmar", (dialog, which) -> criarPedido())
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
     private void criarPedido() {
-        // 1. Validar estoque
         String erroEstoque = carrinhoHelper.validarEstoque();
         if (erroEstoque != null) {
             new AlertDialog.Builder(this)
@@ -169,28 +134,16 @@ public class CriarPedidoActivity extends AppCompatActivity {
             return;
         }
 
-        // 2. Mostrar loading
         mostrarLoading(true, "Criando pedido...");
 
-        // 3. Criar OrderRequest do carrinho
         OrderRequest request = carrinhoHelper.criarOrderRequest(studentId, studentName);
 
-        // 4. Adicionar observações se houver
-        String observacoes = etObservacoes.getText().toString().trim();
-        // Note: OrderRequest não tem campo observações, mas você pode adicionar
-
-        // 5. Criar pedido no Supabase
         orderManager.createOrder(request, accessToken, new SupabaseOrderManager.OrderCallback() {
             @Override
             public void onSuccess(Order order) {
                 runOnUiThread(() -> {
-                    // Esconder loading
                     mostrarLoading(false, "");
-
-                    // Limpar carrinho
                     carrinhoHelper.limparCarrinho();
-
-                    // Mostrar diálogo de sucesso
                     mostrarDialogoSucesso(order);
                 });
             }
@@ -198,10 +151,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    // Esconder loading
                     mostrarLoading(false, "");
-
-                    // Mostrar diálogo de erro
                     mostrarDialogoErro(error);
                 });
             }
@@ -230,39 +180,30 @@ public class CriarPedidoActivity extends AppCompatActivity {
                 "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", order.getTotal()) + "\n" +
                 "📊 Status: " + order.getStatus() + "\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Você pode acompanhar seu pedido na tela 'Meus Pedidos'.";
+                "Acompanhe em 'Meus Pedidos'.";
 
         new AlertDialog.Builder(this)
                 .setTitle("✅ Pedido Criado!")
                 .setMessage(mensagem)
                 .setPositiveButton("Ver Meus Pedidos", (dialog, which) -> {
-                    // Ir para tela de Meus Pedidos
                     Intent intent = new Intent(this, MeusPedidosActivity.class);
                     startActivity(intent);
                     finish();
                 })
-                .setNegativeButton("Voltar ao Início", (dialog, which) -> {
-                    // Voltar para tela principal
-                    finish();
-                })
+                .setNegativeButton("Voltar", (dialog, which) -> finish())
                 .setCancelable(false)
                 .show();
     }
 
     private void mostrarDialogoErro(String erro) {
-        String mensagem;
-        String titulo;
+        String mensagem, titulo;
 
-        // Tratar diferentes tipos de erro
         if (erro.contains("Estoque insuficiente")) {
             titulo = "❌ Produto Esgotado";
-            mensagem = erro + "\n\nPor favor, ajuste as quantidades no carrinho.";
-        } else if (erro.contains("conexão") || erro.contains("network")) {
+            mensagem = erro + "\n\nAjuste as quantidades no carrinho.";
+        } else if (erro.contains("conexão")) {
             titulo = "🌐 Sem Conexão";
-            mensagem = "Não foi possível conectar ao servidor.\n\nVerifique sua conexão com a internet e tente novamente.";
-        } else if (erro.contains("401") || erro.contains("403") || erro.contains("não está configurado")) {
-            titulo = "🔒 Erro de Autenticação";
-            mensagem = "Sua sessão expirou.\n\nPor favor, faça login novamente.";
+            mensagem = "Não foi possível conectar.\n\nVerifique sua internet.";
         } else {
             titulo = "❌ Erro ao Criar Pedido";
             mensagem = erro;
@@ -271,9 +212,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(titulo)
                 .setMessage(mensagem)
-                .setPositiveButton("Tentar Novamente", (dialog, which) -> {
-                    criarPedido();
-                })
+                .setPositiveButton("Tentar Novamente", (dialog, which) -> criarPedido())
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
@@ -281,7 +220,6 @@ public class CriarPedidoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Recarregar dados do carrinho caso tenha voltado de outra tela
         if (!carrinhoHelper.isEmpty()) {
             carregarDadosCarrinho();
         }
@@ -289,14 +227,11 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Confirmar antes de sair
         new AlertDialog.Builder(this)
                 .setTitle("Cancelar Pedido?")
                 .setMessage("Deseja cancelar a criação do pedido?")
-                .setPositiveButton("Sim, Cancelar", (dialog, which) -> {
-                    super.onBackPressed();
-                })
-                .setNegativeButton("Não, Continuar", null)
+                .setPositiveButton("Sim", (dialog, which) -> super.onBackPressed())
+                .setNegativeButton("Não", null)
                 .show();
     }
 }

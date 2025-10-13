@@ -67,7 +67,7 @@
 
         <!-- Mensagem de lista vazia -->
         <LinearLayout
-            android:id="@+id/tvPedidosVazio"
+            android:id="@+id/layoutPedidosVazio"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

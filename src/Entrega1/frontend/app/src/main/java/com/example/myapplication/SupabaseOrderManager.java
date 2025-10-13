@@ -398,4 +398,131 @@ public class SupabaseOrderManager {
         void onSuccess(List<Order> orders);
         void onError(String error);
     }
+
+    // Buscar um pedido específico por ID
+    public Call getOrderById(int orderId, String accessToken, OrderCallback callback) {
+        if (!supabaseClient.isConfigured()) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + orderId)
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
+                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+
+                        if (ordersResponse != null && !ordersResponse.isEmpty()) {
+                            Order order = convertSupabaseResponseToOrder(ordersResponse.get(0));
+                            // Buscar itens do pedido
+                            getOrderItems(order.getId(), accessToken, order, callback);
+                        } else {
+                            callback.onError("Pedido não encontrado");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar pedido", e);
+                        callback.onError("Erro ao processar pedido");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar pedido: " + response.code());
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar itens de um pedido
+    private void getOrderItems(int orderId, String accessToken, Order order, OrderCallback callback) {
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?pedido_id=eq." + orderId)
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro ao buscar itens do pedido");
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderItemSupabaseResponse>>(){}.getType();
+                        List<OrderItemSupabaseResponse> itemsResponse = gson.fromJson(responseBody, listType);
+
+                        if (itemsResponse != null) {
+                            for (OrderItemSupabaseResponse itemResponse : itemsResponse) {
+                                OrderItem item = new OrderItem(
+                                        itemResponse.productId,
+                                        itemResponse.productName,
+                                        itemResponse.quantity,
+                                        itemResponse.price
+                                );
+                                order.addItem(item);
+                            }
+                        }
+
+                        callback.onSuccess(order);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar itens", e);
+                        callback.onError("Erro ao processar itens do pedido");
+                    }
+                } else {
+                    // Se não houver itens, retornar o pedido mesmo assim
+                    callback.onSuccess(order);
+                }
+            }
+        });
+    }
+
+    // Cancelar um pedido
+    public Call cancelOrder(int orderId, String accessToken, OrderCallback callback) {
+        return updateOrderStatus(orderId, "CANCELADO", accessToken, callback);
+    }
+
+    // Classe para resposta dos itens (adicione dentro da classe SupabaseOrderManager)
+    private static class OrderItemSupabaseResponse {
+        public int id;
+        @SerializedName("pedido_id")
+        public int pedidoId;
+        @SerializedName("product_id")
+        public int productId;
+        @SerializedName("product_name")
+        public String productName;
+        public int quantity;
+        public double price;
+        public double subtotal;
+    }
 }
