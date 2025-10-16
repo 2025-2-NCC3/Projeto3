@@ -55,6 +55,7 @@ dependencies {
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
     implementation ("com.google.code.gson:gson:2.11.0")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation ("com.github.bumptech.glide:glide:4.16.0")

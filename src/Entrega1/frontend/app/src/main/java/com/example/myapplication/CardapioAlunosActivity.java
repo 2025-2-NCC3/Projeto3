@@ -197,7 +197,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         Log.d(TAG, "Exibidos " + produtosParaExibir.size() + " produtos na tela");
     }
 
-    // Método para filtrar produtos por categoria
+    // Metodo para filtrar produtos por categoria
     public void filtrarPorCategoria(int categoria) {
         Toast.makeText(this, "Carregando categoria...", Toast.LENGTH_SHORT).show();
 
