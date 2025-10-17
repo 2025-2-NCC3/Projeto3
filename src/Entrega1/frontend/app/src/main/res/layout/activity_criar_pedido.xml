@@ -27,7 +27,7 @@
                 android:layout_marginStart="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
-                android:tint="@android:color/white"
+
                 android:contentDescription="Voltar" />
 
             <TextView
