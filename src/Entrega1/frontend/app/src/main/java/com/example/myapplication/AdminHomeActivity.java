@@ -83,9 +83,9 @@ public class AdminHomeActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
             startActivity(intent);
         });
-        /*
+
         btnGerenciarPedidos.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, GerenciarPedidosActivity.class);
+            Intent intent = new Intent(AdminHomeActivity.this, AdminPedidosActivity.class);
             startActivity(intent);
         });
 
@@ -100,7 +100,7 @@ public class AdminHomeActivity extends AppCompatActivity {
             // Intent intent = new Intent(AdminHomeActivity.this, RelatoriosActivity.class);
             // startActivity(intent);
         });
-        */
+
         btnVerCardapio.setOnClickListener(v -> {
             // Admin pode ver o cardápio como usuário
             Intent intent = new Intent(AdminHomeActivity.this, CardapioAlunosActivity.class);

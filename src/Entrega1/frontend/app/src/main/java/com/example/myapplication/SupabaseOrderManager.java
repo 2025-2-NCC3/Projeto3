@@ -412,7 +412,121 @@ public class SupabaseOrderManager {
 
         return call;
     }
+    // Buscar TODOS os pedidos (para admin)
+    public Call getAllOrders(String accessToken, OrdersCallback callback) {
+        if (!supabaseClient.isConfigured()) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
 
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?order=created_at.desc")
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
+                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+
+                        List<Order> orders = new ArrayList<>();
+                        if (ordersResponse != null) {
+                            for (OrderSupabaseResponse orderResponse : ordersResponse) {
+                                Order order = convertSupabaseResponseToOrder(orderResponse);
+                                orders.add(order);
+                            }
+                        }
+
+                        callback.onSuccess(orders);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar pedidos", e);
+                        callback.onError("Erro ao processar pedidos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar pedidos: " + response.code());
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Confirmar retirada do pedido
+    public Call confirmOrderPickup(String orderId, String accessToken, OrderCallback callback) {
+        return updateOrderStatus(orderId, "RETIRADO", accessToken, callback);
+    }
+
+    // Buscar pedidos por status (útil para filtros)
+    public Call getOrdersByStatus(String status, String accessToken, OrdersCallback callback) {
+        if (!supabaseClient.isConfigured()) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?status=eq." + status + "&order=created_at.desc")
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
+                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+
+                        List<Order> orders = new ArrayList<>();
+                        if (ordersResponse != null) {
+                            for (OrderSupabaseResponse orderResponse : ordersResponse) {
+                                orders.add(convertSupabaseResponseToOrder(orderResponse));
+                            }
+                        }
+
+                        callback.onSuccess(orders);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar pedidos", e);
+                        callback.onError("Erro ao processar pedidos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar pedidos: " + response.code());
+                }
+            }
+        });
+
+        return call;
+    }
     private void getOrderItems(String orderId, String accessToken, Order order, OrderCallback callback) {
         Request request = new Request.Builder()
                 .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + orderId)
