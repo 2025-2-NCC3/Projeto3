@@ -11,6 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -49,8 +53,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
 
         });
-
-
 
         // Carregar produtos do banco de dados
         carregarProdutosDoSupabase();
@@ -115,7 +117,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
             if (!temEstoque) {
                 Log.d(TAG, "Produto " + produto.getNome() + " está sem estoque: " + produto.getEstoque());
-                // Continue exibindo produtos sem estoque, mas com visual diferente
             }
 
             // Cria a visualização do produto que será adicionado no layout
@@ -130,35 +131,48 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Altera a informação de cada elemento
             tituloProduto.setText(produto.getNome());
 
-            // Formatar preço manualmente
+            // Formatar preço
             precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
 
-            // Altera a imagem do produto
+            // CORREÇÃO: Carregar imagem do Supabase usando Glide
             String caminhoImagem = produto.getCaminhoImagem();
-            if (caminhoImagem != null && !caminhoImagem.isEmpty()) {
-                // Remove possível "/" do início para buscar no drawable
-                String nomeImagem = caminhoImagem.startsWith("/") ?
-                        caminhoImagem.substring(1).replace("/", "_").replace(".", "_") :
-                        caminhoImagem.replace("/", "_").replace(".", "_");
 
-                int imageResId = getResources().getIdentifier(nomeImagem, "drawable", getPackageName());
-                if (imageResId != 0) {
-                    imagemProduto.setImageResource(imageResId);
+            if (caminhoImagem != null && !caminhoImagem.isEmpty()) {
+                // Verificar se é uma URL completa (começa com http:// ou https://)
+                if (caminhoImagem.startsWith("http://") || caminhoImagem.startsWith("https://")) {
+                    // É uma URL do Supabase, carregar com Glide
+                    Log.d(TAG, "Carregando imagem do Supabase: " + caminhoImagem);
+
+                    Glide.with(this)
+                            .load(caminhoImagem)
+                            .placeholder(R.drawable.sem_imagem) // Imagem enquanto carrega
+                            .error(R.drawable.sem_imagem) // Imagem se der erro
+                            .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache para melhor performance
+                            .into(imagemProduto);
                 } else {
-                    // Usa um placeholder caso o produto não tenha imagem
-                    imagemProduto.setImageResource(R.drawable.sem_imagem);
+                    // É um nome de arquivo local (sistema antigo), tentar carregar do drawable
+                    Log.d(TAG, "Tentando carregar imagem local: " + caminhoImagem);
+
+                    String nomeImagem = caminhoImagem.startsWith("/") ?
+                            caminhoImagem.substring(1).replace("/", "_").replace(".", "_") :
+                            caminhoImagem.replace("/", "_").replace(".", "_");
+
+                    int imageResId = getResources().getIdentifier(nomeImagem, "drawable", getPackageName());
+                    if (imageResId != 0) {
+                        imagemProduto.setImageResource(imageResId);
+                    } else {
+                        imagemProduto.setImageResource(R.drawable.sem_imagem);
+                    }
                 }
             } else {
+                // Produto sem imagem
+                Log.d(TAG, "Produto sem imagem: " + produto.getNome());
                 imagemProduto.setImageResource(R.drawable.sem_imagem);
             }
 
             // Alterar aparência se produto sem estoque
             if (!temEstoque) {
-                // Deixar o produto com aparência "desabilitada"
                 productView.setAlpha(0.6f);
-
-                // Adicionar texto de indisponível se houver um TextView adicional
-                // (isso é opcional, só funciona se você tiver um TextView extra no layout produto.xml)
             }
 
             // Adiciona a visualização configurada no activity_cardapio
@@ -184,7 +198,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         Log.d(TAG, "Exibidos " + produtosParaExibir.size() + " produtos na tela");
     }
 
-    // Método para filtrar produtos por categoria (pode ser chamado por botões)
+    // Metodo para filtrar produtos por categoria
     public void filtrarPorCategoria(int categoria) {
         Toast.makeText(this, "Carregando categoria...", Toast.LENGTH_SHORT).show();
 
@@ -195,7 +209,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
                     Log.d(TAG, "Produtos filtrados por categoria " + categoria + ": " + produtosFiltrados.size());
                     exibirProdutos(produtosFiltrados);
 
-                    // Mapear categoria para texto
                     String categoriaTexto = "";
                     switch (categoria) {
                         case 1: categoriaTexto = "Bebidas"; break;

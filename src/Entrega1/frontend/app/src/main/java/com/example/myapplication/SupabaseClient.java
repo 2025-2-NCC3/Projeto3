@@ -49,12 +49,11 @@ public class SupabaseClient {
 
         // Obtém as configurações do BuildConfig
 
-        supabaseUrl = BuildConfig.SUPABASE_URL;
-        supabaseKey = BuildConfig.SUPABASE_ANON_KEY;
+        supabaseUrl = SupabaseConfig.SUPABASE_URL;
+        supabaseKey = SupabaseConfig.SUPABASE_ANON_KEY;
 
         // Verifica se as configurações estão válidas
-        isConfigured = supabaseUrl != null && !supabaseUrl.isEmpty() &&
-                supabaseKey != null && !supabaseKey.isEmpty();
+        isConfigured = supabaseUrl != null && !supabaseUrl.isEmpty() && !supabaseKey.isEmpty();
 
         if (isConfigured) {
             Log.d(TAG, "SupabaseClient configurado com sucesso");
