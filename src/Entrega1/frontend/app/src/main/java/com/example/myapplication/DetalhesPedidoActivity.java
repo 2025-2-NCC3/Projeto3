@@ -54,18 +54,18 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void carregarDadosPedido() {
-        // Receber o ID do pedido e access token da intent
-        int pedidoId = getIntent().getIntExtra("pedido_id", -1);
+        // Receber o ID do pedido (agora String) e access token da intent
+        String pedidoId = getIntent().getStringExtra("pedido_id");  // MUDADO: getStringExtra
         String accessToken = getIntent().getStringExtra("access_token");
 
-        if (pedidoId == -1 || accessToken == null) {
+        if (pedidoId == null || pedidoId.isEmpty() || accessToken == null) {  // MUDADO: verificar se é null ou vazio
             Toast.makeText(this, "Erro ao carregar pedido", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         // Buscar pedido no Supabase
-        orderManager.getOrderById(pedidoId, accessToken, new SupabaseOrderManager.OrderCallback() {
+        orderManager.getOrderById(pedidoId, accessToken, new SupabaseOrderManager.OrderCallback() {  // Já passa String
             @Override
             public void onSuccess(Order order) {
                 pedidoAtual = order;
@@ -122,6 +122,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
             return;
         }
 
+        // getId() já retorna String agora
         orderManager.cancelOrder(pedidoAtual.getId(), accessToken, new SupabaseOrderManager.OrderCallback() {
             @Override
             public void onSuccess(Order order) {
@@ -144,8 +145,6 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         return sdf.format(date);
     }
-
-
 
     private void definirCorStatus(String status) {
         int cor;

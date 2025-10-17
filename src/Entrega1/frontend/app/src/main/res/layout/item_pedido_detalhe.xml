@@ -23,7 +23,7 @@
             android:textStyle="bold"
             android:textSize="14sp"
             android:textColor="@color/black"
-            android:marginBottom="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <!-- Linha com Quantidade, Preço e Subtotal -->
         <LinearLayout

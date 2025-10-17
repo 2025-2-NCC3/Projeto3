@@ -134,16 +134,16 @@ public class CarrinhoActivity extends AppCompatActivity {
 
             holder.btnDiminuir.setOnClickListener(v -> {
                 if (item.getQuantidade() > 1) {
-                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() - 1);
+                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() - 1);  // MUDADO: getId() já retorna String
                     atualizarInterface();
                 } else {
-                    mostrarDialogoRemover(produto.getId(), produto.getNome());
+                    mostrarDialogoRemover(produto.getId(), produto.getNome());  // MUDADO: getId() já retorna String
                 }
             });
 
             holder.btnAumentar.setOnClickListener(v -> {
                 if (item.getQuantidade() < produto.getEstoque()) {
-                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() + 1);
+                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() + 1);  // MUDADO: getId() já retorna String
                     atualizarInterface();
                 } else {
                     Toast.makeText(CarrinhoActivity.this, "Estoque máximo atingido", Toast.LENGTH_SHORT).show();
@@ -151,7 +151,7 @@ public class CarrinhoActivity extends AppCompatActivity {
             });
 
             holder.btnRemover.setOnClickListener(v -> {
-                mostrarDialogoRemover(produto.getId(), produto.getNome());
+                mostrarDialogoRemover(produto.getId(), produto.getNome());  // MUDADO: getId() já retorna String
             });
         }
 
@@ -160,12 +160,12 @@ public class CarrinhoActivity extends AppCompatActivity {
             return carrinhoHelper.getItens().size();
         }
 
-        private void mostrarDialogoRemover(int produtoId, String nomeProduto) {
+        private void mostrarDialogoRemover(String produtoId, String nomeProduto) {  // MUDADO: produtoId é String
             new AlertDialog.Builder(CarrinhoActivity.this)
                     .setTitle("Remover Item")
                     .setMessage("Deseja remover " + nomeProduto + " do carrinho?")
                     .setPositiveButton("Sim", (dialog, which) -> {
-                        carrinhoHelper.removerProduto(produtoId);
+                        carrinhoHelper.removerProduto(produtoId);  // Agora funciona com String
                         atualizarInterface();
                         Toast.makeText(CarrinhoActivity.this, "Item removido", Toast.LENGTH_SHORT).show();
                     })

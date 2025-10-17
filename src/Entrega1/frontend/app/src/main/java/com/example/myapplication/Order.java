@@ -5,9 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-//Aqui é o modelo do pedido
 public class Order {
-    private int id;
+    private String id;  // MUDADO: int para String
     private String studentId;
     private String studentName;
     private List<OrderItem> items;
@@ -17,23 +16,30 @@ public class Order {
     private String code;
 
     public Order() {
-        this.id = Integer.parseInt(UUID.randomUUID().toString());
+        this.id = UUID.randomUUID().toString();  // Agora funciona
         this.status = "PENDENTE";
         this.createdAt = new Date();
         this.items = new ArrayList<>();
         this.code = OrderManager.generateOrderCode();
     }
 
-    public int getId() { return id; }
+    public String getId() { return id; }  // MUDADO: retorna String
+
     public String getStudentId() { return studentId; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
+
     public String getStudentName() { return studentName; }
     public void setStudentName(String studentName) { this.studentName = studentName; }
+
     public List<OrderItem> getItems() { return items; }
+
     public double getTotal() { return total; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
     public Date getCreatedAt() { return createdAt; }
+
     public String getCode() { return code; }
 
     public void addItem(OrderItem item) {

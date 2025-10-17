@@ -43,7 +43,11 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sessionManager.logout();
+                Intent intent = new Intent(CardapioAlunosActivity.this, MainActivity.class);
+                startActivity(intent);
             }
+
+
         });
 
 
@@ -94,10 +98,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
     private void carregarProdutosExemplo() {
         // Produtos de exemplo caso não consiga conectar com o Supabase
-        produtos.clear();
-        produtos.add(new Produto(1, "Coxinha", "Coxinha recheada de frango.", "coxinha_exemplo", 1.99, 10, 1));
-        produtos.add(new Produto(2, "Croissant", "Croissant de presunto e queijo.", "croissant_exemplo", 2.99, 12, 1));
-        produtos.add(new Produto(3, "Brownie", "Brownie de chocolate.", "brownie_exemplo", 2.49, 20, 2));
+
 
         exibirProdutos(produtos);
     }

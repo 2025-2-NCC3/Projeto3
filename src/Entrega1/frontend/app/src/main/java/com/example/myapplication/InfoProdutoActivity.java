@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,11 +17,14 @@ public class InfoProdutoActivity extends AppCompatActivity {
     Button botaoVoltar, botaoComprar;
     ImageView imagemProduto;
     TextView nomeProduto, precoProduto, descricaoProduto;
+    private CarrinhoHelper carrinhoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_produto);
+
+        carrinhoHelper = CarrinhoHelper.getInstance(this);
 
         botaoVoltar = findViewById(R.id.botaoVoltar);
         botaoComprar = findViewById(R.id.botaoComprar);
@@ -32,17 +36,15 @@ public class InfoProdutoActivity extends AppCompatActivity {
         botaoVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // Melhor usar finish() ao invés de criar novo Intent
+                finish();
             }
         });
 
-        // Recebe o intent com as informações do produto clicado
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             Produto objetoRecebido = (Produto) bundle.getSerializable("produtoInfo", Produto.class);
 
             if (objetoRecebido != null) {
-                // Carregar imagem de forma segura
                 String caminhoImagem = objetoRecebido.getCaminhoImagem();
 
                 if (caminhoImagem != null && !caminhoImagem.isEmpty()) {
@@ -50,25 +52,25 @@ public class InfoProdutoActivity extends AppCompatActivity {
                     if (imageResId != 0) {
                         imagemProduto.setImageResource(imageResId);
                     } else {
-                        // Imagem não encontrada nos recursos
                         imagemProduto.setImageResource(R.drawable.sem_imagem);
                     }
                 } else {
-                    // Caminho da imagem é nulo ou vazio
                     imagemProduto.setImageResource(R.drawable.sem_imagem);
                 }
 
-                // Preencher outros campos
                 nomeProduto.setText(objetoRecebido.getNome() != null ? objetoRecebido.getNome() : "Produto");
                 precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", objetoRecebido.getPreco()));
                 descricaoProduto.setText(objetoRecebido.getDescricao() != null ? objetoRecebido.getDescricao() : "Sem descrição");
 
-                // Envia as informações do produto à CreateOrderActivity
                 botaoComprar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(InfoProdutoActivity.this, CriarPedidoActivity.class);
-                        intent.putExtra("produtoComprado", objetoRecebido);
+                        // ADICIONA O PRODUTO AO CARRINHO
+                        carrinhoHelper.adicionarProduto(objetoRecebido, 1);
+                        Toast.makeText(InfoProdutoActivity.this, "Produto adicionado ao carrinho!", Toast.LENGTH_SHORT).show();
+
+                        // Vai para a tela do carrinho (ou CriarPedidoActivity)
+                        Intent intent = new Intent(InfoProdutoActivity.this, CarrinhoActivity.class);
                         startActivity(intent);
                     }
                 });

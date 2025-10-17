@@ -35,6 +35,11 @@
         <activity android:name=".AdminCardapioActivity">
         </activity>
          <activity android:name=".AdminHomeActivity"/>
+        <activity android:name=".CarrinhoActivity"/>
+        <activity android:name=".DetalhesPedidoActivity"/>
+        <activity android:name=".CriarPedidoActivity"/>
+        <activity android:name=".MeusPedidosActivity"/>
+
 
     </application>
 

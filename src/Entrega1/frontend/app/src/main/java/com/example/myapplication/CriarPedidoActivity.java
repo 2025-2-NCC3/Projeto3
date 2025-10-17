@@ -29,6 +29,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private CarrinhoHelper carrinhoHelper;
     private SupabaseOrderManager orderManager;
     private String studentId, studentName, accessToken;
+    private AlertDialog currentDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,16 @@ public class CriarPedidoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_criar_pedido);
 
         inicializarViews();
-        inicializarDados();
-        carregarDadosCarrinho();
+
+        // Verificar condições antes de inicializar
+        if (!inicializarDados()) {
+            return; // Sai se houver erro
+        }
+
+        if (!carregarDadosCarrinho()) {
+            return; // Sai se carrinho estiver vazio
+        }
+
         configurarListeners();
     }
 
@@ -55,37 +64,37 @@ public class CriarPedidoActivity extends AppCompatActivity {
         btnCriarPedido = findViewById(R.id.btnCriarPedido);
     }
 
-    private void inicializarDados() {
+    private boolean inicializarDados() {
         carrinhoHelper = CarrinhoHelper.getInstance(this);
         orderManager = SupabaseOrderManager.getInstance(this);
 
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        studentId = prefs.getString("student_id", "2023001");
-        studentName = prefs.getString("student_name", "Cliente Cantina");
-        accessToken = prefs.getString("access_token", "");
+        // Usar SessionManager em vez de SharedPreferences direto
+        SessionManager sessionManager = SessionManager.getInstance(this);
+
+        if (!sessionManager.isLoggedIn()) {
+            showDialogAndFinish("Não Autenticado", "Você precisa fazer login.");
+            return false;
+        }
+
+        studentId = sessionManager.getUserId();
+        studentName = sessionManager.getUserEmail(); // ou criar um método getUserName() no SessionManager
+        accessToken = sessionManager.getAccessToken();
 
         tvNomeCliente.setText(studentName);
         tvIdCliente.setText(studentId);
 
-        if (accessToken.isEmpty()) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Não Autenticado")
-                    .setMessage("Você precisa fazer login.")
-                    .setPositiveButton("OK", (dialog, which) -> finish())
-                    .setCancelable(false)
-                    .show();
+        if (accessToken == null || accessToken.isEmpty()) {
+            showDialogAndFinish("Token Inválido", "Sessão expirada. Faça login novamente.");
+            return false;
         }
+
+        return true;
     }
 
-    private void carregarDadosCarrinho() {
+    private boolean carregarDadosCarrinho() {
         if (carrinhoHelper.isEmpty()) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Carrinho Vazio")
-                    .setMessage("Adicione produtos ao carrinho.")
-                    .setPositiveButton("OK", (dialog, which) -> finish())
-                    .setCancelable(false)
-                    .show();
-            return;
+            showDialogAndFinish("Carrinho Vazio", "Adicione produtos ao carrinho.");
+            return false;
         }
 
         List<ItemCarrinho> itens = carrinhoHelper.getItens();
@@ -103,6 +112,8 @@ public class CriarPedidoActivity extends AppCompatActivity {
                     .append("\n");
         }
         tvListaProdutos.setText(listaProdutos.toString().trim());
+
+        return true;
     }
 
     private void configurarListeners() {
@@ -110,27 +121,47 @@ public class CriarPedidoActivity extends AppCompatActivity {
         btnCriarPedido.setOnClickListener(v -> mostrarDialogoConfirmacao());
     }
 
+    private void showDialogAndFinish(String title, String message) {
+        if (!isFinishing() && !isDestroyed()) {
+            currentDialog = new AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("OK", (dialog, which) -> finish())
+                    .setCancelable(false)
+                    .create();
+            currentDialog.show();
+        } else {
+            finish();
+        }
+    }
+
     private void mostrarDialogoConfirmacao() {
+        if (isFinishing() || isDestroyed()) return;
+
         String mensagem = "Deseja confirmar o pedido?\n\n" +
                 "Valor Total: " + tvValorTotal.getText() + "\n" +
                 "Quantidade: " + tvQuantidadeItens.getText() + " itens";
 
-        new AlertDialog.Builder(this)
+        currentDialog = new AlertDialog.Builder(this)
                 .setTitle("Confirmar Pedido")
                 .setMessage(mensagem)
                 .setPositiveButton("Sim, Confirmar", (dialog, which) -> criarPedido())
                 .setNegativeButton("Cancelar", null)
-                .show();
+                .create();
+        currentDialog.show();
     }
 
     private void criarPedido() {
         String erroEstoque = carrinhoHelper.validarEstoque();
         if (erroEstoque != null) {
-            new AlertDialog.Builder(this)
+            if (isFinishing() || isDestroyed()) return;
+
+            currentDialog = new AlertDialog.Builder(this)
                     .setTitle("Estoque Insuficiente")
                     .setMessage(erroEstoque)
                     .setPositiveButton("OK", null)
-                    .show();
+                    .create();
+            currentDialog.show();
             return;
         }
 
@@ -142,6 +173,8 @@ public class CriarPedidoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Order order) {
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+
                     mostrarLoading(false, "");
                     carrinhoHelper.limparCarrinho();
                     mostrarDialogoSucesso(order);
@@ -151,6 +184,8 @@ public class CriarPedidoActivity extends AppCompatActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+
                     mostrarLoading(false, "");
                     mostrarDialogoErro(error);
                 });
@@ -174,6 +209,8 @@ public class CriarPedidoActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogoSucesso(Order order) {
+        if (isFinishing() || isDestroyed()) return;
+
         String mensagem = "🎉 Pedido realizado com sucesso!\n\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n" +
                 "📝 Código: " + order.getCode() + "\n" +
@@ -182,7 +219,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
                 "━━━━━━━━━━━━━━━━━━━━\n\n" +
                 "Acompanhe em 'Meus Pedidos'.";
 
-        new AlertDialog.Builder(this)
+        currentDialog = new AlertDialog.Builder(this)
                 .setTitle("✅ Pedido Criado!")
                 .setMessage(mensagem)
                 .setPositiveButton("Ver Meus Pedidos", (dialog, which) -> {
@@ -192,10 +229,13 @@ public class CriarPedidoActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Voltar", (dialog, which) -> finish())
                 .setCancelable(false)
-                .show();
+                .create();
+        currentDialog.show();
     }
 
     private void mostrarDialogoErro(String erro) {
+        if (isFinishing() || isDestroyed()) return;
+
         String mensagem, titulo;
 
         if (erro.contains("Estoque insuficiente")) {
@@ -209,29 +249,45 @@ public class CriarPedidoActivity extends AppCompatActivity {
             mensagem = erro;
         }
 
-        new AlertDialog.Builder(this)
+        currentDialog = new AlertDialog.Builder(this)
                 .setTitle(titulo)
                 .setMessage(mensagem)
                 .setPositiveButton("Tentar Novamente", (dialog, which) -> criarPedido())
                 .setNegativeButton("Cancelar", null)
-                .show();
+                .create();
+        currentDialog.show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!carrinhoHelper.isEmpty()) {
+        if (carrinhoHelper != null && !carrinhoHelper.isEmpty()) {
             carregarDadosCarrinho();
         }
     }
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
+        if (isFinishing() || isDestroyed()) {
+            super.onBackPressed();
+            return;
+        }
+
+        currentDialog = new AlertDialog.Builder(this)
                 .setTitle("Cancelar Pedido?")
                 .setMessage("Deseja cancelar a criação do pedido?")
                 .setPositiveButton("Sim", (dialog, which) -> super.onBackPressed())
                 .setNegativeButton("Não", null)
-                .show();
+                .create();
+        currentDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Fechar qualquer diálogo aberto para evitar window leak
+        if (currentDialog != null && currentDialog.isShowing()) {
+            currentDialog.dismiss();
+        }
     }
 }

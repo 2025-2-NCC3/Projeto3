@@ -2,7 +2,7 @@ package com.example.myapplication;
 import java.io.Serializable;
 
 public class Produto implements Serializable {
-    private int id;
+    private String id;
     private String nome;
     private String descricao;
     private String caminhoImagem;
@@ -16,7 +16,7 @@ public class Produto implements Serializable {
     }
 
     // Construtor completo (sem imagemId)
-    public Produto(int id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria){
+    public Produto(String id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria){
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -37,12 +37,12 @@ public class Produto implements Serializable {
     }
 
     // Getters e Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id = String.valueOf(id);
     }
 
     public String getNome() {

@@ -55,9 +55,18 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
     private void inicializarDados() {
         orderManager = SupabaseOrderManager.getInstance(this);
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        studentId = prefs.getString("student_id", "2023001");
-        accessToken = prefs.getString("access_token", "");
+
+        // Usar SessionManager
+        SessionManager sessionManager = SessionManager.getInstance(this);
+
+        if (!sessionManager.isLoggedIn()) {
+            Toast.makeText(this, "Faça login para ver seus pedidos", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        studentId = sessionManager.getUserId();
+        accessToken = sessionManager.getAccessToken();
         pedidos = new ArrayList<>();
     }
 
