@@ -73,6 +73,15 @@ public class SessionManager {
 
         return isLoggedIn;
     }
+    public void saveAccessToken(String accessToken, int expiresIn) {
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
+
+        long expiresAt = System.currentTimeMillis() + (expiresIn * 1000L);
+        editor.putLong(KEY_TOKEN_EXPIRES_AT, expiresAt);
+
+        editor.apply();
+        Log.d(TAG, "Access token salvo");
+    }
 
     /**
      * Retorna o ID do usuário logado

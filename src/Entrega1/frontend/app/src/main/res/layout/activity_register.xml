@@ -1,252 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- res/layout/activity_register.xml -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center_horizontal"
     android:background="@drawable/background_gradient">
-
-    <!-- Header -->
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_app_logo"
-        app:tint="@color/dark_green" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Criar Conta"
-        android:textColor="@color/dark_green"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Crie sua nova conta"
-        android:textColor="@color/medium_green"
-        android:textSize="16sp"
-        android:layout_marginBottom="40dp" />
-
-    <!-- Formulário - Email -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:startIconTint="@color/dark_green"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/dark_green"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:hintTextColor="@color/dark_green"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:fillViewport="true"
-        android:background="@android:color/white">
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center">
+        android:gravity="center_horizontal">
 
-        <!-- Logo ou Título -->
+        <!-- Header -->
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_app_logo"
+            app:tint="@color/dark_green" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Criar Conta"
-            android:textSize="32sp"
+            android:textColor="@color/dark_green"
+            android:textSize="28sp"
             android:textStyle="bold"
-
             android:layout_marginBottom="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Preencha os dados abaixo"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="32dp" />
+            android:text="Crie sua nova conta"
+            android:textColor="@color/medium_green"
+            android:textSize="16sp"
+            android:layout_marginBottom="40dp" />
 
         <!-- Campo Nome -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:textColor="@color/dark_green"
-            />
-
+            android:layout_marginBottom="20dp"
+            android:hint="Nome Completo"
+            app:startIconTint="@color/dark_green"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeColor="@color/dark_green"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:hintTextColor="@color/dark_green"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
                 android:id="@+id/editTextNome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:hint="Nome Completo"/>
-    </LinearLayout>
-
-    <!-- Formulário - Senha -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:startIconTint="@color/dark_green"
-        app:endIconMode="password_toggle"
-        app:endIconTint="@color/dark_green"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/dark_green"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:hintTextColor="@color/dark_green"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Senha"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:textColor="@color/dark_green" />
-
+            android:layout_marginBottom="20dp"
+            android:hint="Email"
+            app:startIconTint="@color/dark_green"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeColor="@color/dark_green"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:hintTextColor="@color/dark_green"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:hint="Email"/>
-
-    <!-- Formulário - Confirmar Senha -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="28dp"
-        app:startIconTint="@color/dark_green"
-        app:endIconMode="password_toggle"
-        app:endIconTint="@color/dark_green"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/dark_green"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        app:hintTextColor="@color/dark_green"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Senha -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirmar Senha"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:textColor="@color/dark_green" />
+            android:layout_marginBottom="20dp"
+            android:hint="Senha"
+            app:startIconTint="@color/dark_green"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/dark_green"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeColor="@color/dark_green"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:hintTextColor="@color/dark_green"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
                 android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"
-                android:hint="Senha"/>
-
-    <!-- Botão de registro -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonRegister"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/dark_green"
-        android:text="Registrar"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:cornerRadius="14dp"
-        app:icon="@drawable/ic_register"
-        app:iconGravity="textStart"
-        app:iconPadding="8dp"
-        app:iconTint="@color/white" />
-
-    <!-- Barra de progresso -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/dark_green"
-        android:visibility="gone"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Link para login -->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Já tem conta? "
-            android:textColor="@color/medium_green"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/textViewLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fazer login"
-            android:textColor="@color/dark_green"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-    </LinearLayout>
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Confirmar Senha -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:hint="Confirmar Senha">
+            android:layout_marginBottom="28dp"
+            android:hint="Confirmar Senha"
+            app:startIconTint="@color/dark_green"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/dark_green"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeColor="@color/dark_green"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:hintTextColor="@color/dark_green"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <EditText
                 android:id="@+id/editTextConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:padding="16dp" />
-
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Botão de registro -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonRegister"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/dark_green"
+            android:text="Registrar"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/ic_register"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/white" />
 
+        <!-- Barra de progresso -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/dark_green"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Link para login -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Já tem conta? "
+                android:textColor="@color/medium_green"
+                android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/textViewLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fazer login"
+                android:textColor="@color/dark_green"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </ScrollView>

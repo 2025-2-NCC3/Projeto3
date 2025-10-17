@@ -17,11 +17,23 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AdminCardapioActivity extends AppCompatActivity {
     private static final String TAG = "AdminCardapioActivity";
-    private static final String BUCKET_NAME = "produtos-images";
+    // CORREÇÃO: Usar o nome correto do bucket
+    private static final String BUCKET_NAME = "Imagem";
 
     // Componentes originais
     private SupabaseClient supabaseClient;
@@ -75,8 +87,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
         editTextEstoque = findViewById(R.id.EditTextEstoque);
         spinnerCategoria = findViewById(R.id.SpinnerCategoria);
 
-        // Componentes para imagem (se existirem no layout)
-        // Se não tiver estes componentes, comente estas linhas
+        // Componentes para imagem
         try {
             buttonSelecionarImagem = findViewById(R.id.buttonSelecionarImagem);
             imageViewPreview = findViewById(R.id.imageViewPreview);
@@ -96,7 +107,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
             finish();
         });
 
-        // Botão para selecionar imagem (se existir)
+        // Botão para selecionar imagem
         if (buttonSelecionarImagem != null) {
             buttonSelecionarImagem.setOnClickListener(v -> selecionarImagem());
         }
@@ -172,7 +183,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
             }
 
             if (imageViewPreview != null) {
-                // Se tiver ImageView, mostrar preview
                 imageViewPreview.setImageURI(uri);
             }
 
@@ -196,7 +206,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
         if (selectedImageBytes != null) {
             uploadImageAndSaveProduct();
         } else {
-            // Salvar produto sem imagem (usar campo de texto se existir)
+            // Salvar produto sem imagem
             salvarProdutoFinal("");
         }
     }
@@ -260,7 +270,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
                 buttonAddAC.setText("Salvando produto...");
             }
 
-            // Usar método existente para inserir
+            // Inserir produto no Supabase
             inserirProdutoNoSupabase(novoProduto);
 
         } catch (NumberFormatException e) {
@@ -338,27 +348,27 @@ public class AdminCardapioActivity extends AppCompatActivity {
         String json = createProductJson(produto);
         Log.d(TAG, "JSON a ser enviado: " + json);
 
-        okhttp3.MediaType JSON = okhttp3.MediaType.get("application/json; charset=utf-8");
-        okhttp3.RequestBody body = okhttp3.RequestBody.create(json, JSON);
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json, JSON);
 
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/produtos")
+        Request request = new Request.Builder()
+                .url(SupabaseConfig.SUPABASE_URL + "/rest/v1/produtos")
                 .post(body)
-                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
-                .addHeader("Authorization", "Bearer " + BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("apikey", SupabaseConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + SupabaseConfig.SUPABASE_ANON_KEY)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Prefer", "return=representation")
                 .build();
 
-        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
-                .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+            public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     Log.e(TAG, "Erro na conexão ao inserir produto", e);
                     Toast.makeText(AdminCardapioActivity.this,
@@ -370,7 +380,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body() != null ? response.body().string() : "";
 
                 runOnUiThread(() -> {
@@ -414,7 +424,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
         String descricao = produto.getDescricao().replace("\"", "\\\"").replace("\n", "\\n");
         String caminhoImagem = produto.getCaminhoImagem().replace("\"", "\\\"");
 
-        return String.format(java.util.Locale.US,
+        return String.format(Locale.US,
                 "{\"nome\":\"%s\",\"descricao\":\"%s\",\"caminhoImagem\":\"%s\",\"preco\":%.2f,\"estoque\":%d,\"categoria\":%d}",
                 nome, descricao, caminhoImagem, produto.getPreco(), produto.getEstoque(), produto.getCategoria()
         );

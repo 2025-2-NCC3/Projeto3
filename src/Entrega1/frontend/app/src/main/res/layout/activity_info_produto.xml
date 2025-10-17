@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
     android:padding="20dp"
-    tools:context=".MainActivity">
+    tools:context=".InfoProdutoActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideEsquerda"
@@ -59,8 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            >
+            android:padding="20dp">
 
             <!-- Imagem do Produto -->
             <ImageView
@@ -120,7 +119,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/dark_green"
-        android:text="Comprar Agora"
+        android:text="Adicionar ao Carrinho"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
