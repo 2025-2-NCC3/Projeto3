@@ -62,7 +62,117 @@ public class SupabaseClient {
             Log.e(TAG, "Erro na configuração do SupabaseClient");
         }
     }
+    /**
+     * Busca usuário por auth_user_id (UUID do Supabase Auth)
+     */
+    public Call getUserByAuthId(String authUserId, SupabaseCallback<UserData> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
 
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/users?auth_user_id=eq." + authUserId + "&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando usuário por auth_user_id: " + authUserId);
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<UserData>>(){}.getType();
+                        List<UserData> users = gson.fromJson(responseBody, listType);
+
+                        if (users != null && !users.isEmpty()) {
+                            callback.onSuccess(users.get(0));
+                        } else {
+                            callback.onError("Perfil não encontrado");
+                        }
+                    } catch (Exception e) {
+                        callback.onError("Erro ao processar dados");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar perfil");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    /**
+     * Cria usuário com auth_user_id
+     */
+    public Call createUserWithAuthId(String json, SupabaseCallback<UserData> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/users")
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Prefer", "return=representation")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful() || response.code() == 201) {
+                    try {
+                        Type listType = new TypeToken<List<UserData>>(){}.getType();
+                        List<UserData> users = gson.fromJson(responseBody, listType);
+
+                        if (users != null && !users.isEmpty()) {
+                            callback.onSuccess(users.get(0));
+                        } else {
+                            callback.onError("Erro ao criar perfil");
+                        }
+                    } catch (Exception e) {
+                        callback.onError("Erro ao processar resposta");
+                    }
+                } else {
+                    callback.onError("Erro ao criar perfil (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
     private OkHttpClient createDevelopmentClient() {
         try {
             // Criar um trust manager que aceita todos os certificados (APENAS PARA DESENVOLVIMENTO)

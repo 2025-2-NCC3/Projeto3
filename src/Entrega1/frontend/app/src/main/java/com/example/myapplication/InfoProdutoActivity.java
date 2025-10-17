@@ -3,11 +3,11 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -18,7 +18,6 @@ import java.util.Locale;
 public class InfoProdutoActivity extends AppCompatActivity {
     private static final String TAG = "InfoProdutoActivity";
 
-    // Componentes da interface (usando os IDs corretos do layout)
     private ImageView imagemProduto;
     private TextView nomeProduto;
     private TextView descricaoProduto;
@@ -27,13 +26,14 @@ public class InfoProdutoActivity extends AppCompatActivity {
     private Button botaoComprar;
 
     private Produto produto;
+    private CarrinhoHelper carrinhoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_produto);
 
-        // Inicializar componentes
+        carrinhoHelper = CarrinhoHelper.getInstance(this);
         inicializarComponentes();
 
         // Receber o intent com as informações do produto clicado
@@ -43,7 +43,6 @@ public class InfoProdutoActivity extends AppCompatActivity {
 
             if (produto != null) {
                 Log.d(TAG, "Produto recebido: " + produto.getNome());
-                // Carregar informações do produto
                 carregarInformacoesProduto(produto);
             } else {
                 Toast.makeText(this, "Erro ao carregar produto", Toast.LENGTH_SHORT).show();
@@ -63,12 +62,17 @@ public class InfoProdutoActivity extends AppCompatActivity {
         if (botaoComprar != null) {
             botaoComprar.setOnClickListener(v -> {
                 if (produto != null && produto.getEstoque() > 0) {
-                    Toast.makeText(this,
+                    // Adiciona ao carrinho
+                    carrinhoHelper.adicionarProduto(produto, 1);
+                    Toast.makeText(InfoProdutoActivity.this,
                             produto.getNome() + " adicionado ao carrinho!",
                             Toast.LENGTH_SHORT).show();
-                    // Aqui você pode adicionar lógica para carrinho de compras
+
+                    // Vai para a tela do carrinho
+                    Intent intent = new Intent(InfoProdutoActivity.this, CarrinhoActivity.class);
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(this,
+                    Toast.makeText(InfoProdutoActivity.this,
                             "Produto indisponível no momento",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -77,7 +81,6 @@ public class InfoProdutoActivity extends AppCompatActivity {
     }
 
     private void inicializarComponentes() {
-        // Usar os IDs corretos do seu layout XML
         imagemProduto = findViewById(R.id.imagemProduto);
         nomeProduto = findViewById(R.id.nomeProduto);
         descricaoProduto = findViewById(R.id.descricaoProduto);
@@ -85,14 +88,7 @@ public class InfoProdutoActivity extends AppCompatActivity {
         botaoVoltar = findViewById(R.id.botaoVoltar);
         botaoComprar = findViewById(R.id.botaoComprar);
 
-        // Log para debug
-        Log.d(TAG, "Componentes inicializados:");
-        Log.d(TAG, "imagemProduto: " + (imagemProduto != null));
-        Log.d(TAG, "nomeProduto: " + (nomeProduto != null));
-        Log.d(TAG, "descricaoProduto: " + (descricaoProduto != null));
-        Log.d(TAG, "precoProduto: " + (precoProduto != null));
-        Log.d(TAG, "botaoVoltar: " + (botaoVoltar != null));
-        Log.d(TAG, "botaoComprar: " + (botaoComprar != null));
+        Log.d(TAG, "Componentes inicializados");
     }
 
     private void carregarInformacoesProduto(Produto produto) {
@@ -157,7 +153,6 @@ public class InfoProdutoActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                // Produto sem imagem
                 Log.d(TAG, "Produto sem imagem definida");
                 imagemProduto.setImageResource(R.drawable.sem_imagem);
             }
