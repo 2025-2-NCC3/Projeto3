@@ -1,4 +1,3 @@
-// com/example/myapplication/SessionManager.java
 package com.example.myapplication;
 
 import android.content.Context;
@@ -15,6 +14,7 @@ public class SessionManager {
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_USER_EMAIL = "userEmail";
+    private static final String KEY_USER_NAME = "userName";
     private static final String KEY_ACCESS_TOKEN = "accessToken";
     private static final String KEY_REFRESH_TOKEN = "refreshToken";
     private static final String KEY_TOKEN_EXPIRES_AT = "tokenExpiresAt";
@@ -54,6 +54,42 @@ public class SessionManager {
     }
 
     /**
+     * Salva a sessão completa com tokens do Supabase Auth
+     * USE ESTE MÉTODO após login bem-sucedido
+     */
+    public void createLoginSessionWithTokens(SupabaseClient.UserData userData, String accessToken, String refreshToken, int expiresIn) {
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
+        editor.putString(KEY_USER_ID, String.valueOf(userData.id));
+        editor.putString(KEY_USER_EMAIL, userData.email);
+        editor.putString(KEY_USER_NAME, userData.nome);
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+
+        // Define expiração baseada no expiresIn (geralmente 3600 segundos = 1 hora)
+        long expiresAt = System.currentTimeMillis() + (expiresIn * 1000L);
+        editor.putLong(KEY_TOKEN_EXPIRES_AT, expiresAt);
+
+        editor.apply();
+
+        Log.d(TAG, "Sessão completa criada para: " + userData.email + " (Role: " + userData.role + ")");
+    }
+
+    /**
+     * Salva apenas os tokens (útil para refresh)
+     */
+    public void saveTokens(String accessToken, String refreshToken, int expiresIn) {
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+
+        long expiresAt = System.currentTimeMillis() + (expiresIn * 1000L);
+        editor.putLong(KEY_TOKEN_EXPIRES_AT, expiresAt);
+
+        editor.apply();
+
+        Log.d(TAG, "Tokens salvos/atualizados");
+    }
+
+    /**
      * Verifica se o usuário está logado
      */
     public boolean isLoggedIn() {
@@ -89,10 +125,25 @@ public class SessionManager {
     }
 
     /**
+     * Retorna o nome do usuário logado
+     */
+    public String getUserName() {
+        return prefs.getString(KEY_USER_NAME, null);
+    }
+
+    /**
      * Retorna o access token
      */
     public String getAccessToken() {
-        return prefs.getString(KEY_ACCESS_TOKEN, null);
+        String token = prefs.getString(KEY_ACCESS_TOKEN, null);
+
+        // Se não tiver token, usar a chave anônima do Supabase como fallback
+        if (token == null || token.isEmpty()) {
+            Log.w(TAG, "Access token não encontrado, usando chave anônima");
+            return BuildConfig.SUPABASE_ANON_KEY;
+        }
+
+        return token;
     }
 
     /**
@@ -100,6 +151,21 @@ public class SessionManager {
      */
     public String getRefreshToken() {
         return prefs.getString(KEY_REFRESH_TOKEN, null);
+    }
+
+    /**
+     * Verifica se tem um access token válido
+     */
+    public boolean hasValidToken() {
+        String token = prefs.getString(KEY_ACCESS_TOKEN, null);
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+
+        long expiresAt = prefs.getLong(KEY_TOKEN_EXPIRES_AT, 0);
+        long currentTime = System.currentTimeMillis();
+
+        return currentTime < expiresAt;
     }
 
     /**
@@ -143,8 +209,10 @@ public class SessionManager {
         return "SessionInfo{" +
                 "isLoggedIn=" + isLoggedIn() +
                 ", userId='" + getUserId() + '\'' +
+                ", userName='" + getUserName() + '\'' +
                 ", email='" + getUserEmail() + '\'' +
                 ", hasToken=" + (getAccessToken() != null) +
+                ", tokenValid=" + hasValidToken() +
                 '}';
     }
 }

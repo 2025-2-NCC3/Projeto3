@@ -1,4 +1,3 @@
-// com/example/myapplication/AdminManager.java
 package com.example.myapplication;
 
 import android.content.Context;
@@ -21,8 +20,10 @@ public class AdminManager {
     private static AdminManager instance;
     private final SharedPreferences prefs;
     private final SharedPreferences.Editor editor;
+    private final Context context;
 
     private AdminManager(Context context) {
+        this.context = context.getApplicationContext();
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = prefs.edit();
     }
@@ -91,5 +92,99 @@ public class AdminManager {
         }
 
         return false;
+    }
+
+    /**
+     * Verifica as permissões do usuário atual no banco de dados
+     * e atualiza localmente
+     */
+    public void verificarPermissoes(AdminCheckCallback callback) {
+        SessionManager sessionManager = SessionManager.getInstance(context);
+        String email = sessionManager.getUserEmail();
+
+        if (email == null) {
+            callback.onResult(false, "Usuário não autenticado");
+            return;
+        }
+
+        SupabaseClient supabaseClient = SupabaseClient.getInstance(context);
+        supabaseClient.getUserByEmail(email, new SupabaseClient.SupabaseCallback<SupabaseClient.UserData>() {
+            @Override
+            public void onSuccess(SupabaseClient.UserData userData) {
+                boolean isAdmin = ROLE_ADMIN.equals(userData.role);
+                setUserRole(userData.role);
+
+                String message = isAdmin ?
+                        "Usuário é administrador" :
+                        "Usuário não tem permissões de admin";
+
+                callback.onResult(isAdmin, message);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onResult(false, "Erro ao verificar permissões: " + error);
+            }
+        });
+    }
+
+    /**
+     * Promove um usuário a admin (apenas outro admin pode fazer isso)
+     */
+    public void promoverParaAdmin(int userId, AdminActionCallback callback) {
+        if (!isAdmin()) {
+            callback.onError("Você não tem permissão para esta ação");
+            return;
+        }
+
+        SupabaseClient supabaseClient = SupabaseClient.getInstance(context);
+        SessionManager sessionManager = SessionManager.getInstance(context);
+        String accessToken = sessionManager.getAccessToken();
+
+        supabaseClient.updateUserRole(userId, ROLE_ADMIN, new SupabaseClient.SupabaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                callback.onSuccess("Usuário promovido a administrador");
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError("Erro ao promover usuário: " + error);
+            }
+        });
+    }
+
+    /**
+     * Remove privilégios de admin de um usuário
+     */
+    public void removerAdmin(int userId, AdminActionCallback callback) {
+        if (!isAdmin()) {
+            callback.onError("Você não tem permissão para esta ação");
+            return;
+        }
+
+        SupabaseClient supabaseClient = SupabaseClient.getInstance(context);
+
+        supabaseClient.updateUserRole(userId, ROLE_USER, new SupabaseClient.SupabaseCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                callback.onSuccess("Privilégios de admin removidos");
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError("Erro ao remover privilégios: " + error);
+            }
+        });
+    }
+
+    // Interfaces de callback
+    public interface AdminCheckCallback {
+        void onResult(boolean isAdmin, String message);
+    }
+
+    public interface AdminActionCallback {
+        void onSuccess(String message);
+        void onError(String error);
     }
 }
