@@ -51,14 +51,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:backgroundTint="@color/dark_green"
-            android:layout_marginEnd="16dp" />
+            />
 
         <TextView
             android:id="@+id/tituloPagina"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="left"
+            android:gravity="center"
             android:layout_marginLeft="8dp"
             android:text="Cardápio"
             android:textSize="32sp"

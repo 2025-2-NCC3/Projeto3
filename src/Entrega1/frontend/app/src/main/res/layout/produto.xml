@@ -3,8 +3,8 @@
 android:id="@+id/boxProduto"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true"
+android:clickable="true"
+android:focusable="true"
 android:layout_marginTop="10dp"
 android:orientation="horizontal"
 >
@@ -17,31 +17,31 @@ android:orientation="horizontal"
     android:src="@drawable/coxinha_exemplo"
     />
 
-<LinearLayout
-    android:id="@+id/infoProduto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
-
-    <TextView
-        android:id="@+id/tituloProduto"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/infoProduto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        android:text="exemploNome"
-        android:textSize="28sp"
-        />
+        android:orientation="vertical"
+        >
 
-    <TextView
-        android:id="@+id/precoProduto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        android:text="exemplo"
-        android:textSize="28sp"
-        />
-</LinearLayout>
+        <TextView
+            android:id="@+id/tituloProduto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="exemploNome"
+            android:textSize="28sp"
+            />
+
+        <TextView
+            android:id="@+id/precoProduto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="exemplo"
+            android:textSize="28sp"
+            />
+    </LinearLayout>
 </LinearLayout>
