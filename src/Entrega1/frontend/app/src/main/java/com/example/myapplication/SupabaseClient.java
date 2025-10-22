@@ -41,9 +41,12 @@ public class SupabaseClient {
     private final String supabaseUrl;
     private final String supabaseKey;
     private final boolean isConfigured;
+    private final Context context;
+    // ADICIONAR: Armazenar token do usuário autenticado
+    private String userAccessToken = null;
 
     private SupabaseClient(Context context) {
-        // Configurar OkHttpClient com configurações SSL mais permissivas para desenvolvimento
+        this.context = context.getApplicationContext();
         client = createDevelopmentClient();
         gson = new Gson();
 
@@ -62,6 +65,19 @@ public class SupabaseClient {
             Log.e(TAG, "Erro na configuração do SupabaseClient");
         }
     }
+    private String getAuthToken() {
+        SessionManager sessionManager = SessionManager.getInstance(context);
+        String token = sessionManager.getAccessToken();
+
+        if (token != null && !token.isEmpty()) {
+            Log.d(TAG, "✓ Usando token do usuário autenticado");
+            return token;
+        }
+
+        Log.w(TAG, "⚠ Nenhum token disponível - usando ANON_KEY");
+        return supabaseKey;
+    }
+
     /**
      * Busca usuário por auth_user_id (UUID do Supabase Auth)
      */
@@ -350,19 +366,13 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        Log.d(TAG, "URL da requisição: " + request.url());
-
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
                     Log.e(TAG, "Erro na requisição de signin", e);
-                    String errorMessage = "Erro de conexão: " + e.getMessage();
-                    if (e.getMessage() != null && e.getMessage().contains("Trust anchor")) {
-                        errorMessage = "Erro de certificado SSL. Verifique sua conexão de internet.";
-                    }
-                    callback.onError(errorMessage);
+                    callback.onError("Erro de conexão: " + e.getMessage());
                 }
             }
 
@@ -380,6 +390,16 @@ public class SupabaseClient {
                     try {
                         AuthResponse authResponse = gson.fromJson(responseBody, AuthResponse.class);
                         if (authResponse != null && authResponse.user != null) {
+                            // CRÍTICO: Salvar token no SessionManager
+                            SessionManager sessionManager = SessionManager.getInstance(context);
+                            sessionManager.saveAccessToken(
+                                    authResponse.accessToken,
+                                    authResponse.expiresIn
+                            );
+
+                            Log.d(TAG, "✓ Token salvo no SessionManager");
+                            Log.d(TAG, "Token: " + authResponse.accessToken.substring(0, 20) + "...");
+
                             callback.onSuccess(authResponse);
                         } else {
                             callback.onError("Resposta inválida do servidor");
@@ -410,6 +430,22 @@ public class SupabaseClient {
         });
 
         return call;
+    }
+    // ADICIONAR: Método para definir token após login
+    public void setUserAccessToken(String token) {
+        this.userAccessToken = token;
+        Log.d(TAG, "Token de acesso do usuário definido");
+    }
+
+    // ADICIONAR: Método para limpar token no logout
+    public void clearUserAccessToken() {
+        this.userAccessToken = null;
+        Log.d(TAG, "Token de acesso do usuário limpo");
+    }
+
+    // ADICIONAR: Método para obter token
+    public String getUserAccessToken() {
+        return userAccessToken;
     }
 
     // ===== MÉTODOS PARA PRODUTOS DO CARDÁPIO =====
@@ -705,12 +741,26 @@ public class SupabaseClient {
             return null;
         }
 
-        // Gerar nome único para a imagem
+        SessionManager sessionManager = SessionManager.getInstance(context);
+
+        // CRÍTICO: Verificar se há token
+        String userToken = sessionManager.getAccessToken();
+        if (userToken == null || userToken.isEmpty()) {
+            Log.e(TAG, "❌ ERRO: Nenhum token de acesso encontrado!");
+            Log.e(TAG, "SessionInfo: " + sessionManager.getSessionInfo());
+            callback.onError("Você precisa estar logado para fazer upload de imagens");
+            return null;
+        }
+
         long timestamp = System.currentTimeMillis();
         String extension = getFileExtension(fileName);
         String uniqueFileName = "produto_" + timestamp + "." + extension;
 
-        Log.d(TAG, "Fazendo upload da imagem: " + uniqueFileName + " para bucket: " + bucketName);
+        Log.d(TAG, "=== UPLOAD DE IMAGEM ===");
+        Log.d(TAG, "Arquivo: " + uniqueFileName);
+        Log.d(TAG, "Bucket: " + bucketName);
+        Log.d(TAG, "Token disponível: ✓ SIM");
+        Log.d(TAG, "Token (primeiros 30 chars): " + userToken.substring(0, Math.min(30, userToken.length())) + "...");
 
         RequestBody body = RequestBody.create(imageBytes, MediaType.parse("image/*"));
 
@@ -718,7 +768,7 @@ public class SupabaseClient {
                 .url(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + uniqueFileName)
                 .post(body)
                 .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Authorization", "Bearer " + userToken) // Usar token do usuário
                 .addHeader("Content-Type", "image/*")
                 .addHeader("x-upsert", "true")
                 .build();
@@ -744,13 +794,15 @@ public class SupabaseClient {
                 Log.d(TAG, "Resposta upload - Body: " + responseBody);
 
                 if (response.isSuccessful()) {
-                    // Construir a URL pública da imagem
                     String publicUrl = supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + uniqueFileName;
 
                     ImageUploadResponse uploadResponse = new ImageUploadResponse();
                     uploadResponse.fileName = uniqueFileName;
                     uploadResponse.publicUrl = publicUrl;
                     uploadResponse.bucketName = bucketName;
+
+                    Log.d(TAG, "✓ Upload realizado com sucesso!");
+                    Log.d(TAG, "URL pública: " + publicUrl);
 
                     callback.onSuccess(uploadResponse);
                 } else {
