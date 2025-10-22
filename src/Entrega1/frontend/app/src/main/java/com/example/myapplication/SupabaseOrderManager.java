@@ -56,7 +56,6 @@ public class SupabaseOrderManager {
 
         // Adicionar itens ao pedido
         for (OrderItemRequest itemRequest : orderRequest.getItems()) {
-            // Buscar produto para obter informações completas
             Produto produto = OrderManager.getProduct(itemRequest.getProductId());
             if (produto != null) {
                 OrderItem item = new OrderItem(
@@ -76,7 +75,7 @@ public class SupabaseOrderManager {
             return null;
         }
 
-        // Converter para formato do Supabase
+        // Converter para formato do Supabase - SEM produtos
         OrderSupabaseRequest supabaseRequest = new OrderSupabaseRequest(order);
         String json = gson.toJson(supabaseRequest);
         Log.d(TAG, "Criando pedido: " + json);
@@ -119,7 +118,7 @@ public class SupabaseOrderManager {
                             Order createdOrder = convertSupabaseResponseToOrder(orderResponse);
 
                             // Criar itens do pedido
-                            createOrderItems(createdOrder.getId(), order.getItems(), accessToken, callback, createdOrder);
+                            createOrderItems(String.valueOf(createdOrder.getId()), order.getItems(), accessToken, callback, createdOrder);
                         } else {
                             callback.onError("Resposta inválida do servidor");
                         }
@@ -136,7 +135,7 @@ public class SupabaseOrderManager {
         return call;
     }
 
-    private void createOrderItems(int orderId, List<OrderItem> items, String accessToken,
+    private void createOrderItems(String orderId, List<OrderItem> items, String accessToken,
                                   OrderCallback callback, Order createdOrder) {
 
         List<OrderItemSupabaseRequest> itemsRequest = new ArrayList<>();
@@ -168,7 +167,6 @@ public class SupabaseOrderManager {
                 if (call.isCanceled()) return;
 
                 if (response.isSuccessful()) {
-                    // Atualizar estoque local
                     OrderManager.updateStock(createdOrder);
                     createdOrder.setStatus(OrderManager.STATUS_CONFIRMED);
                     callback.onSuccess(createdOrder);
@@ -187,7 +185,7 @@ public class SupabaseOrderManager {
         }
 
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?student_id=eq." + studentId + "&order=created_at.desc")
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id_usuario=eq." + studentId + "&order=id.desc")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -235,7 +233,7 @@ public class SupabaseOrderManager {
     }
 
     // Atualizar status do pedido
-    public Call updateOrderStatus(int orderId, String newStatus, String accessToken, OrderCallback callback) {
+    public Call updateOrderStatus(String orderId, String newStatus, String accessToken, OrderCallback callback) {
         StatusUpdateRequest statusRequest = new StatusUpdateRequest(newStatus);
         String json = gson.toJson(statusRequest);
 
@@ -286,10 +284,8 @@ public class SupabaseOrderManager {
         return call;
     }
 
-    // Métodos de conversão
     private Order convertSupabaseResponseToOrder(OrderSupabaseResponse response) {
         Order order = new Order();
-        // Usar reflection ou setter personalizado para definir ID
         try {
             java.lang.reflect.Field idField = Order.class.getDeclaredField("id");
             idField.setAccessible(true);
@@ -298,97 +294,63 @@ public class SupabaseOrderManager {
             Log.e(TAG, "Erro ao definir ID do pedido", e);
         }
 
-        order.setStudentId(response.studentId);
-        order.setStudentName(response.studentName);
+        order.setStudentId(String.valueOf(response.idUsuario));
         order.setStatus(response.status);
-
-        // Converter data
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-        try {
-            if (response.createdAt != null) {
-                java.lang.reflect.Field createdAtField = Order.class.getDeclaredField("createdAt");
-                createdAtField.setAccessible(true);
-                createdAtField.set(order, formatter.parse(response.createdAt));
-            }
-            if (response.code != null) {
-                java.lang.reflect.Field codeField = Order.class.getDeclaredField("code");
-                codeField.setAccessible(true);
-                codeField.set(order, response.code);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Erro ao converter datas", e);
-        }
 
         return order;
     }
 
-    // Classes para requisições e respostas do Supabase
+    // Classes para requisições e respostas
     private static class OrderSupabaseRequest {
-        @SerializedName("student_id")
-        public String studentId;
-        @SerializedName("student_name")
-        public String studentName;
+        @SerializedName("id_usuario")
+        public String idUsuario;
         public String status;
         @SerializedName("total_amount")
         public double totalAmount;
-        public String code;
 
         public OrderSupabaseRequest(Order order) {
-            this.studentId = order.getStudentId();
-            this.studentName = order.getStudentName();
+            this.idUsuario = order.getStudentId();
             this.status = order.getStatus();
             this.totalAmount = order.getTotal();
-            this.code = order.getCode();
         }
     }
 
     private static class OrderItemSupabaseRequest {
-        @SerializedName("pedido_id")
-        public int pedidoId;
-        @SerializedName("product_id")
-        public int productId;
-        @SerializedName("product_name")
-        public String productName;
-        public int quantity;
-        public double price;
-        public double subtotal;
+        @SerializedName("id_pedido")
+        public String idPedido;
+        @SerializedName("id_produto")
+        public String idProduto;
+        public int quantidade;
+        @SerializedName("preco_produto")
+        public double precoProduto;
 
-        public OrderItemSupabaseRequest(int pedidoId, OrderItem item) {
-            this.pedidoId = pedidoId;
-            this.productId = item.getProductId();
-            this.productName = item.getProductName();
-            this.quantity = item.getQuantity();
-            this.price = item.getPrice();
-            this.subtotal = item.getSubtotal();
+        public OrderItemSupabaseRequest(String idPedido, OrderItem item) {
+            this.idPedido = idPedido;
+            this.idProduto = item.getProductId();
+            this.quantidade = item.getQuantity();
+            this.precoProduto = item.getPrice();
         }
     }
 
     private static class OrderSupabaseResponse {
-        public int id;
-        @SerializedName("student_id")
-        public String studentId;
-        @SerializedName("student_name")
-        public String studentName;
+        public String id;
+        @SerializedName("id_usuario")
+        public int idUsuario;
         public String status;
         @SerializedName("total_amount")
         public double totalAmount;
-        public String code;
         @SerializedName("created_at")
         public String createdAt;
     }
 
     private static class StatusUpdateRequest {
         public String status;
-        @SerializedName("updated_at")
-        public String updatedAt;
 
         public StatusUpdateRequest(String status) {
             this.status = status;
-            this.updatedAt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(new Date());
         }
     }
 
-    // Interfaces de callback
     public interface OrderCallback {
         void onSuccess(Order order);
         void onError(String error);
@@ -397,5 +359,126 @@ public class SupabaseOrderManager {
     public interface OrdersCallback {
         void onSuccess(List<Order> orders);
         void onError(String error);
+    }
+
+    public Call getOrderById(String orderId, String accessToken, OrderCallback callback) {
+        if (!supabaseClient.isConfigured()) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + orderId)
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
+                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+
+                        if (ordersResponse != null && !ordersResponse.isEmpty()) {
+                            Order order = convertSupabaseResponseToOrder(ordersResponse.get(0));
+                            getOrderItems(orderId, accessToken, order, callback);
+                        } else {
+                            callback.onError("Pedido não encontrado");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar pedido", e);
+                        callback.onError("Erro ao processar pedido");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar pedido: " + response.code());
+                }
+            }
+        });
+
+        return call;
+    }
+
+    private void getOrderItems(String orderId, String accessToken, Order order, OrderCallback callback) {
+        Request request = new Request.Builder()
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + orderId)
+                .get()
+                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        Call call = supabaseClient.client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro ao buscar itens do pedido");
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<OrderItemSupabaseResponse>>(){}.getType();
+                        List<OrderItemSupabaseResponse> itemsResponse = gson.fromJson(responseBody, listType);
+
+                        if (itemsResponse != null) {
+                            for (OrderItemSupabaseResponse itemResponse : itemsResponse) {
+                                OrderItem item = new OrderItem(
+                                        String.valueOf(itemResponse.idProduto),
+                                        itemResponse.nomeProduto,
+                                        itemResponse.quantidade,
+                                        itemResponse.precoProduto
+                                );
+                                order.addItem(item);
+                            }
+                        }
+
+                        callback.onSuccess(order);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar itens", e);
+                        callback.onError("Erro ao processar itens do pedido");
+                    }
+                } else {
+                    callback.onSuccess(order);
+                }
+            }
+        });
+    }
+
+    public Call cancelOrder(String orderId, String accessToken, OrderCallback callback) {
+        return updateOrderStatus(orderId, "CANCELADO", accessToken, callback);
+    }
+
+    private static class OrderItemSupabaseResponse {
+        public int id;
+        @SerializedName("id_pedido")
+        public int idPedido;
+        @SerializedName("id_produto")
+        public int idProduto;
+        @SerializedName("nome_produto")
+        public String nomeProduto;
+        public int quantidade;
+        @SerializedName("preco_produto")
+        public double precoProduto;
     }
 }

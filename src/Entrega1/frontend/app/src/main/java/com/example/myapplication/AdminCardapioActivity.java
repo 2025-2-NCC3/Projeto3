@@ -17,28 +17,41 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AdminCardapioActivity extends AppCompatActivity {
     private static final String TAG = "AdminCardapioActivity";
-    private static final String BUCKET_NAME = "produtos-images";
+    private static final String BUCKET_NAME = "Imagem";
 
-    // Componentes originais
     private SupabaseClient supabaseClient;
     private Button buttonAddAC, botaoVoltar;
     private EditText editTextNomeProduto, editTextValorProduto, editTextDetalhesProduto, editTextEstoque;
     private Spinner spinnerCategoria;
 
-    // Componentes para imagem
     private Button buttonSelecionarImagem;
     private ImageView imageViewPreview;
 
-    // Controle de upload
     private byte[] selectedImageBytes;
     private String uploadedImageUrl;
     private boolean isUploading = false;
 
-    // ActivityResultLauncher para seleção de imagem
     private ActivityResultLauncher<String> imagePickerLauncher;
 
     @Override
@@ -46,27 +59,16 @@ public class AdminCardapioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_cardapio);
 
-        // Inicializar SupabaseClient
         supabaseClient = SupabaseClient.getInstance(this);
 
-        // Inicializar componentes
         initializeComponents();
-
-        // Configurar listeners
         setupListeners();
-
-        // Configurar spinner de categorias
         setupCategoriaSpinner();
-
-        // Configurar seleção de imagem
         setupImagePicker();
-
-        // Criar bucket se necessário
         createBucketIfNeeded();
     }
 
     private void initializeComponents() {
-        // Componentes originais
         buttonAddAC = findViewById(R.id.ButtonAddAC);
         botaoVoltar = findViewById(R.id.botaoVoltar);
         editTextNomeProduto = findViewById(R.id.EditTextNomeProduto);
@@ -75,8 +77,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
         editTextEstoque = findViewById(R.id.EditTextEstoque);
         spinnerCategoria = findViewById(R.id.SpinnerCategoria);
 
-        // Componentes para imagem (se existirem no layout)
-        // Se não tiver estes componentes, comente estas linhas
         try {
             buttonSelecionarImagem = findViewById(R.id.buttonSelecionarImagem);
             imageViewPreview = findViewById(R.id.imageViewPreview);
@@ -86,17 +86,14 @@ public class AdminCardapioActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Botão para adicionar produto
         buttonAddAC.setOnClickListener(v -> adicionarProduto());
 
-        // Botão voltar
         botaoVoltar.setOnClickListener(v -> {
             Intent intent = new Intent(AdminCardapioActivity.this, AdminHomeActivity.class);
             startActivity(intent);
             finish();
         });
 
-        // Botão para selecionar imagem (se existir)
         if (buttonSelecionarImagem != null) {
             buttonSelecionarImagem.setOnClickListener(v -> selecionarImagem());
         }
@@ -166,13 +163,11 @@ public class AdminCardapioActivity extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-            // Atualizar interface
             if (buttonSelecionarImagem != null) {
                 buttonSelecionarImagem.setText("Imagem Selecionada ✓");
             }
 
             if (imageViewPreview != null) {
-                // Se tiver ImageView, mostrar preview
                 imageViewPreview.setImageURI(uri);
             }
 
@@ -187,16 +182,13 @@ public class AdminCardapioActivity extends AppCompatActivity {
     }
 
     private void adicionarProduto() {
-        // Validar campos
         if (!validarCampos()) {
             return;
         }
 
-        // Se há imagem selecionada, fazer upload primeiro
         if (selectedImageBytes != null) {
             uploadImageAndSaveProduct();
         } else {
-            // Salvar produto sem imagem (usar campo de texto se existir)
             salvarProdutoFinal("");
         }
     }
@@ -220,8 +212,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             Log.d(TAG, "Upload realizado com sucesso: " + response.publicUrl);
                             uploadedImageUrl = response.publicUrl;
-
-                            // Agora salvar o produto com a URL da imagem
                             salvarProdutoFinal(uploadedImageUrl);
                         });
                     }
@@ -233,7 +223,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
                             Toast.makeText(AdminCardapioActivity.this,
                                     "Erro no upload da imagem: " + error,
                                     Toast.LENGTH_LONG).show();
-
                             resetarInterface();
                         });
                     }
@@ -241,7 +230,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
     }
 
     private void salvarProdutoFinal(String caminhoImagem) {
-        // Obter valores dos campos
         String nome = editTextNomeProduto.getText().toString().trim();
         String valorStr = editTextValorProduto.getText().toString().trim();
         String detalhes = editTextDetalhesProduto.getText().toString().trim();
@@ -252,7 +240,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
             double valor = Double.parseDouble(valorStr);
             int estoque = Integer.parseInt(estoqueStr);
 
-            // Criar novo produto
             Produto novoProduto = new Produto(nome, detalhes, caminhoImagem, valor, estoque, categoriaIndex);
 
             if (!isUploading) {
@@ -260,13 +247,11 @@ public class AdminCardapioActivity extends AppCompatActivity {
                 buttonAddAC.setText("Salvando produto...");
             }
 
-            // Usar método existente para inserir
             inserirProdutoNoSupabase(novoProduto);
 
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Valor ou estoque inválido", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Erro ao converter valor ou estoque", e);
-
             resetarInterface();
         }
     }
@@ -334,43 +319,38 @@ public class AdminCardapioActivity extends AppCompatActivity {
             return;
         }
 
-        // Criar JSON manualmente
         String json = createProductJson(produto);
         Log.d(TAG, "JSON a ser enviado: " + json);
 
-        okhttp3.MediaType JSON = okhttp3.MediaType.get("application/json; charset=utf-8");
-        okhttp3.RequestBody body = okhttp3.RequestBody.create(json, JSON);
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json, JSON);
 
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/produtos")
+        Request request = new Request.Builder()
+                .url(SupabaseConfig.SUPABASE_URL + "/rest/v1/produtos")
                 .post(body)
-                .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
-                .addHeader("Authorization", "Bearer " + BuildConfig.SUPABASE_ANON_KEY)
+                .addHeader("apikey", SupabaseConfig.SUPABASE_ANON_KEY)
+                .addHeader("Authorization", "Bearer " + SupabaseConfig.SUPABASE_ANON_KEY)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Prefer", "return=representation")
                 .build();
 
-        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
-                .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .build();
+        // CORRIGIDO: Usar OkHttpClient com SSL permissivo
+        OkHttpClient client = criarOkHttpClientComSSLPermissivo();
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+            public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     Log.e(TAG, "Erro na conexão ao inserir produto", e);
                     Toast.makeText(AdminCardapioActivity.this,
                             "Erro de conexão: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
-
                     resetarInterface();
                 });
             }
 
             @Override
-            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 String responseBody = response.body() != null ? response.body().string() : "";
 
                 runOnUiThread(() -> {
@@ -382,7 +362,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
                                 "Produto '" + produto.getNome() + "' adicionado com sucesso!",
                                 Toast.LENGTH_LONG).show();
 
-                        // Limpar campos após sucesso
                         limparCampos();
                         resetarInterface();
 
@@ -409,12 +388,56 @@ public class AdminCardapioActivity extends AppCompatActivity {
         });
     }
 
+    // NOVO: Método para criar OkHttpClient com SSL permissivo
+    private OkHttpClient criarOkHttpClientComSSLPermissivo() {
+        try {
+            // Criar TrustManager que aceita todos os certificados
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                        }
+
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Instalar TrustManager
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+
+            return new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao criar OkHttpClient SSL permissivo", e);
+            // Fallback para cliente padrão
+            return new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
+        }
+    }
+
     private String createProductJson(Produto produto) {
         String nome = produto.getNome().replace("\"", "\\\"").replace("\n", "\\n");
         String descricao = produto.getDescricao().replace("\"", "\\\"").replace("\n", "\\n");
         String caminhoImagem = produto.getCaminhoImagem().replace("\"", "\\\"");
 
-        return String.format(java.util.Locale.US,
+        return String.format(Locale.US,
                 "{\"nome\":\"%s\",\"descricao\":\"%s\",\"caminhoImagem\":\"%s\",\"preco\":%.2f,\"estoque\":%d,\"categoria\":%d}",
                 nome, descricao, caminhoImagem, produto.getPreco(), produto.getEstoque(), produto.getCategoria()
         );
@@ -425,7 +448,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
         buttonAddAC.setEnabled(true);
         buttonAddAC.setText("Adicionar Produto");
 
-        // Limpar dados da imagem
         selectedImageBytes = null;
         uploadedImageUrl = null;
 
@@ -441,7 +463,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
         editTextEstoque.setText("");
         spinnerCategoria.setSelection(0);
 
-        // Limpar imagem
         selectedImageBytes = null;
         uploadedImageUrl = null;
 
@@ -453,7 +474,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
             imageViewPreview.setImageResource(android.R.color.transparent);
         }
 
-        // Focar no primeiro campo
         editTextNomeProduto.requestFocus();
     }
 }

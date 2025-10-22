@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
+    android:background="@drawable/background_gradient"
     tools:context=".AdminCardapioActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -35,6 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Voltar"
+        android:backgroundTint="@color/dark_green"
         app:layout_constraintStart_toEndOf="@id/guideEsquerda"
         app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
 
@@ -165,6 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Selecionar Imagem"
+                android:backgroundTint="@color/dark_green"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
             <ImageView
