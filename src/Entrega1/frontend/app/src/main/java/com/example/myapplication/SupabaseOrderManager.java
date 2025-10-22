@@ -286,7 +286,9 @@ public class SupabaseOrderManager {
 
     private Order convertSupabaseResponseToOrder(OrderSupabaseResponse response) {
         Order order = new Order();
+
         try {
+            // Definir ID
             java.lang.reflect.Field idField = Order.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(order, response.id);
@@ -294,8 +296,18 @@ public class SupabaseOrderManager {
             Log.e(TAG, "Erro ao definir ID do pedido", e);
         }
 
+        // Definir outros campos
         order.setStudentId(String.valueOf(response.idUsuario));
         order.setStatus(response.status);
+        order.setTotal(response.totalAmount);  // ADICIONAR
+
+        // CRÍTICO: Definir created_at
+        if (response.createdAt != null && !response.createdAt.isEmpty()) {
+            order.setCreatedAt(response.createdAt);
+            Log.d(TAG, "Created_at definido: " + response.createdAt);
+        } else {
+            Log.w(TAG, "Created_at está null na resposta do Supabase!");
+        }
 
         return order;
     }

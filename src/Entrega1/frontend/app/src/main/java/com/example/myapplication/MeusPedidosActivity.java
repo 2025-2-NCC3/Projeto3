@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class MeusPedidosActivity extends AppCompatActivity {
+    private static final String TAG = "MeusPedidosActivity";
 
     private ImageButton btnVoltar;
     private SwipeRefreshLayout swipeRefresh;
@@ -37,6 +40,8 @@ public class MeusPedidosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meus_pedidos);
+
+        Log.d(TAG, "onCreate - Iniciando MeusPedidosActivity");
 
         inicializarViews();
         inicializarDados();
@@ -60,6 +65,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
         SessionManager sessionManager = SessionManager.getInstance(this);
 
         if (!sessionManager.isLoggedIn()) {
+            Log.e(TAG, "Usuário não está logado");
             Toast.makeText(this, "Faça login para ver seus pedidos", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -67,6 +73,10 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
         studentId = sessionManager.getUserId();
         accessToken = sessionManager.getAccessToken();
+
+        Log.d(TAG, "Student ID: " + studentId);
+        Log.d(TAG, "Token disponível: " + (accessToken != null ? "SIM" : "NÃO"));
+
         pedidos = new ArrayList<>();
     }
 
@@ -82,6 +92,8 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
     private void carregarPedidos() {
+        Log.d(TAG, "Carregando pedidos do estudante: " + studentId);
+
         if (!swipeRefresh.isRefreshing()) {
             progressBarCarregando.setVisibility(View.VISIBLE);
         }
@@ -92,6 +104,8 @@ public class MeusPedidosActivity extends AppCompatActivity {
                 new SupabaseOrderManager.OrdersCallback() {
                     @Override
                     public void onSuccess(List<Order> orders) {
+                        Log.d(TAG, "Pedidos carregados com sucesso: " + orders.size());
+
                         runOnUiThread(() -> {
                             progressBarCarregando.setVisibility(View.GONE);
                             swipeRefresh.setRefreshing(false);
@@ -112,10 +126,14 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(String error) {
+                        Log.e(TAG, "Erro ao carregar pedidos: " + error);
+
                         runOnUiThread(() -> {
                             progressBarCarregando.setVisibility(View.GONE);
                             swipeRefresh.setRefreshing(false);
-                            Toast.makeText(MeusPedidosActivity.this, "Erro: " + error, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MeusPedidosActivity.this,
+                                    "Erro ao carregar pedidos: " + error,
+                                    Toast.LENGTH_LONG).show();
                             layoutPedidosVazio.setVisibility(View.VISIBLE);
                         });
                     }
@@ -138,21 +156,34 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Order pedido = pedidos.get(position);
+            try {
+                Order pedido = pedidos.get(position);
 
-            holder.tvCodigoPedido.setText(pedido.getCode());
+                Log.d(TAG, "Binding pedido position " + position + ": " + pedido.getId());
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
-            holder.tvDataPedido.setText(formatter.format(pedido.getCreatedAt()));
+                // Código do pedido
+                holder.tvCodigoPedido.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
 
-            holder.tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
+                // CORRIGIDO: Usar getCreatedAtDate() em vez de getCreatedAt()
+                Date dataPedido = pedido.getCreatedAtDate();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
+                holder.tvDataPedido.setText(formatter.format(dataPedido));
 
-            String status = pedido.getStatus();
-            holder.tvStatus.setText(PedidoUtils.getStatusText(status));
-            holder.cardStatus.setCardBackgroundColor(PedidoUtils.getStatusColor(status));
-            holder.tvStatusIcon.setText(PedidoUtils.getStatusIcon(status));
+                // Valor total
+                holder.tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
 
-            holder.itemView.setOnClickListener(v -> mostrarDetalhesPedido(pedido));
+                // Status
+                String status = pedido.getStatus();
+                holder.tvStatus.setText(PedidoUtils.getStatusText(status));
+                holder.cardStatus.setCardBackgroundColor(PedidoUtils.getStatusColor(status));
+                holder.tvStatusIcon.setText(PedidoUtils.getStatusIcon(status));
+
+                // Click listener
+                holder.itemView.setOnClickListener(v -> mostrarDetalhesPedido(pedido));
+
+            } catch (Exception e) {
+                Log.e(TAG, "Erro ao fazer bind do pedido na posição " + position, e);
+            }
         }
 
         @Override
@@ -177,24 +208,36 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
     private void mostrarDetalhesPedido(Order pedido) {
-        StringBuilder detalhes = new StringBuilder();
-        detalhes.append("📋 Código: ").append(pedido.getCode()).append("\n\n");
+        try {
+            StringBuilder detalhes = new StringBuilder();
+            detalhes.append("📋 Código: ").append(pedido.getCode() != null ? pedido.getCode() : "N/A").append("\n\n");
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
-        detalhes.append("📅 Data: ").append(formatter.format(pedido.getCreatedAt())).append("\n\n");
-        detalhes.append("💰 Total: R$ ").append(String.format(Locale.getDefault(), "%.2f", pedido.getTotal())).append("\n\n");
-        detalhes.append("📊 Status: ").append(PedidoUtils.getStatusText(pedido.getStatus()));
+            // CORRIGIDO: Usar getCreatedAtDate()
+            Date dataPedido = pedido.getCreatedAtDate();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
+            detalhes.append("📅 Data: ").append(formatter.format(dataPedido)).append("\n\n");
 
-        new AlertDialog.Builder(this)
-                .setTitle("Detalhes do Pedido")
-                .setMessage(detalhes.toString())
-                .setPositiveButton("OK", null)
-                .show();
+            detalhes.append("💰 Total: R$ ").append(String.format(Locale.getDefault(), "%.2f", pedido.getTotal())).append("\n\n");
+            detalhes.append("📊 Status: ").append(PedidoUtils.getStatusText(pedido.getStatus()));
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Detalhes do Pedido")
+                    .setMessage(detalhes.toString())
+                    .setPositiveButton("OK", null)
+                    .show();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao mostrar detalhes do pedido", e);
+            Toast.makeText(this, "Erro ao exibir detalhes", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume - Recarregando pedidos");
         carregarPedidos();
     }
 }
+
+

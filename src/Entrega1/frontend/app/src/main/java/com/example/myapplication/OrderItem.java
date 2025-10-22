@@ -1,10 +1,25 @@
 package com.example.myapplication;
 
-public class OrderItem {
-    private String productId;  // MUDADO: int para String
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
+
+public class OrderItem implements Serializable {
+
+    @SerializedName("product_id")
+    private String productId;
+
+    @SerializedName("product_name")
     private String productName;
+
+    @SerializedName("quantity")
     private int quantity;
+
+    @SerializedName("price")
     private double price;
+
+    // Construtor vazio para Gson
+    public OrderItem() {
+    }
 
     public OrderItem(String productId, String productName, int quantity, double price) {
         this.productId = productId;
@@ -13,11 +28,11 @@ public class OrderItem {
         this.price = price;
     }
 
-    public String getProductId() {  // MUDADO: retorna String
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {  // MUDADO: recebe String
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

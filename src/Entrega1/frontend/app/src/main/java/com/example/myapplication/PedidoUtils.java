@@ -1,229 +1,114 @@
 package com.example.myapplication;
 
-import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.util.Log;
 
 public class PedidoUtils {
+    private static final String TAG = "PedidoUtils";
 
-    // ========================================
-    // NAVEGAÇÃO ENTRE TELAS
-    // ========================================
-
-    public static void abrirCriarPedido(Context context) {
-        Intent intent = new Intent(context, CriarPedidoActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void abrirMeusPedidos(Context context) {
-        Intent intent = new Intent(context, MeusPedidosActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void abrirCarrinho(Context context) {
-        Intent intent = new Intent(context, CarrinhoActivity.class);
-        context.startActivity(intent);
-    }
-
-    // ========================================
-    // FORMATAÇÃO
-    // ========================================
-
-    public static String formatarPreco(double preco) {
-        return String.format("R$ %.2f", preco);
-    }
-
-    public static String formatarData(java.util.Date data) {
-        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
-        return formatter.format(data);
-    }
-
-    // ========================================
-    // STATUS DO PEDIDO
-    // ========================================
-
-    public static int getStatusColor(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return 0xFFFFF9C4; // Amarelo claro
-            case "CONFIRMADO":
-                return 0xFFC8E6C9; // Verde claro
-            case "PREPARANDO":
-                return 0xFFFFE0B2; // Laranja claro
-            case "PRONTO":
-                return 0xFF81C784; // Verde
-            case "ENTREGUE":
-                return 0xFFB2DFDB; // Azul claro
-            case "CANCELADO":
-                return 0xFFFFCDD2; // Vermelho claro
-            default:
-                return 0xFFE0E0E0; // Cinza
-        }
-    }
-
+    /**
+     * Retorna o texto formatado do status
+     */
     public static String getStatusText(String status) {
-        switch (status) {
-            case "PENDENTE":
+        // CRÍTICO: Verificar se status é null
+        if (status == null || status.isEmpty()) {
+            Log.w(TAG, "Status está null ou vazio, retornando 'Desconhecido'");
+            return "Desconhecido";
+        }
+
+        switch (status.toLowerCase()) {
+            case "pendente":
                 return "Pendente";
-            case "CONFIRMADO":
-                return "Confirmado";
-            case "PREPARANDO":
-                return "Preparando";
-            case "PRONTO":
+            case "preparando":
+                return "Em Preparo";
+            case "pronto":
                 return "Pronto";
-            case "ENTREGUE":
+            case "entregue":
                 return "Entregue";
-            case "CANCELADO":
+            case "cancelado":
                 return "Cancelado";
             default:
-                return status;
+                Log.w(TAG, "Status desconhecido: " + status);
+                return "Desconhecido";
         }
     }
 
+    /**
+     * Retorna a cor do status
+     */
+    public static int getStatusColor(String status) {
+        // CRÍTICO: Verificar se status é null
+        if (status == null || status.isEmpty()) {
+            return Color.parseColor("#808080"); // Cinza
+        }
+
+        switch (status.toLowerCase()) {
+            case "pendente":
+                return Color.parseColor("#FF9800"); // Laranja
+            case "preparando":
+                return Color.parseColor("#2196F3"); // Azul
+            case "pronto":
+                return Color.parseColor("#4CAF50"); // Verde
+            case "entregue":
+                return Color.parseColor("#9E9E9E"); // Cinza
+            case "cancelado":
+                return Color.parseColor("#F44336"); // Vermelho
+            default:
+                return Color.parseColor("#808080"); // Cinza
+        }
+    }
+
+    /**
+     * Retorna o ícone emoji do status
+     */
     public static String getStatusIcon(String status) {
-        switch (status) {
-            case "PENDENTE":
+        // CRÍTICO: Verificar se status é null
+        if (status == null || status.isEmpty()) {
+            return "❓";
+        }
+
+        switch (status.toLowerCase()) {
+            case "pendente":
                 return "⏳";
-            case "CONFIRMADO":
-                return "✅";
-            case "PREPARANDO":
+            case "preparando":
                 return "👨‍🍳";
-            case "PRONTO":
-                return "🔔";
-            case "ENTREGUE":
-                return "✨";
-            case "CANCELADO":
+            case "pronto":
+                return "✅";
+            case "entregue":
+                return "🎉";
+            case "cancelado":
                 return "❌";
             default:
-                return "📦";
+                return "❓";
         }
     }
 
-    public static String getStatusDescricao(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return "Aguardando confirmação";
-            case "CONFIRMADO":
-                return "Pedido confirmado";
-            case "PREPARANDO":
-                return "Sendo preparado";
-            case "PRONTO":
-                return "Pronto para retirada";
-            case "ENTREGUE":
-                return "Pedido entregue";
-            case "CANCELADO":
-                return "Pedido cancelado";
-            default:
-                return "Status desconhecido";
+    /**
+     * Formata data do pedido
+     */
+    public static String formatarData(String createdAt) {
+        if (createdAt == null || createdAt.isEmpty()) {
+            return "Data não disponível";
+        }
+
+        try {
+            java.text.SimpleDateFormat inputFormat = new java.text.SimpleDateFormat(
+                    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                    java.util.Locale.US
+            );
+            inputFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+
+            java.util.Date date = inputFormat.parse(createdAt);
+
+            java.text.SimpleDateFormat outputFormat = new java.text.SimpleDateFormat(
+                    "dd/MM/yyyy 'às' HH:mm",
+                    java.util.Locale.getDefault()
+            );
+
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao formatar data: " + createdAt, e);
+            return "Data inválida";
         }
     }
-
-    // ========================================
-    // VALIDAÇÕES
-    // ========================================
-
-    public static boolean podeCancelarPedido(Order pedido) {
-        if (pedido == null) return false;
-        String status = pedido.getStatus();
-        return status.equals("PENDENTE") || status.equals("CONFIRMADO");
-    }
-
-    public static boolean podeAlterarStatus(Order pedido) {
-        if (pedido == null) return false;
-        String status = pedido.getStatus();
-        return !status.equals("ENTREGUE") && !status.equals("CANCELADO");
-    }
-
-    public static boolean isEmailValido(String email) {
-        if (email == null || email.isEmpty()) return false;
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    public static boolean isConectado(Context context) {
-        android.net.ConnectivityManager cm =
-                (android.net.ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            android.net.NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        }
-        return false;
-    }
-
-    // ========================================
-    // CÁLCULOS
-    // ========================================
-
-    public static double calcularSubtotal(int quantidade, double precoUnitario) {
-        return quantidade * precoUnitario;
-    }
-
-    public static double calcularDesconto(double valorTotal, double percentualDesconto) {
-        return valorTotal * (percentualDesconto / 100.0);
-    }
-
-    public static double aplicarDesconto(double valorTotal, double percentualDesconto) {
-        double desconto = calcularDesconto(valorTotal, percentualDesconto);
-        return valorTotal - desconto;
-    }
-
-    // ========================================
-    // MENSAGENS
-    // ========================================
-
-    public static String getMensagemSucesso(Order order) {
-        return "🎉 Pedido criado com sucesso!\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus());
-    }
-
-    public static String getMensagemErro(String erro) {
-        if (erro == null) return "Erro desconhecido";
-
-        if (erro.contains("Estoque insuficiente")) {
-            return "😔 Ops! Alguns produtos estão sem estoque.\n\nPor favor, ajuste as quantidades.";
-        } else if (erro.contains("conexão") || erro.contains("network")) {
-            return "🌐 Sem conexão com a internet.\n\nVerifique sua conexão e tente novamente.";
-        } else if (erro.contains("401") || erro.contains("403")) {
-            return "🔒 Sua sessão expirou.\n\nFaça login novamente.";
-        } else {
-            return "❌ " + erro;
-        }
-    }
-
-    // ========================================
-    // COMPARTILHAMENTO
-    // ========================================
-
-    public static void compartilharPedido(Context context, Order order) {
-        String texto = "📦 Meu Pedido\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus()) + "\n" +
-                "Data: " + formatarData(order.getCreatedAt());
-
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, texto);
-        sendIntent.setType("text/plain");
-
-        Intent shareIntent = Intent.createChooser(sendIntent, "Compartilhar Pedido");
-        context.startActivity(shareIntent);
-    }
-
-    // ========================================
-    // CONSTANTES ÚTEIS
-    // ========================================
-
-    public static final String EXTRA_ORDER_ID = "order_id";
-    public static final String EXTRA_ORDER_CODE = "order_code";
-    public static final String EXTRA_PRODUTO = "produto";
-    public static final String EXTRA_QUANTIDADE = "quantidade";
-
-    // Status
-    public static final String STATUS_PENDENTE = "PENDENTE";
-    public static final String STATUS_CONFIRMADO = "CONFIRMADO";
-    public static final String STATUS_PREPARANDO = "PREPARANDO";
-    public static final String STATUS_PRONTO = "PRONTO";
-    public static final String STATUS_ENTREGUE = "ENTREGUE";
-    public static final String STATUS_CANCELADO = "CANCELADO";
 }
