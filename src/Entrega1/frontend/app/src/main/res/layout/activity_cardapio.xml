@@ -10,6 +10,8 @@
     android:background="@drawable/background_gradient"
     tools:context=".CardapioAlunosActivity">
 
+
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideEsquerda"
         android:layout_width="wrap_content"
@@ -58,7 +60,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="left"
+            android:gravity="center"
             android:layout_marginLeft="8dp"
             android:text="Cardápio"
             android:textSize="32sp"
@@ -181,5 +183,14 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <include
+        android:id="@+id/includeNavbar"
+        layout="@layout/navbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,6 +56,8 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
         // Carregar produtos do banco de dados
         carregarProdutosDoSupabase();
+        // Carregar a navbar ebaa
+        NavbarHelper.setupNavbar(this, "cardapio");
     }
 
     private void carregarProdutosDoSupabase() {
