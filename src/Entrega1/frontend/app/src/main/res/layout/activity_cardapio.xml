@@ -32,7 +32,7 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <!-- Cabeçalho com botões -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -40,15 +40,19 @@
         android:gravity="center_vertical"
         app:layout_constraintStart_toEndOf="@id/guideEsquerda"
         app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo">
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo" >
 
         <Button
             android:id="@+id/botaoVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Voltar"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:backgroundTint="@color/dark_green"
-            android:layout_marginEnd="8dp" />
+             />
+
 
         <TextView
             android:id="@+id/tituloPagina"
@@ -100,6 +104,13 @@
         </LinearLayout>
 
     </LinearLayout>
+
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
     <!-- Filtros por categoria -->
     <HorizontalScrollView

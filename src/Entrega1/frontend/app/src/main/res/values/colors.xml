@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="gray">#7C7C7C</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="off_white">#F4F4F4</color>
+    <color name="verdefecap">#235135</color>
+    <color name="beige">#FDF4E2</color>
     <color name="dark_green">#235135</color>
     <color name="background_beige">#ece3da</color>
     <color name="bright_green">#1FE423</color>
@@ -11,7 +15,6 @@
     <color name="warm_beige">#E8DBCE</color>
     <color name="accent_gold">#D4AF37</color>
     <color name="text_light">#8A8175</color>
-    <color name="gray">#FF808080</color>
     <color name="light_gray">#FFCCCCCC</color>
     <color name="orange">#FFFF8C00</color>
     <color name="green">#FF008000</color>
