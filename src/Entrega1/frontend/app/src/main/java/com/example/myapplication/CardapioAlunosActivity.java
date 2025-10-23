@@ -22,11 +22,12 @@ import java.util.Locale;
 public class CardapioAlunosActivity extends AppCompatActivity {
     private static final String TAG = "CardapioAlunosActivity";
 
-    Button botaoVoltar, botaoAdmin;
+    Button botaoVoltar, btnCarrinho, btnMeusPedidos;
     LinearLayout boxLista;
     private SupabaseClient supabaseClient;
     private List<Produto> produtos;
     private SessionManager sessionManager;
+    private CarrinhoHelper carrinhoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,27 +36,65 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
         // Inicializar componentes
         botaoVoltar = findViewById(R.id.botaoVoltar);
+        btnCarrinho = findViewById(R.id.btnCarrinho);
+        btnMeusPedidos = findViewById(R.id.btnMeusPedidos);
         boxLista = findViewById(R.id.boxLista);
         produtos = new ArrayList<>();
         sessionManager = SessionManager.getInstance(getApplicationContext());
+        carrinhoHelper = CarrinhoHelper.getInstance(this);
 
         // Inicializar SupabaseClient
         supabaseClient = SupabaseClient.getInstance(this);
 
-        // Retornar à MainActivity
+        // Configurar listeners dos botões
+        configurarBotoes();
+
+        // Carregar produtos do banco de dados
+        carregarProdutosDoSupabase();
+
+        // Atualizar badge do carrinho
+        atualizarBadgeCarrinho();
+    }
+
+    private void configurarBotoes() {
+        // Botão Voltar
         botaoVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sessionManager.logout();
                 Intent intent = new Intent(CardapioAlunosActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
-
-
         });
 
-        // Carregar produtos do banco de dados
-        carregarProdutosDoSupabase();
+        // Botão Carrinho
+        btnCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CardapioAlunosActivity.this, CarrinhoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Botão Meus Pedidos
+        btnMeusPedidos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CardapioAlunosActivity.this, MeusPedidosActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void atualizarBadgeCarrinho() {
+        int quantidadeItens = carrinhoHelper.getQuantidadeTotal();
+
+        if (quantidadeItens > 0) {
+            btnCarrinho.setText("🛒 " + quantidadeItens);
+        } else {
+            btnCarrinho.setText("🛒");
+        }
     }
 
     private void carregarProdutosDoSupabase() {
@@ -100,8 +139,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
     private void carregarProdutosExemplo() {
         // Produtos de exemplo caso não consiga conectar com o Supabase
-
-
         exibirProdutos(produtos);
     }
 
@@ -134,7 +171,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Formatar preço
             precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
 
-            // CORREÇÃO: Carregar imagem do Supabase usando Glide
+            // Carregar imagem do Supabase usando Glide
             String caminhoImagem = produto.getCaminhoImagem();
 
             if (caminhoImagem != null && !caminhoImagem.isEmpty()) {
@@ -274,5 +311,8 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         // Recarregar cardápio quando voltar de outras telas
         Log.d(TAG, "onResume - Recarregando cardápio");
         carregarProdutosDoSupabase();
+
+        // Atualizar badge do carrinho
+        atualizarBadgeCarrinho();
     }
 }

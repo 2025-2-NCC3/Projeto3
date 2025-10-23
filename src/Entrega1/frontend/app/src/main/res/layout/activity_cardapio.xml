@@ -53,6 +53,7 @@
             android:backgroundTint="@color/dark_green"
              />
 
+
         <TextView
             android:id="@+id/tituloPagina"
             android:layout_width="0dp"
@@ -61,14 +62,55 @@
             android:gravity="left"
             android:layout_marginLeft="8dp"
             android:text="Cardápio"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <!-- Container vertical para os botões -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botão Carrinho (em cima) -->
+            <Button
+                android:id="@+id/btnCarrinho"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="🛒"
+                android:textSize="18sp"
+                android:backgroundTint="@color/dark_green"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Botão Meus Pedidos (embaixo) -->
+            <Button
+                android:id="@+id/btnMeusPedidos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="📦"
+                android:textSize="18sp"
+                android:backgroundTint="@color/dark_green"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
             android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Filtros por categoria -->
     <HorizontalScrollView

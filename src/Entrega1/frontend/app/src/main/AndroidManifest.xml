@@ -42,6 +42,10 @@
         <activity android:name=".DetalhesPedidoActivity"/>
         <activity android:name=".CriarPedidoActivity"/>
         <activity android:name=".MeusPedidosActivity"/>
+        <activity android:name=".AdminPedidosActivity">
+        </activity>
+        <activity android:name=".AdminPedidoDetalhesActivity">
+        </activity>
 
 
     </application>
