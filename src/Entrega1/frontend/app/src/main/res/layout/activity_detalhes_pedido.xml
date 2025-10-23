@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="#FFFFFF">
 
-    <!-- Header com botão voltar -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:background="@color/dark_green"
+        android:padding="8dp"
+        android:elevation="4dp">
 
         <Button
             android:id="@+id/btn_voltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="← Voltar"
-            android:backgroundTint="@color/gray"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#558B2F"
             style="@style/Widget.AppCompat.Button.Colored" />
 
         <TextView
@@ -30,21 +33,19 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:textColor="@color/black" />
+            android:textColor="#FFFFFF" />
 
         <View
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- Card com informações principais -->
-    <androidx.cardview.widget.CardView
+    <!-- Conteúdo com ScrollView -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,160 +53,186 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ID do Pedido -->
-            <LinearLayout
+            <!-- Card de Informações -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="ID do Pedido:"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="#FFFFFF">
 
-                <TextView
-                    android:id="@+id/tv_pedido_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carregando..."
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
+                    <!-- ID do Pedido -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
 
-            <!-- Data do Pedido -->
-            <LinearLayout
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="ID do Pedido:"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+
+                        <TextView
+                            android:id="@+id/tv_pedido_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carregando..."
+                            android:textSize="14sp"
+                            android:textColor="#555555" />
+                    </LinearLayout>
+
+                    <!-- Data -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Data:"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+
+                        <TextView
+                            android:id="@+id/tv_data_pedido"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carregando..."
+                            android:textSize="14sp"
+                            android:textColor="#555555" />
+                    </LinearLayout>
+
+                    <!-- Status -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Status:"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+
+                        <TextView
+                            android:id="@+id/tv_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carregando..."
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF9800" />
+                    </LinearLayout>
+
+                    <!-- Cliente -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cliente:"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="#000000" />
+
+                        <TextView
+                            android:id="@+id/tv_cliente_nome"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carregando..."
+                            android:textSize="14sp"
+                            android:textColor="#555555" />
+                    </LinearLayout>
+
+                    <!-- Total -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total:"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:textColor="#000000" />
+
+                        <TextView
+                            android:id="@+id/tv_total_pedido"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="R$ 0,00"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/dark_green" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Título Itens -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:text="Itens do Pedido"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="12dp" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Data:"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/tv_data_pedido"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carregando..."
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-
-            <!-- Status -->
-            <LinearLayout
+            <!-- RecyclerView dos Itens -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_itens_pedido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp"
+                android:nestedScrollingEnabled="false" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Status:"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/tv_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carregando..."
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/orange" />
-            </LinearLayout>
-
-            <!-- Cliente -->
-            <LinearLayout
+            <!-- Botão Cancelar -->
+            <Button
+                android:id="@+id/btn_cancelar_pedido"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_height="56dp"
+                android:text="Cancelar Pedido"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#F44336"
+                style="@style/Widget.AppCompat.Button.Colored" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cliente:"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/tv_cliente_nome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carregando..."
-                    android:textSize="14sp"
-                    android:textColor="@color/gray" />
-            </LinearLayout>
-
-            <!-- Total -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Total:"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="@color/black" />
-
-                <TextView
-                    android:id="@+id/tv_total_pedido"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="R$ 0,00"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/green" />
-            </LinearLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Título Itens -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Itens do Pedido"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="12dp" />
-
-    <!-- RecyclerView dos Itens -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_itens_pedido"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Botão Cancelar Pedido -->
-    <Button
-        android:id="@+id/btn_cancelar_pedido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cancelar Pedido"
-        android:backgroundTint="@color/red"
-        android:textColor="@color/white"
-        style="@style/Widget.AppCompat.Button.Colored" />
+    </ScrollView>
 
 </LinearLayout>

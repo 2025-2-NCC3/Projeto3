@@ -286,15 +286,46 @@ public class SupabaseOrderManager {
 
     private Order convertSupabaseResponseToOrder(OrderSupabaseResponse response) {
         Order order = new Order();
+
         try {
+            // Definir ID usando reflection
             java.lang.reflect.Field idField = Order.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(order, response.id);
+
+            // Definir createdAt usando reflection
+            java.lang.reflect.Field createdAtField = Order.class.getDeclaredField("createdAt");
+            createdAtField.setAccessible(true);
+
+            // Converter string ISO 8601 para Date
+            if (response.createdAt != null) {
+                try {
+                    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                    Date date = isoFormat.parse(response.createdAt.replace("Z", "").substring(0, 19));
+                    createdAtField.set(order, date);
+                } catch (Exception e) {
+                    Log.e(TAG, "Erro ao parsear data: " + response.createdAt, e);
+                    createdAtField.set(order, new Date()); // Data atual como fallback
+                }
+            }
+
+            // Definir code usando reflection
+            java.lang.reflect.Field codeField = Order.class.getDeclaredField("code");
+            codeField.setAccessible(true);
+            codeField.set(order, response.code != null ? response.code : "ORD" + response.id.substring(0, Math.min(6, response.id.length())));
+
+            // Definir total usando reflection
+            java.lang.reflect.Field totalField = Order.class.getDeclaredField("total");
+            totalField.setAccessible(true);
+            totalField.set(order, response.totalAmount);
+
         } catch (Exception e) {
-            Log.e(TAG, "Erro ao definir ID do pedido", e);
+            Log.e(TAG, "Erro ao definir campos do pedido", e);
         }
 
+        // Campos públicos normais
         order.setStudentId(String.valueOf(response.idUsuario));
+        order.setStudentName(response.studentName != null ? response.studentName : "Usuário ID: " + response.idUsuario);
         order.setStatus(response.status);
 
         return order;
@@ -304,12 +335,18 @@ public class SupabaseOrderManager {
     private static class OrderSupabaseRequest {
         @SerializedName("id_usuario")
         public String idUsuario;
+
+        @SerializedName("nome_usuario")
+        public String nomeUsuario;
+
         public String status;
+
         @SerializedName("total_amount")
         public double totalAmount;
 
         public OrderSupabaseRequest(Order order) {
             this.idUsuario = order.getStudentId();
+            this.nomeUsuario = order.getStudentName();
             this.status = order.getStatus();
             this.totalAmount = order.getTotal();
         }
@@ -334,13 +371,22 @@ public class SupabaseOrderManager {
 
     private static class OrderSupabaseResponse {
         public String id;
+
         @SerializedName("id_usuario")
         public int idUsuario;
+
+        @SerializedName("nome_usuario")
+        public String studentName;
+
         public String status;
+
         @SerializedName("total_amount")
         public double totalAmount;
+
         @SerializedName("created_at")
         public String createdAt;
+
+        public String code;
     }
 
     private static class StatusUpdateRequest {

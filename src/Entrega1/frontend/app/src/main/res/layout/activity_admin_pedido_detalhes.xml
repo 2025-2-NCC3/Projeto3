@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#F5F5F5">
 
     <!-- Header -->
     <RelativeLayout
-        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="@color/dark_green"
@@ -29,9 +29,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Detalhes do Pedido"
+            android:text="Detalhes do Pedido - Admin"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </RelativeLayout>
@@ -41,26 +41,22 @@
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
         android:visibility="visible" />
 
     <!-- Conteúdo -->
-    <LinearLayout
-        android:id="@+id/layoutContent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshDetalhes"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshDetalhes"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/layoutContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,7 +70,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#FFFFFF">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -116,7 +113,8 @@
                             android:textColor="#424242"
                             android:textSize="16sp"
                             android:drawableStart="@android:drawable/ic_menu_myplaces"
-                            android:drawablePadding="8dp" />
+                            android:drawablePadding="8dp"
+                            android:drawableTint="#757575" />
 
                         <TextView
                             android:id="@+id/tvOrderDate"
@@ -127,7 +125,8 @@
                             android:textColor="#757575"
                             android:textSize="14sp"
                             android:drawableStart="@android:drawable/ic_menu_recent_history"
-                            android:drawablePadding="8dp" />
+                            android:drawablePadding="8dp"
+                            android:drawableTint="#757575" />
 
                         <TextView
                             android:id="@+id/tvOrderCode"
@@ -139,7 +138,8 @@
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:drawableStart="@android:drawable/ic_secure"
-                            android:drawablePadding="8dp" />
+                            android:drawablePadding="8dp"
+                            android:drawableTint="#4CAF50" />
 
                     </LinearLayout>
 
@@ -160,13 +160,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="#FFFFFF">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewItems"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="8dp" />
+                        android:padding="8dp"
+                        android:nestedScrollingEnabled="false" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -176,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp"
+                    app:cardElevation="4dp"
                     app:cardBackgroundColor="@color/dark_green">
 
                     <LinearLayout
@@ -217,23 +219,26 @@
                     android:text="✅ Confirmar Retirada"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:background="@color/dark_green"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/dark_green"
+                    style="@style/Widget.AppCompat.Button.Colored" />
 
                 <Button
                     android:id="@+id/btnCancelarPedido"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
                     android:text="❌ Cancelar Pedido"
                     android:textSize="16sp"
-                    android:background="#F44336"
+                    android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    style="@style/Widget.AppCompat.Button.Borderless" />
+                    android:backgroundTint="#F44336"
+                    style="@style/Widget.AppCompat.Button.Colored" />
 
             </LinearLayout>
 
         </ScrollView>
 
-    </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-</RelativeLayout>
+</LinearLayout>

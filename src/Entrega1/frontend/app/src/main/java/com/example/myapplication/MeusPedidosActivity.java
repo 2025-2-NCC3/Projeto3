@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -152,7 +151,8 @@ public class MeusPedidosActivity extends AppCompatActivity {
             holder.cardStatus.setCardBackgroundColor(PedidoUtils.getStatusColor(status));
             holder.tvStatusIcon.setText(PedidoUtils.getStatusIcon(status));
 
-            holder.itemView.setOnClickListener(v -> mostrarDetalhesPedido(pedido));
+            // MUDANÇA AQUI: Abre a tela de detalhes em vez do AlertDialog
+            holder.itemView.setOnClickListener(v -> abrirDetalhesPedido(pedido));
         }
 
         @Override
@@ -176,20 +176,12 @@ public class MeusPedidosActivity extends AppCompatActivity {
         }
     }
 
-    private void mostrarDetalhesPedido(Order pedido) {
-        StringBuilder detalhes = new StringBuilder();
-        detalhes.append("📋 Código: ").append(pedido.getCode()).append("\n\n");
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
-        detalhes.append("📅 Data: ").append(formatter.format(pedido.getCreatedAt())).append("\n\n");
-        detalhes.append("💰 Total: R$ ").append(String.format(Locale.getDefault(), "%.2f", pedido.getTotal())).append("\n\n");
-        detalhes.append("📊 Status: ").append(PedidoUtils.getStatusText(pedido.getStatus()));
-
-        new AlertDialog.Builder(this)
-                .setTitle("Detalhes do Pedido")
-                .setMessage(detalhes.toString())
-                .setPositiveButton("OK", null)
-                .show();
+    private void abrirDetalhesPedido(Order pedido) {
+        Intent intent = new Intent(this, DetalhesPedidoActivity.class);
+        intent.putExtra("pedido_id", pedido.getId());
+        intent.putExtra("access_token", accessToken);
+        startActivity(intent);
     }
 
     @Override

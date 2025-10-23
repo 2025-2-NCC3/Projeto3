@@ -2,11 +2,12 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private RecyclerView recyclerViewItems;
     private Button btnConfirmarRetirada, btnCancelarPedido;
     private ProgressBar progressBar;
-    private LinearLayout layoutContent;
+    private ScrollView layoutContent;  // MUDADO: LinearLayout para ScrollView
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshDetalhes;
 
     private Order currentOrder;
@@ -42,6 +43,8 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_pedido_detalhes);
+
+        Log.d(TAG, "onCreate: Iniciando");
 
         sessionManager = SessionManager.getInstance(this);
         orderManager = SupabaseOrderManager.getInstance(this);
@@ -67,12 +70,14 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnConfirmarRetirada = findViewById(R.id.btnConfirmarRetirada);
         btnCancelarPedido = findViewById(R.id.btnCancelarPedido);
         progressBar = findViewById(R.id.progressBar);
-        layoutContent = findViewById(R.id.layoutContent);
+        layoutContent = findViewById(R.id.layoutContent);  // Agora é ScrollView
         swipeRefreshDetalhes = findViewById(R.id.swipeRefreshDetalhes);
 
         btnConfirmarRetirada.setOnClickListener(v -> confirmarRetirada());
         btnCancelarPedido.setOnClickListener(v -> cancelarPedido());
         swipeRefreshDetalhes.setOnRefreshListener(this::loadOrderDetails);
+
+        Log.d(TAG, "Views inicializadas");
     }
 
     private void loadOrderDetails() {
@@ -83,6 +88,8 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "Carregando pedido: " + orderId);
+
         if (!swipeRefreshDetalhes.isRefreshing()) {
             showLoading();
         }
@@ -91,6 +98,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         orderManager.getOrderById(orderId, token, new SupabaseOrderManager.OrderCallback() {
             @Override
             public void onSuccess(Order order) {
+                Log.d(TAG, "Pedido carregado com sucesso");
                 runOnUiThread(() -> {
                     hideLoading();
                     swipeRefreshDetalhes.setRefreshing(false);
@@ -101,6 +109,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
+                Log.e(TAG, "Erro ao carregar: " + error);
                 runOnUiThread(() -> {
                     hideLoading();
                     swipeRefreshDetalhes.setRefreshing(false);
@@ -113,7 +122,9 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     }
 
     private void displayOrderDetails(Order order) {
-        tvOrderId.setText("Pedido #" + order.getId());
+        Log.d(TAG, "Exibindo detalhes");
+
+        tvOrderId.setText("Pedido #" + order.getId().substring(0, Math.min(8, order.getId().length())));
         tvStudentName.setText(order.getStudentName() != null ? order.getStudentName() : "Aluno ID: " + order.getStudentId());
         tvOrderDate.setText("Data: " + dateFormat.format(order.getCreatedAt()));
 
@@ -127,7 +138,9 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
 
         // Configurar adapter dos itens
         OrderItemAdapter itemAdapter = new OrderItemAdapter(this);
-        itemAdapter.atualizarItens(order.getItems());
+        if (order.getItems() != null && !order.getItems().isEmpty()) {
+            itemAdapter.atualizarItens(order.getItems());
+        }
         recyclerViewItems.setAdapter(itemAdapter);
 
         // Configurar botões baseado no status
@@ -151,14 +164,14 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private int getStatusColor(String status) {
         String statusUpper = status.toUpperCase();
         switch (statusUpper) {
-            case "PENDENTE": return 0xFFFF9800; // Laranja
-            case "PREPARANDO": return 0xFF2196F3; // Azul
+            case "PENDENTE": return 0xFFFF9800;
+            case "PREPARANDO": return 0xFF2196F3;
             case "PRONTO":
-            case "CONFIRMADO": return 0xFF4CAF50; // Verde
+            case "CONFIRMADO": return 0xFF4CAF50;
             case "ENTREGUE":
-            case "RETIRADO": return 0xFF009688; // Verde-azulado
-            case "CANCELADO": return 0xFFF44336; // Vermelho
-            default: return 0xFF757575; // Cinza
+            case "RETIRADO": return 0xFF009688;
+            case "CANCELADO": return 0xFFF44336;
+            default: return 0xFF757575;
         }
     }
 
@@ -184,6 +197,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                 btnCancelarPedido.setVisibility(View.GONE);
                 break;
         }
+        Log.d(TAG, "Botões atualizados para status: " + status);
     }
 
     private void confirmarRetirada() {
@@ -205,20 +219,20 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         orderManager.confirmOrderPickup(currentOrder.getId(), token, new SupabaseOrderManager.OrderCallback() {
             @Override
             public void onSuccess(Order order) {
+                Log.d(TAG, "Retirada confirmada");
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
                     currentOrder = order;
                     displayOrderDetails(order);
-
-                    // Recarregar dados atualizados do servidor
                     loadOrderDetails();
                 });
             }
 
             @Override
             public void onError(String error) {
+                Log.e(TAG, "Erro ao confirmar: " + error);
                 runOnUiThread(() -> {
                     hideLoading();
                     btnConfirmarRetirada.setEnabled(true);
@@ -248,20 +262,20 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         orderManager.cancelOrder(currentOrder.getId(), token, new SupabaseOrderManager.OrderCallback() {
             @Override
             public void onSuccess(Order order) {
+                Log.d(TAG, "Pedido cancelado");
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
                     currentOrder = order;
                     displayOrderDetails(order);
-
-                    // Recarregar dados atualizados do servidor
                     loadOrderDetails();
                 });
             }
 
             @Override
             public void onError(String error) {
+                Log.e(TAG, "Erro ao cancelar: " + error);
                 runOnUiThread(() -> {
                     hideLoading();
                     btnCancelarPedido.setEnabled(true);
