@@ -35,10 +35,12 @@
         android:id="@+id/botaoVoltar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Voltar"
+        android:layout_marginTop="16dp"
         android:backgroundTint="@color/dark_green"
+        android:text="Voltar"
+
         app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tituloPagina"
@@ -170,6 +172,7 @@
                 android:backgroundTint="@color/dark_green"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
+
             <ImageView
                 android:id="@+id/imageViewPreview"
                 android:layout_width="120dp"
@@ -187,6 +190,7 @@
                 android:text="Adicionar Produto"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:backgroundTint="@color/dark_green"
                 android:textColor="@android:color/white"
                 android:layout_marginTop="16dp" />
 

@@ -50,6 +50,8 @@ public class AdminCardapioActivity extends AppCompatActivity {
     private String uploadedImageUrl;
     private boolean isUploading = false;
 
+    private Button buttonEditarProduto;
+
     // ActivityResultLauncher para seleção de imagem
     private ActivityResultLauncher<String> imagePickerLauncher;
 
@@ -86,6 +88,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
         editTextDetalhesProduto = findViewById(R.id.EditTextDetalhesProduto);
         editTextEstoque = findViewById(R.id.EditTextEstoque);
         spinnerCategoria = findViewById(R.id.SpinnerCategoria);
+        buttonEditarProduto = findViewById(R.id.buttonEditarProduto);
 
         // Componentes para imagem
         try {
@@ -106,7 +109,6 @@ public class AdminCardapioActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
         // Botão para selecionar imagem
         if (buttonSelecionarImagem != null) {
             buttonSelecionarImagem.setOnClickListener(v -> selecionarImagem());

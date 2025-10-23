@@ -22,6 +22,8 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private TextView textWelcome;
     private Button btnGerenciarProdutos;
+
+    private Button btnEditarProdutos;
     private Button btnGerenciarPedidos;
     private Button btnGerenciarUsuarios;
     private Button btnRelatorios;
@@ -70,6 +72,7 @@ public class AdminHomeActivity extends AppCompatActivity {
         btnGerenciarUsuarios = findViewById(R.id.btnGerenciarUsuarios);
         btnRelatorios = findViewById(R.id.btnRelatorios);
         btnVerCardapio = findViewById(R.id.btnVerCardapio);
+        btnEditarProdutos = findViewById(R.id.buttonEditarProduto);
 
         // Exibir nome do admin
         String userEmail = sessionManager.getUserEmail();
@@ -80,6 +83,10 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnGerenciarProdutos.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
+            startActivity(intent);
+        });
+        btnEditarProdutos.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
             startActivity(intent);
         });
