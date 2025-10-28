@@ -630,6 +630,122 @@ public class SupabaseClient {
         return call;
     }
 
+    // ===== MÉTODOS PARA COMPRAS DO HISTÓRICO =====
+
+    // Buscar todas as compras do usuário
+    public Call getAllPurchases(SupabaseCallback<List<Compra>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/pedidos?select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando todos as compras: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar compras", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar compras - Código: " + response.code());
+                Log.d(TAG, "Resposta buscar compras - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Compra> compras = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(compras);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar histórico de compras", e);
+                        callback.onError("Erro ao processar dados das compras");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar compras (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar compra por ID
+    public Call getPurchaseById(int id, SupabaseCallback<Compra> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/pedidos?id=eq." + id + "&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando compra por ID: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produto por ID", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produto por ID - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Compra> compras = gson.fromJson(responseBody, listType);
+
+                        if (compras != null && !compras.isEmpty()) {
+                            callback.onSuccess(compras.get(0));
+                        } else {
+                            callback.onError("Compra não encontrada");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar compras", e);
+                        callback.onError("Erro ao processar dados da compras");
+                    }
+                } else {
+                    callback.onError("Compras não encontrada (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
     // Classes de modelo para requisições
     private static class SignUpRequest {
         private final String email;

@@ -116,7 +116,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             boolean temEstoque = produto.getEstoque() > 0;
 
             if (!temEstoque) {
-                Log.d(TAG, "Produto " + produto.getNome() + " está sem estoque: " + produto.getEstoque());
+                Log.d(TAG, "Produto " + produto.getNome() + " está sem estoque.");
             }
 
             // Cria a visualização do produto que será adicionado no layout

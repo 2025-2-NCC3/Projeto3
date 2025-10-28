@@ -6,15 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +23,8 @@ public class HistoricoActivity extends AppCompatActivity {
     Button botaoVoltar;
     LinearLayout boxLista;
     private List<Compra> compras;
+    private SupabaseClient supabaseClient;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +35,10 @@ public class HistoricoActivity extends AppCompatActivity {
         botaoVoltar = findViewById(R.id.botaoVoltar);
         boxLista = findViewById(R.id.boxLista);
         compras = new ArrayList<>();
+        sessionManager = SessionManager.getInstance(getApplicationContext());
+
+        // Inicializar SupabaseClient
+        supabaseClient = SupabaseClient.getInstance(this);
 
         // Retornar ao perfil
         botaoVoltar.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +46,46 @@ public class HistoricoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(HistoricoActivity.this, PerfilActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        // Carregar produtos do banco de dados
+        carregarProdutosDoSupabase();
+    }
+
+    private void carregarProdutosDoSupabase() {
+        // Mostrar mensagem de carregamento
+        Toast.makeText(this, "Carregando histórico...", Toast.LENGTH_SHORT).show();
+
+        supabaseClient.getAllPurchases(new SupabaseClient.SupabaseCallback<List<Compra>>() {
+            @Override
+            public void onSuccess(List<Compra> historicoDoBank) {
+                runOnUiThread(() -> {
+                    Log.d(TAG, "Compras carregados do Supabase: " + historicoDoBank.size());
+
+                    // Atualizar lista de produtos
+                    compras.clear();
+                    compras.addAll(historicoDoBank);
+
+                    // Exibir produtos na tela
+                    exibirCompras(compras);
+
+                    Toast.makeText(HistoricoActivity.this,
+                            "Histórico carregado: " + compras.size() + " itens",
+                            Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Log.e(TAG, "Erro ao carregar produtos: " + error);
+
+                    // Em caso de erro, usar produtos de exemplo
+                    Toast.makeText(HistoricoActivity.this,
+                            "Erro ao carregar do servidor. Usando dados locais.",
+                            Toast.LENGTH_LONG).show();
+                });
             }
         });
     }
@@ -56,22 +98,22 @@ public class HistoricoActivity extends AppCompatActivity {
 
         for (Compra compra : comprasParaExibir) {
 
-            // Cria a visualização do produto que será adicionado no layout
-            View productView = inflater.inflate(R.layout.historico, boxLista, false);
+            // Cria a visualização da compra que será adicionada no layout
+            View compraView = inflater.inflate(R.layout.historico, boxLista, false);
 
             // Pega referencias para cada elemento
-            LinearLayout boxHistorico = productView.findViewById(R.id.boxHistorico);
-            TextView valorCompra = productView.findViewById(R.id.valorCompra);
-            TextView dataCompra = productView.findViewById(R.id.dataCompra);
+            LinearLayout boxHistorico = compraView.findViewById(R.id.boxHistorico);
+            TextView valorCompra = compraView.findViewById(R.id.valorCompra);
+            TextView dataCompra = compraView.findViewById(R.id.dataCompra);
 
             // Altera a informação de cada elemento
-            dataCompra.setText(produto.getData());
+            dataCompra.setText(compra.getData());
 
             // Formatar preço
-            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", compra.getPreco()));
+            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", compra.getTotal()));
 
-            // Adiciona a visualização configurada no activity_cardapio
-            boxLista.addView(productView);
+            // Adiciona a visualização configurada no activity_historico
+            boxLista.addView(compraView);
 
             // Adiciona função para abrir a página de informações ao clicar no produto
             boxHistorico.setOnClickListener(new View.OnClickListener() {
