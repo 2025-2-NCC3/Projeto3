@@ -325,7 +325,7 @@ public class SupabaseOrderManager {
 
         // Campos públicos normais
         order.setStudentId(String.valueOf(response.idUsuario));
-        order.setStudentName(response.studentName != null ? response.studentName : "Usuário ID: " + response.idUsuario);
+
         order.setStatus(response.status);
 
         return order;
@@ -336,8 +336,7 @@ public class SupabaseOrderManager {
         @SerializedName("id_usuario")
         public String idUsuario;
 
-        @SerializedName("nome_usuario")
-        public String nomeUsuario;
+
 
         public String status;
 
@@ -346,7 +345,7 @@ public class SupabaseOrderManager {
 
         public OrderSupabaseRequest(Order order) {
             this.idUsuario = order.getStudentId();
-            this.nomeUsuario = order.getStudentName();
+
             this.status = order.getStatus();
             this.totalAmount = order.getTotal();
         }
@@ -375,8 +374,6 @@ public class SupabaseOrderManager {
         @SerializedName("id_usuario")
         public int idUsuario;
 
-        @SerializedName("nome_usuario")
-        public String studentName;
 
         public String status;
 

@@ -40,7 +40,7 @@
         android:gravity="center_vertical"
         app:layout_constraintStart_toEndOf="@id/guideEsquerda"
         app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" >
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo">
 
         <Button
             android:id="@+id/botaoVoltar"
@@ -48,29 +48,34 @@
             android:layout_height="wrap_content"
             android:text="Voltar"
             android:layout_marginEnd="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:backgroundTint="@color/dark_green"
-             />
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tituloPagina"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:layout_marginLeft="8dp"
+            android:gravity="start"
+            android:layout_marginStart="8dp"
             android:text="Cardápio"
             android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/botaoVoltar"
+            app:layout_constraintEnd_toStartOf="@id/botoesContainer"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <!-- Container vertical para os botões -->
         <LinearLayout
+            android:id="@+id/botoesContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Botão Carrinho (em cima) -->
             <Button
@@ -103,14 +108,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Filtros por categoria -->
     <HorizontalScrollView
@@ -149,6 +147,7 @@
                 android:textSize="12sp"
                 android:onClick="mostrarBebidas"
                 android:layout_marginEnd="8dp" />
+
             <Button
                 android:id="@+id/btnSalgados"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
