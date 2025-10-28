@@ -36,7 +36,7 @@ public class CarrinhoHelper {
     public void adicionarProduto(Produto produto, int quantidade) {
         // Verificar se produto já existe no carrinho
         for (ItemCarrinho item : itens) {
-            if (item.getProduto().getId().equals(produto.getId())) {  // MUDADO: usando .equals()
+            if (item.getProduto().getId().equals(produto.getId())) {
                 // Atualizar quantidade
                 item.setQuantidade(item.getQuantidade() + quantidade);
                 salvarItens();
@@ -50,20 +50,20 @@ public class CarrinhoHelper {
     }
 
     // Remover produto do carrinho
-    public void removerProduto(String produtoId) {  // MUDADO: String ao invés de int
-        itens.removeIf(item -> item.getProduto().getId().equals(produtoId));  // MUDADO: .equals()
+    public void removerProduto(String produtoId) {
+        itens.removeIf(item -> item.getProduto().getId().equals(produtoId));
         salvarItens();
     }
 
     // Atualizar quantidade de um produto
-    public void atualizarQuantidade(String produtoId, int novaQuantidade) {  // MUDADO: String
+    public void atualizarQuantidade(String produtoId, int novaQuantidade) {
         if (novaQuantidade <= 0) {
             removerProduto(produtoId);
             return;
         }
 
         for (ItemCarrinho item : itens) {
-            if (item.getProduto().getId().equals(produtoId)) {  // MUDADO: .equals()
+            if (item.getProduto().getId().equals(produtoId)) {
                 item.setQuantidade(novaQuantidade);
                 salvarItens();
                 return;
@@ -106,9 +106,9 @@ public class CarrinhoHelper {
     }
 
     // Obter quantidade de um produto específico no carrinho
-    public int getQuantidadeProduto(String produtoId) {  // MUDADO: String
+    public int getQuantidadeProduto(String produtoId) {
         for (ItemCarrinho item : itens) {
-            if (item.getProduto().getId().equals(produtoId)) {  // MUDADO: .equals()
+            if (item.getProduto().getId().equals(produtoId)) {
                 return item.getQuantidade();
             }
         }
@@ -116,7 +116,7 @@ public class CarrinhoHelper {
     }
 
     // Verificar se produto está no carrinho
-    public boolean contemProduto(String produtoId) {  // MUDADO: String
+    public boolean contemProduto(String produtoId) {
         return getQuantidadeProduto(produtoId) > 0;
     }
 
@@ -140,7 +140,7 @@ public class CarrinhoHelper {
         }
     }
 
-    // Converter carrinho para OrderRequest
+    // ⭐ ATUALIZADO: Converter carrinho para OrderRequest com TODOS os dados
     public OrderRequest criarOrderRequest(String studentId, String studentName) {
         OrderRequest request = new OrderRequest();
         request.setStudentId(studentId);
@@ -148,9 +148,16 @@ public class CarrinhoHelper {
 
         List<OrderItemRequest> items = new ArrayList<>();
         for (ItemCarrinho itemCarrinho : itens) {
-            OrderItemRequest item = new OrderItemRequest();
-            item.setProductId(itemCarrinho.getProduto().getId());  // Já é String
-            item.setQuantity(itemCarrinho.getQuantidade());
+            Produto produto = itemCarrinho.getProduto();
+
+            // ⭐ NOVO: Usar construtor completo com nome e preço
+            OrderItemRequest item = new OrderItemRequest(
+                    produto.getId(),              // productId
+                    produto.getNome(),            // productName
+                    itemCarrinho.getQuantidade(), // quantity
+                    produto.getPreco()            // price
+            );
+
             items.add(item);
         }
         request.setItems(items);

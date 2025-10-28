@@ -54,28 +54,39 @@ public class SupabaseOrderManager {
         order.setStudentId(orderRequest.getStudentId());
         order.setStudentName(orderRequest.getStudentName());
 
-        // Adicionar itens ao pedido
+        // Adicionar itens ao pedido (usando dados do OrderRequest, não do OrderManager)
         for (OrderItemRequest itemRequest : orderRequest.getItems()) {
-            Produto produto = OrderManager.getProduct(itemRequest.getProductId());
-            if (produto != null) {
-                OrderItem item = new OrderItem(
-                        produto.getId(),
-                        produto.getNome(),
-                        itemRequest.getQuantity(),
-                        produto.getPreco()
-                );
-                order.addItem(item);
-            }
+            // ⭐ LOG 1: Verificar dados do ItemRequest
+            Log.d(TAG, "========== ITEM REQUEST ==========");
+            Log.d(TAG, "Produto ID: " + itemRequest.getProductId());
+            Log.d(TAG, "Nome: " + itemRequest.getProductName());
+            Log.d(TAG, "Preço: " + itemRequest.getPrice());
+            Log.d(TAG, "Quantidade: " + itemRequest.getQuantity());
+
+            // Criar OrderItem diretamente do ItemRequest (sem buscar do OrderManager)
+            OrderItem item = new OrderItem(
+                    itemRequest.getProductId(),
+                    itemRequest.getProductName(),
+                    itemRequest.getQuantity(),
+                    itemRequest.getPrice()
+            );
+
+            // ⭐ LOG 2: Verificar OrderItem criado
+            Log.d(TAG, "========== ORDER ITEM ==========");
+            Log.d(TAG, "Preço item (getPrice): " + item.getPrice());
+            Log.d(TAG, "Quantidade: " + item.getQuantity());
+            Log.d(TAG, "Subtotal: " + item.getSubtotal());
+            order.addItem(item);
         }
 
-        // Validar estoque antes de enviar
-        String stockError = OrderManager.validateStock(order);
-        if (stockError != null) {
-            callback.onError(stockError);
-            return null;
-        }
+        // Validar estoque antes de enviar (OPCIONAL - se quiser manter validação)
+        // String stockError = OrderManager.validateStock(order);
+        // if (stockError != null) {
+        //     callback.onError(stockError);
+        //     return null;
+        // }
 
-        // Converter para formato do Supabase - SEM produtos
+        // Converter para formato do Supabase - SEM nome_usuario
         OrderSupabaseRequest supabaseRequest = new OrderSupabaseRequest(order);
         String json = gson.toJson(supabaseRequest);
         Log.d(TAG, "Criando pedido: " + json);
@@ -117,8 +128,14 @@ public class SupabaseOrderManager {
                             OrderSupabaseResponse orderResponse = ordersResponse.get(0);
                             Order createdOrder = convertSupabaseResponseToOrder(orderResponse);
 
-                            // Criar itens do pedido
-                            createOrderItems(String.valueOf(createdOrder.getId()), order.getItems(), accessToken, callback, createdOrder);
+                            // ⭐ CORREÇÃO CRÍTICA: Copiar itens do order original para o createdOrder
+                            Log.d(TAG, "Copiando " + order.getItems().size() + " itens para o pedido criado");
+                            for (OrderItem item : order.getItems()) {
+                                createdOrder.addItem(item);
+                            }
+
+                            // Criar itens do pedido (agora createdOrder tem os itens)
+                            createOrderItems(String.valueOf(createdOrder.getId()), createdOrder.getItems(), accessToken, callback, createdOrder);
                         } else {
                             callback.onError("Resposta inválida do servidor");
                         }
@@ -140,10 +157,26 @@ public class SupabaseOrderManager {
 
         List<OrderItemSupabaseRequest> itemsRequest = new ArrayList<>();
         for (OrderItem item : items) {
-            itemsRequest.add(new OrderItemSupabaseRequest(orderId, item));
+            // ⭐ LOG 3: Verificar item ANTES de criar o request
+            Log.d(TAG, "========== ANTES DO REQUEST ==========");
+            Log.d(TAG, "Item: " + item.getProductName());
+            Log.d(TAG, "Preço (item.getPrice()): " + item.getPrice());
+
+            OrderItemSupabaseRequest itemRequest = new OrderItemSupabaseRequest(orderId, item);
+
+            // ⭐ LOG 4: Verificar o request DEPOIS de criado
+            Log.d(TAG, "========== DEPOIS DO REQUEST ==========");
+            Log.d(TAG, "precoProduto: " + itemRequest.precoProduto);
+            Log.d(TAG, "quantidade: " + itemRequest.quantidade);
+
+            itemsRequest.add(itemRequest);
         }
 
         String json = gson.toJson(itemsRequest);
+        // ⭐ LOG 5: JSON COMPLETO que será enviado
+        Log.d(TAG, "========== JSON FINAL ==========");
+        Log.d(TAG, json);
+
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
                 .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido")
@@ -158,6 +191,7 @@ public class SupabaseOrderManager {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao salvar itens do pedido", e);
                     callback.onError("Erro ao salvar itens do pedido");
                 }
             }
@@ -166,8 +200,16 @@ public class SupabaseOrderManager {
             public void onResponse(Call call, Response response) throws IOException {
                 if (call.isCanceled()) return;
 
+                String responseBody = response.body() != null ? response.body().string() : "";
+                // ⭐ LOG 6: Resposta do servidor
+                Log.d(TAG, "========== RESPOSTA CRIAR ITENS ==========");
+                Log.d(TAG, "Código: " + response.code());
+                Log.d(TAG, "Body: " + responseBody);
+
                 if (response.isSuccessful()) {
-                    OrderManager.updateStock(createdOrder);
+                    // ⭐ NOTA: Não atualizamos mais o estoque do OrderManager
+                    // pois ele tem dados desatualizados. O estoque deve ser
+                    // gerenciado no banco de dados (Supabase)
                     createdOrder.setStatus(OrderManager.STATUS_CONFIRMED);
                     callback.onSuccess(createdOrder);
                 } else {
@@ -305,7 +347,7 @@ public class SupabaseOrderManager {
                     createdAtField.set(order, date);
                 } catch (Exception e) {
                     Log.e(TAG, "Erro ao parsear data: " + response.createdAt, e);
-                    createdAtField.set(order, new Date()); // Data atual como fallback
+                    createdAtField.set(order, new Date());
                 }
             }
 
@@ -325,7 +367,6 @@ public class SupabaseOrderManager {
 
         // Campos públicos normais
         order.setStudentId(String.valueOf(response.idUsuario));
-
         order.setStatus(response.status);
 
         return order;
@@ -336,8 +377,6 @@ public class SupabaseOrderManager {
         @SerializedName("id_usuario")
         public String idUsuario;
 
-
-
         public String status;
 
         @SerializedName("total_amount")
@@ -345,7 +384,6 @@ public class SupabaseOrderManager {
 
         public OrderSupabaseRequest(Order order) {
             this.idUsuario = order.getStudentId();
-
             this.status = order.getStatus();
             this.totalAmount = order.getTotal();
         }
@@ -373,7 +411,6 @@ public class SupabaseOrderManager {
 
         @SerializedName("id_usuario")
         public int idUsuario;
-
 
         public String status;
 
@@ -455,6 +492,7 @@ public class SupabaseOrderManager {
 
         return call;
     }
+
     // Buscar TODOS os pedidos (para admin)
     public Call getAllOrders(String accessToken, OrdersCallback callback) {
         if (!supabaseClient.isConfigured()) {
@@ -516,7 +554,7 @@ public class SupabaseOrderManager {
         return updateOrderStatus(orderId, "RETIRADO", accessToken, callback);
     }
 
-    // Buscar pedidos por status (útil para filtros)
+    // Buscar pedidos por status
     public Call getOrdersByStatus(String status, String accessToken, OrdersCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
@@ -570,6 +608,7 @@ public class SupabaseOrderManager {
 
         return call;
     }
+
     private void getOrderItems(String orderId, String accessToken, Order order, OrderCallback callback) {
         Request request = new Request.Builder()
                 .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + orderId)

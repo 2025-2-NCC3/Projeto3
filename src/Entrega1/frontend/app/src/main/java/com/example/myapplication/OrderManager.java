@@ -11,7 +11,7 @@ import java.util.Map;
 public class OrderManager {
     private static int orderCounter = 0;
     private static Map<String, Produto> products = new HashMap<>();
-    private static Map<String, Order> orders = new HashMap<>();  // MUDADO: Integer para String
+    private static Map<String, Order> orders = new HashMap<>();
 
     // Status dos pedidos
     public static final String STATUS_PENDING = "PENDENTE";
@@ -21,13 +21,17 @@ public class OrderManager {
     public static final String STATUS_DELIVERED = "ENTREGUE";
     public static final String STATUS_CANCELLED = "CANCELADO";
 
-    static {
-        // Inicializar produtos com String IDs
-        products.put("1", new Produto("1", "Café", "Café quente", "sem_imagem", 5.0, 10, 3));
-        products.put("2", new Produto("2", "Sanduíche", "Sanduíche natural", "sem_imagem", 2.0, 15, 2));
-        products.put("3", new Produto("3", "Suco Natural", "Suco de laranja", "sem_imagem", 3.0, 8, 3));
-        products.put("4", new Produto("4", "Salgado", "Coxinha", "coxinha_exemplo", 2.5, 20, 1));
-        products.put("5", new Produto("5", "Água", "Água mineral", "sem_imagem", 4.0, 25, 3));
+    // ⭐ NOVO: Método para atualizar a lista de produtos
+    public static void updateProducts(List<Produto> produtosList) {
+        products.clear();
+        for (Produto produto : produtosList) {
+            products.put(produto.getId(), produto);
+        }
+    }
+
+    // ⭐ NOVO: Método para adicionar/atualizar um produto
+    public static void addOrUpdateProduct(Produto produto) {
+        products.put(produto.getId(), produto);
     }
 
     public static String generateOrderCode() {
@@ -38,7 +42,7 @@ public class OrderManager {
 
     public static String validateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Produto produto = products.get(item.getProductId());  // Já é String
+            Produto produto = products.get(item.getProductId());
             if (produto == null) {
                 return "Produto não encontrado: " + item.getProductName();
             }
@@ -52,7 +56,7 @@ public class OrderManager {
 
     public static void updateStock(Order order) {
         for (OrderItem item : order.getItems()) {
-            Produto produto = products.get(item.getProductId());  // Já é String
+            Produto produto = products.get(item.getProductId());
             if (produto != null) {
                 produto.setEstoque(produto.getEstoque() - item.getQuantity());
             }
@@ -66,10 +70,10 @@ public class OrderManager {
 
         // Adicionar itens ao pedido
         for (OrderItemRequest itemRequest : request.getItems()) {
-            Produto produto = products.get(itemRequest.getProductId());  // Já é String
+            Produto produto = products.get(itemRequest.getProductId());
             if (produto != null) {
                 OrderItem item = new OrderItem(
-                        produto.getId(),  // Agora é String
+                        produto.getId(),
                         produto.getNome(),
                         itemRequest.getQuantity(),
                         produto.getPreco()
@@ -87,17 +91,17 @@ public class OrderManager {
         // Confirmar pedido
         updateStock(order);
         order.setStatus(STATUS_CONFIRMED);
-        orders.put(order.getId(), order);  // getId() agora retorna String
+        orders.put(order.getId(), order);
 
         return new OrderResponse(true, "Pedido criado com sucesso! Código: " + order.getCode(), order);
     }
 
     // Métodos de consulta
-    public static Order getOrder(String orderId) {  // MUDADO: String em vez de int
+    public static Order getOrder(String orderId) {
         return orders.get(orderId);
     }
 
-    public static boolean updateOrderStatus(String orderId, String newStatus) {  // MUDADO: String orderId
+    public static boolean updateOrderStatus(String orderId, String newStatus) {
         Order order = orders.get(orderId);
         if (order != null) {
             order.setStatus(newStatus);
@@ -106,11 +110,11 @@ public class OrderManager {
         return false;
     }
 
-    public static Map<String, Order> getStudentOrders(String studentId) {  // MUDADO: Map<String, Order>
+    public static Map<String, Order> getStudentOrders(String studentId) {
         Map<String, Order> studentOrders = new HashMap<>();
         for (Order order : orders.values()) {
             if (studentId.equals(order.getStudentId())) {
-                studentOrders.put(order.getId(), order);  // getId() retorna String
+                studentOrders.put(order.getId(), order);
             }
         }
         return studentOrders;
