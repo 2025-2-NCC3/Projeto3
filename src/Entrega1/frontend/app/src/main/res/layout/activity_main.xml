@@ -12,8 +12,8 @@
     <!-- Logo/Imagem Central -->
     <ImageView
         android:id="@+id/logoImage"
-        android:layout_width="210dp"
-        android:layout_height="210dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:src="@drawable/logo_tia"
         android:scaleType="centerInside"
         android:contentDescription="Logo do app"
