@@ -1,11 +1,12 @@
 package com.example.myapplication;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class Order {
+public class Order implements Serializable {
     private String id;  // MUDADO: int para String
     private String studentId;
     private String studentName;

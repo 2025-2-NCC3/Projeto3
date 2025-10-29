@@ -22,7 +22,7 @@ public class HistoricoActivity extends AppCompatActivity {
 
     Button botaoVoltar;
     LinearLayout boxLista;
-    private List<Compra> compras;
+    private List<Order> compras;
     private SupabaseClient supabaseClient;
     private SessionManager sessionManager;
 
@@ -57,9 +57,9 @@ public class HistoricoActivity extends AppCompatActivity {
         // Mostrar mensagem de carregamento
         Toast.makeText(this, "Carregando histórico...", Toast.LENGTH_SHORT).show();
 
-        supabaseClient.getAllPurchases(new SupabaseClient.SupabaseCallback<List<Compra>>() {
+        supabaseClient.getAllPurchases(new SupabaseClient.SupabaseCallback<List<Order>>() {
             @Override
-            public void onSuccess(List<Compra> historicoDoBank) {
+            public void onSuccess(List<Order> historicoDoBank) {
                 runOnUiThread(() -> {
                     Log.d(TAG, "Compras carregados do Supabase: " + historicoDoBank.size());
 
@@ -90,13 +90,13 @@ public class HistoricoActivity extends AppCompatActivity {
         });
     }
 
-    private void exibirCompras(List<Compra> comprasParaExibir) {
+    private void exibirCompras(List<Order> comprasParaExibir) {
         // Limpar compras anteriores
         boxLista.removeAllViews();
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        for (Compra compra : comprasParaExibir) {
+        for (Order order : comprasParaExibir) {
 
             // Cria a visualização da compra que será adicionada no layout
             View compraView = inflater.inflate(R.layout.historico, boxLista, false);
@@ -107,10 +107,10 @@ public class HistoricoActivity extends AppCompatActivity {
             TextView dataCompra = compraView.findViewById(R.id.dataCompra);
 
             // Altera a informação de cada elemento
-            dataCompra.setText(compra.getData());
+            dataCompra.setText((CharSequence) order.getCreatedAt());
 
             // Formatar preço
-            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", compra.getTotal()));
+            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", order.getTotal()));
 
             // Adiciona a visualização configurada no activity_historico
             boxLista.addView(compraView);
@@ -120,7 +120,7 @@ public class HistoricoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(HistoricoActivity.this, InfoCompraActivity.class);
-                    intent.putExtra("compraInfo", compra);
+                    intent.putExtra("compraInfo", order);
                     startActivity(intent);
                 }
             });

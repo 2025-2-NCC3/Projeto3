@@ -633,7 +633,7 @@ public class SupabaseClient {
     // ===== MÉTODOS PARA COMPRAS DO HISTÓRICO =====
 
     // Buscar todas as compras do usuário
-    public Call getAllPurchases(SupabaseCallback<List<Compra>> callback) {
+    public Call getAllPurchases(SupabaseCallback<List<Order>> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
             return null;
