@@ -6,80 +6,54 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="@drawable/background_gradient"
     tools:context=".CardapioAlunosActivity">
-
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideEsquerda"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="10dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideDireita"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="10dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideTopo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
 
     <!-- Cabeçalho com botões -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" >
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/botaoVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Voltar"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:backgroundTint="@color/dark_green"
-             />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tituloPagina"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginLeft="8dp"
             android:text="Cardápio"
             android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Filtros por categoria -->
     <HorizontalScrollView
         android:id="@+id/filtrosLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
         <LinearLayout
@@ -109,6 +83,7 @@
                 android:textSize="12sp"
                 android:onClick="mostrarBebidas"
                 android:layout_marginEnd="8dp" />
+
             <Button
                 android:id="@+id/btnSalgados"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -165,15 +140,19 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <!-- ScrollView com conteúdo -->
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/filtrosLayout"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/includeNavbar">
 
         <LinearLayout
             android:id="@+id/boxLista"
@@ -184,10 +163,11 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Navbar fixada na parte inferior -->
     <include
         android:id="@+id/includeNavbar"
         layout="@layout/navbar"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
+    <!-- Box de informações do usuário -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/boxInfo"
         android:layout_width="match_parent"
@@ -13,8 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@color/beige"
-        android:padding="30dp"
-        >
+        android:padding="30dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fotoPerfil"
@@ -24,8 +23,7 @@
             app:shapeAppearanceOverlay="@style/roundedImageView"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/nomeUsuario"
@@ -37,8 +35,7 @@
             android:textStyle="bold"
             android:layout_marginStart="20dp"
             app:layout_constraintStart_toEndOf="@id/fotoPerfil"
-            app:layout_constraintTop_toTopOf="@id/fotoPerfil"
-            />
+            app:layout_constraintTop_toTopOf="@id/fotoPerfil" />
 
         <TextView
             android:id="@+id/emailUsuario"
@@ -50,42 +47,38 @@
             android:textStyle="bold"
             android:layout_marginStart="20dp"
             app:layout_constraintStart_toEndOf="@id/fotoPerfil"
-            app:layout_constraintTop_toBottomOf="@id/nomeUsuario"
-            />
+            app:layout_constraintTop_toBottomOf="@id/nomeUsuario" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#CCCCCC"
-        app:layout_constraintTop_toBottomOf="@id/boxInfo"
-        />
+        app:layout_constraintTop_toBottomOf="@id/boxInfo" />
 
+    <!-- ScrollView com as opções -->
     <ScrollView
         android:id="@+id/scrollOpcoes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/boxInfo"
-        >
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toTopOf="@id/includeNavbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            android:layout_height="wrap_content">
 
+            <!-- Dados da conta -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/boxDados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                >
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/iconeDados"
@@ -95,8 +88,7 @@
                     android:src="@drawable/dados"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
                     android:id="@+id/textoDados"
@@ -107,18 +99,17 @@
                     android:layout_marginLeft="20dp"
                     app:layout_constraintStart_toEndOf="@id/iconeDados"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#CCCCCC"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Histórico de pedidos -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/boxHistorico"
                 android:layout_width="match_parent"
@@ -126,8 +117,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/boxDados"
-                >
+                app:layout_constraintTop_toBottomOf="@id/boxDados">
 
                 <ImageView
                     android:id="@+id/iconeHistorico"
@@ -137,8 +127,7 @@
                     android:src="@drawable/historico"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
                     android:id="@+id/textoHistorico"
@@ -149,25 +138,23 @@
                     android:layout_marginLeft="20dp"
                     app:layout_constraintStart_toEndOf="@id/iconeHistorico"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#CCCCCC"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Formas de pagamento -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/boxPagamento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/boxHistorico"
-                >
+                app:layout_constraintTop_toBottomOf="@id/boxHistorico">
 
                 <ImageView
                     android:id="@+id/iconePagamento"
@@ -177,8 +164,7 @@
                     android:src="@drawable/pagamento"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
                     android:id="@+id/textoPagamento"
@@ -189,25 +175,23 @@
                     android:layout_marginLeft="20dp"
                     app:layout_constraintStart_toEndOf="@id/iconePagamento"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#CCCCCC"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Configurações -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/boxConfig"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/boxPagamento"
-                >
+                app:layout_constraintTop_toBottomOf="@id/boxPagamento">
 
                 <ImageView
                     android:id="@+id/iconeConfig"
@@ -217,8 +201,7 @@
                     android:src="@drawable/configuracoes"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <TextView
                     android:id="@+id/textoConfig"
@@ -229,20 +212,27 @@
                     android:layout_marginLeft="20dp"
                     app:layout_constraintStart_toEndOf="@id/iconeConfig"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#CCCCCC"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <!-- Navbar fixada na parte inferior -->
+    <include
+        android:id="@+id/includeNavbar"
+        layout="@layout/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
