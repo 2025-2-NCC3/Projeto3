@@ -101,7 +101,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
     private void carregarProdutosExemplo() {
         // Produtos de exemplo caso não consiga conectar com o Supabase
 
-
         exibirProdutos(produtos);
     }
 

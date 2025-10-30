@@ -19,12 +19,8 @@ public class InfoProdutoActivity extends AppCompatActivity {
     private static final String TAG = "InfoProdutoActivity";
 
     private ImageView imagemProduto;
-    private TextView nomeProduto;
-    private TextView descricaoProduto;
-    private TextView precoProduto;
-    private Button botaoVoltar;
-    private Button botaoComprar;
-
+    private TextView nomeProduto, descricaoProduto, precoProduto;
+    private Button botaoVoltar, botaoComprar;
     private Produto produto;
     private CarrinhoHelper carrinhoHelper;
 
@@ -39,7 +35,7 @@ public class InfoProdutoActivity extends AppCompatActivity {
         // Receber o intent com as informações do produto clicado
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            produto = (Produto) bundle.getSerializable("produtoInfo", Produto.class);
+            produto = bundle.getSerializable("produtoInfo", Produto.class);
 
             if (produto != null) {
                 Log.d(TAG, "Produto recebido: " + produto.getNome());
