@@ -100,7 +100,7 @@
             android:layout_marginTop="100dp"
             android:text="Cardápio"
             android:textColor="#F5F5DB"
-            android:textSize="30sp"
+            android:textSize="26sp"
             android:fontFamily="@font/poppins_bold"/>
 
         <!-- Barra de Pesquisa dentro do Header -->

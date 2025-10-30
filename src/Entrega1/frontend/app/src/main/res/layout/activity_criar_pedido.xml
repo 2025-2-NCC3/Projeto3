@@ -1,60 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#F5F5F5">
+    android:background="#FFFFFF"
+    tools:context=".CriarPedidoActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <!-- Header com Imagem e Overlay -->
+    <FrameLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="196dp"
+        android:background="@drawable/rounded_bottom_shape"
+        android:clipChildren="true"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Header -->
-        <RelativeLayout
+        <!-- Fundo verde -->
+        <View
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/dark_green"
-            android:elevation="4dp">
+            android:layout_height="match_parent"
+            android:background="@color/dark_green"/>
 
-            <ImageButton
-                android:id="@+id/btnVoltar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
+        <!-- Logo transparente -->
+        <ImageView
+            android:id="@+id/headerImage"
+            android:layout_width="228dp"
+            android:layout_height="247dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:alpha="0.2"
+            android:contentDescription="Header"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_tia" />
 
-                android:contentDescription="Voltar" />
+        <!-- Botão Voltar -->
+        <ImageButton
+            android:id="@+id/btnVoltar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Voltar"
+            app:tint="#F5F5DB"
+            android:padding="12dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Finalizar Pedido"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="130dp"
+            android:text="Finalizar Pedido"
+            android:textColor="#F5F5DB"
+            android:textSize="26sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"/>
 
-        </RelativeLayout>
+    </FrameLayout>
 
-        <!-- Conteúdo -->
+    <!-- ScrollView com conteúdo -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
-            <!-- Card de Informações do Cliente -->
-            <androidx.cardview.widget.CardView
+            <!-- Card de Dados do Cliente -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#F5F5F5"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -66,18 +103,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="📋 Dados do Cliente"
-                        android:textColor="#333333"
+                        android:textColor="#235135"
                         android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:layout_marginBottom="12dp" />
 
-                    <!-- Nome do Cliente -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Nome:"
                         android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular" />
 
                     <TextView
                         android:id="@+id/tvNomeCliente"
@@ -86,16 +123,16 @@
                         android:text="Cliente Cantina"
                         android:textColor="#333333"
                         android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_semibold"
                         android:layout_marginBottom="8dp" />
 
-                    <!-- ID do Cliente -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ID:"
                         android:textColor="#666666"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular" />
 
                     <TextView
                         android:id="@+id/tvIdCliente"
@@ -103,19 +140,22 @@
                         android:layout_height="wrap_content"
                         android:text="2023001"
                         android:textColor="#333333"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_medium" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Card de Resumo do Pedido -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#F5F5F5"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -127,9 +167,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🛒 Resumo do Carrinho"
-                        android:textColor="#333333"
+                        android:textColor="#235135"
                         android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:layout_marginBottom="12dp" />
 
                     <!-- Quantidade de Itens -->
@@ -145,7 +185,8 @@
                             android:layout_weight="1"
                             android:text="Quantidade de itens:"
                             android:textColor="#666666"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_regular" />
 
                         <TextView
                             android:id="@+id/tvQuantidadeItens"
@@ -154,11 +195,11 @@
                             android:text="0"
                             android:textColor="#333333"
                             android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
 
-                    <!-- Lista de produtos (opcional) -->
+                    <!-- Lista de produtos -->
                     <TextView
                         android:id="@+id/tvListaProdutos"
                         android:layout_width="match_parent"
@@ -166,13 +207,14 @@
                         android:text="• Café x2\n• Coxinha x3"
                         android:textColor="#666666"
                         android:textSize="13sp"
+                        android:fontFamily="@font/poppins_regular"
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="12dp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#EEEEEE"
+                        android:background="#DDDDDD"
                         android:layout_marginVertical="8dp" />
 
                     <!-- Valor Total -->
@@ -188,30 +230,32 @@
                             android:text="Valor Total:"
                             android:textColor="#333333"
                             android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                         <TextView
                             android:id="@+id/tvValorTotal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="R$ 0,00"
-                            android:textColor="@color/dark_green"
+                            android:textColor="#235135"
                             android:textSize="22sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Card de Observações -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#F5F5F5"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -223,9 +267,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="💬 Observações (Opcional)"
-                        android:textColor="#333333"
+                        android:textColor="#235135"
                         android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:layout_marginBottom="8dp" />
 
                     <EditText
@@ -236,6 +280,7 @@
                         android:textColorHint="#999999"
                         android:textColor="#333333"
                         android:textSize="14sp"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="top|start"
                         android:padding="12dp"
                         android:background="@drawable/edittext_background"
@@ -244,18 +289,18 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Card de Status -->
-            <androidx.cardview.widget.CardView
+            <!-- Card de Status (inicialmente oculto) -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#E3F2FD">
+                app:cardBackgroundColor="#E8F5E9">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -268,7 +313,8 @@
                         android:id="@+id/progressBar"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="12dp" />
+                        android:layout_marginEnd="12dp"
+                        android:indeterminateTint="#235135"/>
 
                     <TextView
                         android:id="@+id/tvStatus"
@@ -276,24 +322,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Criando pedido..."
-                        android:textColor="#1976D2"
-                        android:textSize="14sp" />
+                        android:textColor="#235135"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_medium" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Botão Criar Pedido -->
-            <Button
+            <!-- Botão Confirmar Pedido -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCriarPedido"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="✅ Confirmar Pedido"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:background="@color/dark_green"
-                android:elevation="4dp"
+                android:text="CONFIRMAR PEDIDO"
+                android:textColor="#F5F5DB"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"
+                app:backgroundTint="#3D7A4C"
+                app:cornerRadius="10dp"
+                app:elevation="4dp"
                 android:layout_marginBottom="16dp" />
 
             <!-- Informações Adicionais -->
@@ -303,11 +352,12 @@
                 android:text="ℹ️ Após confirmar o pedido, você receberá um código para acompanhamento."
                 android:textColor="#666666"
                 android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"
                 android:gravity="center"
                 android:padding="8dp" />
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

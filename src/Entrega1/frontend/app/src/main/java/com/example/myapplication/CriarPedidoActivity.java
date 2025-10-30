@@ -3,14 +3,16 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -20,10 +22,10 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private TextView tvNomeCliente, tvIdCliente, tvQuantidadeItens;
     private TextView tvListaProdutos, tvValorTotal;
     private EditText etObservacoes;
-    private CardView cardStatus;
+    private MaterialCardView cardStatus;
     private ProgressBar progressBar;
     private TextView tvStatus;
-    private Button btnCriarPedido;
+    private MaterialButton btnCriarPedido;
 
     private CarrinhoHelper carrinhoHelper;
     private SupabaseOrderManager orderManager;
@@ -203,7 +205,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
             cardStatus.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             btnCriarPedido.setEnabled(true);
-            btnCriarPedido.setText("✅ Confirmar Pedido");
+            btnCriarPedido.setText("✅ CONFIRMAR PEDIDO");
         }
     }
 

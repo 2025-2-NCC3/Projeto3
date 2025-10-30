@@ -4,13 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.myapplication.R;
-import com.example.myapplication.OrderItem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.ItemViewHolder> {
 
@@ -41,32 +41,58 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Item
     }
 
     public void atualizarItens(List<OrderItem> novoItens) {
-        this.itens = novoItens;
+        if (novoItens != null) {
+            this.itens = new ArrayList<>(novoItens);
+        } else {
+            this.itens = new ArrayList<>();
+        }
         notifyDataSetChanged();
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvNomeProduto;
-        private TextView tvQuantidade;
-        private TextView tvPrecoProduto;
-        private TextView tvSubtotal;
+        private ImageView imagemProduto;
+        private TextView txtNomeProduto;
+        private TextView txtPrecoUnitario;
+        private TextView txtSubtotalItem;
+        private TextView txtQuantidade;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvNomeProduto = itemView.findViewById(R.id.tv_nome_produto);
-            tvQuantidade = itemView.findViewById(R.id.tv_quantidade);
-            tvPrecoProduto = itemView.findViewById(R.id.tv_preco_produto);
-            tvSubtotal = itemView.findViewById(R.id.tv_subtotal);
+            imagemProduto = itemView.findViewById(R.id.imagemProduto);
+            txtNomeProduto = itemView.findViewById(R.id.txtNomeProduto);
+            txtPrecoUnitario = itemView.findViewById(R.id.txtPrecoUnitario);
+            txtSubtotalItem = itemView.findViewById(R.id.txtSubtotalItem);
+            txtQuantidade = itemView.findViewById(R.id.txtQuantidade);
         }
 
         public void bind(OrderItem item) {
-            tvNomeProduto.setText(item.getProductName());
-            tvQuantidade.setText("Qtd: " + item.getQuantity());
-            tvPrecoProduto.setText("R$ " + String.format("%.2f", item.getPrice()));
+            // Nome do produto - com fallback
+            String nomeProduto = item.getProductName();
+            if (nomeProduto == null || nomeProduto.isEmpty()) {
+                nomeProduto = "Produto sem nome";
+                android.util.Log.e("OrderItemAdapter", "Produto sem nome! Item: " + item.toString());
+            }
+            txtNomeProduto.setText(nomeProduto);
 
+            // Quantidade no formato "X x"
+            int quantidade = item.getQuantity();
+            txtQuantidade.setText(String.format(Locale.getDefault(), "%d x", quantidade));
+
+            // Preço unitário
+            double preco = item.getPrice();
+            txtPrecoUnitario.setText(String.format(Locale.getDefault(), "R$ %.2f", preco));
+
+            // Subtotal (quantidade * preço)
             double subtotal = item.getSubtotal();
-            tvSubtotal.setText("Subtotal: R$ " + String.format("%.2f", subtotal));
+            txtSubtotalItem.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
+
+            // Log para debug
+            android.util.Log.d("OrderItemAdapter", "Binding item: " + nomeProduto +
+                    " | Qtd: " + quantidade + " | Preço: " + preco + " | Subtotal: " + subtotal);
+
+            // Imagem do produto
+            imagemProduto.setImageResource(R.drawable.logo_tia);
         }
     }
 }
