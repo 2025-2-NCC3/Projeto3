@@ -1,4 +1,5 @@
 package com.example.myapplication;
+
 import java.io.Serializable;
 
 public class Produto implements Serializable {
@@ -10,13 +11,23 @@ public class Produto implements Serializable {
     private int estoque;
     private int categoria;
 
-    // Construtor vazio - IMPORTANTE PARA RESOLVER O ERRO
+    // Construtor vazio - IMPORTANTE
     public Produto() {
-        // Construtor vazio para criar produto e depois setar os valores
     }
 
-    // Construtor completo (sem imagemId)
-    public Produto(String id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria){
+    // Construtor completo (ordem: id, nome, preco, descricao, caminhoImagem, estoque, categoria)
+    public Produto(String id, String nome, double preco, String descricao, String caminhoImagem, int estoque, int categoria) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.descricao = descricao;
+        this.caminhoImagem = caminhoImagem;
+        this.estoque = estoque;
+        this.categoria = categoria;
+    }
+
+    // Construtor antigo para compatibilidade
+    public Produto(String id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -41,6 +52,10 @@ public class Produto implements Serializable {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setId(int id) {
         this.id = String.valueOf(id);
     }
@@ -57,8 +72,18 @@ public class Produto implements Serializable {
         return descricao;
     }
 
+    // Método adicional para compatibilidade com código antigo
+    public String getDetalhes() {
+        return descricao;
+    }
+
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    // Método adicional para compatibilidade
+    public void setDetalhes(String detalhes) {
+        this.descricao = detalhes;
     }
 
     public String getCaminhoImagem() {
