@@ -32,6 +32,16 @@ public class CarrinhoHelper {
         return instance;
     }
 
+    // ⭐ NOVO: Método simplificado para adicionar produto com quantidade 1
+    public void adicionarItem(Produto produto) {
+        adicionarProduto(produto, 1);
+    }
+
+    // ⭐ NOVO: Método para adicionar com quantidade específica
+    public void adicionarItem(Produto produto, int quantidade) {
+        adicionarProduto(produto, quantidade);
+    }
+
     // Adicionar produto ao carrinho
     public void adicionarProduto(Produto produto, int quantidade) {
         // Verificar se produto já existe no carrinho
@@ -140,7 +150,7 @@ public class CarrinhoHelper {
         }
     }
 
-    // ⭐ ATUALIZADO: Converter carrinho para OrderRequest com TODOS os dados
+    // Converter carrinho para OrderRequest com TODOS os dados
     public OrderRequest criarOrderRequest(String studentId, String studentName) {
         OrderRequest request = new OrderRequest();
         request.setStudentId(studentId);
@@ -150,7 +160,6 @@ public class CarrinhoHelper {
         for (ItemCarrinho itemCarrinho : itens) {
             Produto produto = itemCarrinho.getProduto();
 
-            // ⭐ NOVO: Usar construtor completo com nome e preço
             OrderItemRequest item = new OrderItemRequest(
                     produto.getId(),              // productId
                     produto.getNome(),            // productName
@@ -176,5 +185,25 @@ public class CarrinhoHelper {
             }
         }
         return null;
+    }
+
+    // ⭐ NOVO: Método para obter resumo do carrinho (útil para debug)
+    public String getResumoCarrinho() {
+        if (itens.isEmpty()) {
+            return "Carrinho vazio";
+        }
+
+        StringBuilder resumo = new StringBuilder();
+        resumo.append("Itens no carrinho: ").append(getQuantidadeTotal()).append("\n");
+        for (ItemCarrinho item : itens) {
+            resumo.append("- ")
+                    .append(item.getProduto().getNome())
+                    .append(": ")
+                    .append(item.getQuantidade())
+                    .append(" un.\n");
+        }
+        resumo.append("Subtotal: R$ ").append(String.format("%.2f", getSubtotal()));
+
+        return resumo.toString();
     }
 }

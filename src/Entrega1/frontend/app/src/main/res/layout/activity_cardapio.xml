@@ -3,253 +3,224 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:padding="24dp"
+    android:background="@drawable/background_gradient"
     tools:context=".CardapioAlunosActivity">
 
-    <!-- Header com Imagem -->
-    <ImageView
-        android:id="@+id/headerImage"
-        android:layout_width="0dp"
-        android:layout_height="225dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/logo_tia"
-        android:contentDescription="Header do cardápio"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Overlay escuro no header -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="225dp"
-        android:background="#80000000"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Botão Voltar -->
-    <TextView
-        android:id="@+id/botaoVoltar"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideEsquerda"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="25dp"
-        android:text="←"
-        android:textSize="24sp"
-        android:textColor="#F5F5DB"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="8dp"
-        android:contentDescription="Voltar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp" />
 
-    <!-- Título "Cardápio" -->
-    <TextView
-        android:id="@+id/tituloPagina"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="60dp"
-        android:text="Cardápio"
-        android:textColor="#F5F5DB"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
 
-
-    <!-- Barra de Pesquisa -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchCard"
+    <!-- Cabeçalho com botões -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="-20dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="4dp"
-        app:cardBackgroundColor="#F5F5F5"
-        app:layout_constraintTop_toBottomOf="@id/headerImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo">
 
+        <Button
+            android:id="@+id/botaoVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/dark_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginStart="8dp"
+            android:text="Cardápio"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/botaoVoltar"
+            app:layout_constraintEnd_toStartOf="@id/botoesContainer"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Container vertical para os botões -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="39dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp">
+            android:id="@+id/botoesContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:text="🔍"
+            <!-- Botão Carrinho (em cima) -->
+            <Button
+                android:id="@+id/btnCarrinho"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="🛒"
                 android:textSize="18sp"
-                android:gravity="center"
-                android:layout_marginStart="6dp"/>
+                android:backgroundTint="@color/dark_green"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_marginBottom="4dp" />
 
-            <EditText
-                android:id="@+id/searchInput"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Search"
-                android:textColorHint="#BDBDBD"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:background="@android:color/transparent"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:inputType="text"
-                android:imeOptions="actionSearch"/>
-
-            <TextView
-                android:id="@+id/filterIcon"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:text="⚙️"
+            <!-- Botão Meus Pedidos (embaixo) -->
+            <Button
+                android:id="@+id/btnMeusPedidos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="📦"
                 android:textSize="18sp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:backgroundTint="@color/dark_green"
+                android:padding="4dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Filtros de Categoria -->
+    <!-- Filtros por categoria -->
     <HorizontalScrollView
-        android:id="@+id/categoriasScroll"
+        android:id="@+id/filtrosLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/searchCard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/btnTodos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Todos"
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarTudo"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnBebidas"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Bebidas"
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarBebidas"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnSalgados"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:textColor="@color/dark_green"
+                android:text="Salgados"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnPratos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Pratos"
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarPratosPrincipais"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnSobremesas"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Sobremesas"
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarSobremesas"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnEntradas"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Entradas"
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarEntradas"
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/btnLanches"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="78dp"
-                android:layout_height="27dp"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
                 android:text="Lanches"
-                android:textColor="#9C5827"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="4dp"
-                app:strokeColor="#9C5827"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp"
-                android:layout_marginEnd="7dp"/>
-
-            <Button
-                android:id="@+id/btnBebidas"
-                android:layout_width="78dp"
-                android:layout_height="27dp"
-                android:text="Bebidas"
-                android:textColor="#FFFFFF"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:backgroundTint="#9C5827"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="4dp"
-                app:cornerRadius="10dp"
-                android:layout_marginEnd="7dp"/>
-
-            <Button
-                android:id="@+id/btnDoces"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="78dp"
-                android:layout_height="27dp"
-                android:text="Doces"
-                android:textColor="#9C5827"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="4dp"
-                app:strokeColor="#9C5827"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp"
-                android:layout_marginEnd="7dp"/>
-
-            <Button
-                android:id="@+id/btnMarmitas"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="78dp"
-                android:layout_height="27dp"
-                android:text="Marmitas"
-                android:textColor="#9C5827"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="4dp"
-                app:strokeColor="#9C5827"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp"/>
+                android:textColor="@color/dark_green"
+                android:textSize="12sp"
+                android:onClick="mostrarLanches" />
 
         </LinearLayout>
-
     </HorizontalScrollView>
 
-    <!-- Divider -->
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginEnd="26dp"
-        android:layout_marginTop="8dp"
-        android:background="#EFEFEF"
-        app:layout_constraintTop_toBottomOf="@id/categoriasScroll"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Lista de Produtos em Grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProdutos"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="100dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/filtrosLayout"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/boxLista"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

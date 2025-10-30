@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/boxProduto"
     android:layout_width="153dp"
     android:layout_height="143dp"
     android:layout_margin="4dp"
@@ -14,7 +15,7 @@
 
         <!-- Imagem do Produto -->
         <ImageView
-            android:id="@+id/imgProduto"
+            android:id="@+id/imagemProduto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -26,8 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/product_gradient" />
-
-
 
         <!-- Informações do Produto -->
         <LinearLayout
@@ -41,7 +40,7 @@
 
             <!-- Nome do Produto -->
             <TextView
-                android:id="@+id/txtNomeProduto"
+                android:id="@+id/tituloProduto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Iced Latte"
@@ -59,7 +58,7 @@
 
                 <!-- Preço -->
                 <TextView
-                    android:id="@+id/txtPrecoProduto"
+                    android:id="@+id/precoProduto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"

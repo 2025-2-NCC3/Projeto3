@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -139,7 +140,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
     private void carregarProdutosExemplo() {
         // Produtos de exemplo caso não consiga conectar com o Supabase
-        exibirProdutos(produtos);
+        List<Produto> produtosExemplo = new ArrayList<>();
+        // Adicione alguns produtos de exemplo aqui se necessário
+        exibirProdutos(produtosExemplo);
     }
 
     private void exibirProdutos(List<Produto> produtosParaExibir) {
@@ -159,11 +162,12 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Cria a visualização do produto que será adicionado no layout
             View productView = inflater.inflate(R.layout.produto, boxLista, false);
 
-            // Pega referencias para cada elemento
-            LinearLayout boxProduto = productView.findViewById(R.id.boxProduto);
+            // Pega referencias para cada elemento - AGORA COM OS IDs CORRETOS
+            CardView boxProduto = productView.findViewById(R.id.boxProduto);
             ImageView imagemProduto = productView.findViewById(R.id.imagemProduto);
             TextView tituloProduto = productView.findViewById(R.id.tituloProduto);
             TextView precoProduto = productView.findViewById(R.id.precoProduto);
+            ImageView btnAdicionar = productView.findViewById(R.id.btnAdicionar);
 
             // Altera a informação de cada elemento
             tituloProduto.setText(produto.getNome());
@@ -210,6 +214,11 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Alterar aparência se produto sem estoque
             if (!temEstoque) {
                 productView.setAlpha(0.6f);
+                btnAdicionar.setAlpha(0.5f);
+                btnAdicionar.setClickable(false);
+            } else {
+                btnAdicionar.setAlpha(1f);
+                btnAdicionar.setClickable(true);
             }
 
             // Adiciona a visualização configurada no activity_cardapio
@@ -223,6 +232,26 @@ public class CardapioAlunosActivity extends AppCompatActivity {
                         Intent intent = new Intent(CardapioAlunosActivity.this, InfoProdutoActivity.class);
                         intent.putExtra("produtoInfo", produto);
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(CardapioAlunosActivity.this,
+                                "Produto indisponível no momento",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            // Adicionar função para o botão de adicionar ao carrinho
+            btnAdicionar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (temEstoque) {
+                        // Adicionar produto ao carrinho
+                        carrinhoHelper.adicionarItem(produto);
+                        atualizarBadgeCarrinho();
+
+                        Toast.makeText(CardapioAlunosActivity.this,
+                                produto.getNome() + " adicionado ao carrinho!",
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(CardapioAlunosActivity.this,
                                 "Produto indisponível no momento",
@@ -314,5 +343,12 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
         // Atualizar badge do carrinho
         atualizarBadgeCarrinho();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Limpar requisições do Glide para evitar memory leaks
+        Glide.with(this).pauseRequests();
     }
 }
