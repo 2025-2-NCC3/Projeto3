@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +14,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -21,15 +26,11 @@ public class CarrinhoActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewCarrinho;
     private LinearLayout layoutCarrinhoVazio;
-    private TextView tvSubtotal, tvQuantidadeTotal;
-    private Button btnFinalizarPedido, btnLimparCarrinho;
-    private ImageButton btnVoltar;
+    private TextView txtSubtotal, txtSeusItens;
+    private MaterialButton btnFinalizarPedido, btnLimparCarrinho;
+    private ImageButton botaoVoltar;
     private CarrinhoAdapter adapter;
     private CarrinhoHelper carrinhoHelper;
-    private String studentId = "2023001";
-    private String studentName = "Cliente Cantina";
-    private String accessToken = "";
-    private SupabaseOrderManager supabaseOrderManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,6 @@ public class CarrinhoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_carrinho);
 
         carrinhoHelper = CarrinhoHelper.getInstance(this);
-        supabaseOrderManager = SupabaseOrderManager.getInstance(this);
 
         inicializarViews();
         configurarListeners();
@@ -47,11 +47,11 @@ public class CarrinhoActivity extends AppCompatActivity {
     private void inicializarViews() {
         recyclerViewCarrinho = findViewById(R.id.recyclerViewCarrinho);
         layoutCarrinhoVazio = findViewById(R.id.layoutCarrinhoVazio);
-        tvSubtotal = findViewById(R.id.tvSubtotal);
-        tvQuantidadeTotal = findViewById(R.id.tvQuantidadeTotal);
+        txtSubtotal = findViewById(R.id.txtSubtotal);
+        txtSeusItens = findViewById(R.id.txtSeusItens);
         btnFinalizarPedido = findViewById(R.id.btnFinalizarPedido);
         btnLimparCarrinho = findViewById(R.id.btnLimparCarrinho);
-        btnVoltar = findViewById(R.id.btnVoltar);
+        botaoVoltar = findViewById(R.id.botaoVoltar);
 
         recyclerViewCarrinho.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarrinhoAdapter();
@@ -59,9 +59,15 @@ public class CarrinhoActivity extends AppCompatActivity {
     }
 
     private void configurarListeners() {
-        btnVoltar.setOnClickListener(v -> finish());
+        botaoVoltar.setOnClickListener(v -> finish());
+
         btnLimparCarrinho.setOnClickListener(v -> mostrarDialogoLimpar());
+
         btnFinalizarPedido.setOnClickListener(v -> {
+            if (carrinhoHelper.getItens().isEmpty()) {
+                Toast.makeText(this, "Carrinho vazio", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(this, CriarPedidoActivity.class);
             startActivity(intent);
         });
@@ -69,14 +75,17 @@ public class CarrinhoActivity extends AppCompatActivity {
 
     private void atualizarInterface() {
         List<ItemCarrinho> itens = carrinhoHelper.getItens();
+        int quantidadeTotal = carrinhoHelper.getQuantidadeTotal();
+
+        // Atualizar texto "Seus Itens"
+        txtSeusItens.setText("Seus Itens (" + quantidadeTotal + ")");
 
         if (itens.isEmpty()) {
             recyclerViewCarrinho.setVisibility(View.GONE);
             layoutCarrinhoVazio.setVisibility(View.VISIBLE);
             btnFinalizarPedido.setEnabled(false);
             btnLimparCarrinho.setEnabled(false);
-            tvSubtotal.setText("R$ 0,00");
-            tvQuantidadeTotal.setText("0 itens");
+            txtSubtotal.setText("R$ 0,00");
         } else {
             recyclerViewCarrinho.setVisibility(View.VISIBLE);
             layoutCarrinhoVazio.setVisibility(View.GONE);
@@ -84,10 +93,7 @@ public class CarrinhoActivity extends AppCompatActivity {
             btnLimparCarrinho.setEnabled(true);
 
             double subtotal = carrinhoHelper.getSubtotal();
-            int quantidadeTotal = carrinhoHelper.getQuantidadeTotal();
-
-            tvSubtotal.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
-            tvQuantidadeTotal.setText(quantidadeTotal + " " + (quantidadeTotal == 1 ? "item" : "itens"));
+            txtSubtotal.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
 
             adapter.notifyDataSetChanged();
         }
@@ -127,31 +133,63 @@ public class CarrinhoActivity extends AppCompatActivity {
             ItemCarrinho item = itens.get(position);
             Produto produto = item.getProduto();
 
-            holder.tvNomeProduto.setText(produto.getNome());
-            holder.tvPrecoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
-            holder.tvQuantidade.setText(String.valueOf(item.getQuantidade()));
-            holder.tvSubtotal.setText(String.format(Locale.getDefault(), "R$ %.2f", item.getSubtotal()));
+            // Nome e descrição
+            holder.txtNomeProduto.setText(produto.getNome());
+            holder.txtDescricaoProduto.setText(produto.getDescricao());
 
+            // Preços
+            holder.txtPrecoUnitario.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
+            holder.txtPrecoTotalItem.setText(String.format(Locale.getDefault(), "R$ %.2f", item.getSubtotal()));
+
+            // Quantidade
+            holder.txtQuantidade.setText(String.valueOf(item.getQuantidade()));
+
+            // Carregar imagem
+            String caminhoImagem = produto.getCaminhoImagem();
+            if (caminhoImagem != null && !caminhoImagem.isEmpty()) {
+                if (caminhoImagem.startsWith("http://") || caminhoImagem.startsWith("https://")) {
+                    Glide.with(CarrinhoActivity.this)
+                            .load(caminhoImagem)
+                            .placeholder(R.drawable.sem_imagem)
+                            .error(R.drawable.sem_imagem)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.imagemProduto);
+                } else {
+                    String nomeImagem = caminhoImagem.replace("/", "_").replace(".", "_");
+                    int imageResId = getResources().getIdentifier(nomeImagem, "drawable", getPackageName());
+                    if (imageResId != 0) {
+                        holder.imagemProduto.setImageResource(imageResId);
+                    } else {
+                        holder.imagemProduto.setImageResource(R.drawable.sem_imagem);
+                    }
+                }
+            } else {
+                holder.imagemProduto.setImageResource(R.drawable.sem_imagem);
+            }
+
+            // Botão diminuir
             holder.btnDiminuir.setOnClickListener(v -> {
                 if (item.getQuantidade() > 1) {
-                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() - 1);  // MUDADO: getId() já retorna String
+                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() - 1);
                     atualizarInterface();
                 } else {
-                    mostrarDialogoRemover(produto.getId(), produto.getNome());  // MUDADO: getId() já retorna String
+                    mostrarDialogoRemover(produto.getId(), produto.getNome());
                 }
             });
 
+            // Botão aumentar
             holder.btnAumentar.setOnClickListener(v -> {
                 if (item.getQuantidade() < produto.getEstoque()) {
-                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() + 1);  // MUDADO: getId() já retorna String
+                    carrinhoHelper.atualizarQuantidade(produto.getId(), item.getQuantidade() + 1);
                     atualizarInterface();
                 } else {
                     Toast.makeText(CarrinhoActivity.this, "Estoque máximo atingido", Toast.LENGTH_SHORT).show();
                 }
             });
 
+            // Botão remover
             holder.btnRemover.setOnClickListener(v -> {
-                mostrarDialogoRemover(produto.getId(), produto.getNome());  // MUDADO: getId() já retorna String
+                mostrarDialogoRemover(produto.getId(), produto.getNome());
             });
         }
 
@@ -160,12 +198,12 @@ public class CarrinhoActivity extends AppCompatActivity {
             return carrinhoHelper.getItens().size();
         }
 
-        private void mostrarDialogoRemover(String produtoId, String nomeProduto) {  // MUDADO: produtoId é String
+        private void mostrarDialogoRemover(String produtoId, String nomeProduto) {
             new AlertDialog.Builder(CarrinhoActivity.this)
                     .setTitle("Remover Item")
                     .setMessage("Deseja remover " + nomeProduto + " do carrinho?")
                     .setPositiveButton("Sim", (dialog, which) -> {
-                        carrinhoHelper.removerProduto(produtoId);  // Agora funciona com String
+                        carrinhoHelper.removerProduto(produtoId);
                         atualizarInterface();
                         Toast.makeText(CarrinhoActivity.this, "Item removido", Toast.LENGTH_SHORT).show();
                     })
@@ -174,16 +212,19 @@ public class CarrinhoActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvNomeProduto, tvPrecoProduto, tvQuantidade, tvSubtotal;
-            Button btnDiminuir, btnAumentar;
-            ImageButton btnRemover;
+            ImageView imagemProduto;
+            TextView txtNomeProduto, txtDescricaoProduto, txtPrecoUnitario;
+            TextView txtQuantidade, txtPrecoTotalItem;
+            ImageButton btnDiminuir, btnAumentar, btnRemover;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                tvNomeProduto = itemView.findViewById(R.id.tvNomeProduto);
-                tvPrecoProduto = itemView.findViewById(R.id.tvPrecoProduto);
-                tvQuantidade = itemView.findViewById(R.id.tvQuantidade);
-                tvSubtotal = itemView.findViewById(R.id.tvSubtotal);
+                imagemProduto = itemView.findViewById(R.id.imagemProduto);
+                txtNomeProduto = itemView.findViewById(R.id.txtNomeProduto);
+                txtDescricaoProduto = itemView.findViewById(R.id.txtDescricaoProduto);
+                txtPrecoUnitario = itemView.findViewById(R.id.txtPrecoUnitario);
+                txtQuantidade = itemView.findViewById(R.id.txtQuantidade);
+                txtPrecoTotalItem = itemView.findViewById(R.id.txtPrecoTotalItem);
                 btnDiminuir = itemView.findViewById(R.id.btnDiminuir);
                 btnAumentar = itemView.findViewById(R.id.btnAumentar);
                 btnRemover = itemView.findViewById(R.id.btnRemover);

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,123 +15,162 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- Cabeçalho do item -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/btnRemover"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvNomeProduto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nome do Produto"
-                    android:textColor="#333333"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvPrecoProduto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="R$ 0,00"
-                    android:textColor="#666666"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/btnRemover"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_delete"
-                android:contentDescription="Remover" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#EEEEEE"
-            android:layout_marginVertical="8dp" />
-
-        <!-- Controles de quantidade e subtotal -->
+        <!-- Informações do Produto (PRIMEIRO) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginBottom="12dp">
 
-            <!-- Controles de quantidade -->
+            <!-- Imagem do Produto -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/imagemProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Imagem do produto"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Detalhes do Produto -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
 
                 <TextView
+                    android:id="@+id/txtNomeProduto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Qtd:"
-                    android:textColor="#666666"
-                    android:textSize="14sp"
-                    android:layout_marginEnd="8dp" />
-
-                <Button
-                    android:id="@+id/btnDiminuir"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:text="-"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/button_quantity"
-                    android:padding="0dp" />
+                    android:text="Iced Mocha"
+                    android:textColor="#9C5827"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
-                    android:id="@+id/tvQuantidade"
-                    android:layout_width="48dp"
+                    android:id="@+id/txtDescricaoProduto"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="#333333"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:text="Small • 8oz"
+                    android:textColor="#000000"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/poppins_light"
+                    android:letterSpacing="-0.01"
+                    android:layout_marginTop="2dp"/>
 
-                <Button
-                    android:id="@+id/btnAumentar"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:text="+"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/button_quantity"
-                    android:padding="0dp" />
+                <TextView
+                    android:id="@+id/txtPrecoUnitario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 170,00"
+                    android:textColor="#000000"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:letterSpacing="-0.01"
+                    android:layout_marginTop="2dp"/>
 
             </LinearLayout>
 
-            <!-- Subtotal -->
-            <TextView
-                android:id="@+id/tvSubtotal"
+            <!-- Botão Remover -->
+            <ImageButton
+                android:id="@+id/btnRemover"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Remover item"
+                app:tint="#BDBDBD"/>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#339C5827"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Container inferior: Controles e Preço -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Controles de Quantidade -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="R$ 0,00"
-                android:textColor="@color/dark_green"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <ImageButton
+                    android:id="@+id/btnDiminuir"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_remove"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Diminuir quantidade"
+                    app:tint="#9C5827"
+                    android:scaleType="centerInside"
+                    android:padding="2dp"/>
+
+                <TextView
+                    android:id="@+id/txtQuantidade"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textAlignment="center"
+                    android:textColor="#2ABEA8"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"/>
+
+                <ImageButton
+                    android:id="@+id/btnAumentar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_add"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Aumentar quantidade"
+                    app:tint="#9C5827"
+                    android:scaleType="centerInside"
+                    android:padding="2dp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <!-- Preço Total do Item -->
+            <TextView
+                android:id="@+id/txtPrecoTotalItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 170,00"
+                android:textColor="#235135"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_semibold"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
