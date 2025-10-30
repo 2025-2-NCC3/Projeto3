@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button buttonLogin;
     private TextView textViewRegister;
     private ProgressBar progressBar;
+    private ImageView togglePassword;
+    private boolean isPasswordVisible = false;
+
     private SupabaseClient supabaseClient;
     private SessionManager sessionManager;
     private AdminManager adminManager;
@@ -55,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.buttonLogin);
         textViewRegister = findViewById(R.id.textViewRegister);
         progressBar = findViewById(R.id.progressBar);
+        togglePassword = findViewById(R.id.togglePassword);
     }
 
     private void setupListeners() {
@@ -63,6 +69,25 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivityForResult(intent, REGISTER_REQUEST_CODE);
         });
+
+        // Configurar toggle de senha
+        togglePassword.setOnClickListener(v -> togglePasswordVisibility());
+    }
+
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Ocultar senha
+            editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            togglePassword.setImageResource(R.drawable.ic_eye_off);
+            isPasswordVisible = false;
+        } else {
+            // Mostrar senha
+            editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            togglePassword.setImageResource(R.drawable.ic_eye);
+            isPasswordVisible = true;
+        }
+        // Mover cursor para o final do texto
+        editTextPassword.setSelection(editTextPassword.getText().length());
     }
 
     private void loginUser() {

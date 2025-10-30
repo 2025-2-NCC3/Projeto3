@@ -48,13 +48,14 @@
                 android:text="Bem-vindo de volta!"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Faça login na sua conta"
+                android:fontFamily="@font/poppins_regular"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:gravity="center"
@@ -94,6 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Email"
+                        android:fontFamily="@font/poppins_regular"
                         android:textColor="#000000"
                         android:textSize="14sp"/>
 
@@ -106,6 +108,7 @@
                         android:textColorHint="#A0AFAFAF"
                         android:textColor="#000000"
                         android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular"
                         android:inputType="textEmailAddress"
                         android:imeOptions="actionNext"
                         android:paddingStart="10dp"
@@ -125,6 +128,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Senha"
+                        android:fontFamily="@font/poppins_regular"
                         android:textColor="#000000"
                         android:textSize="14sp"/>
 
@@ -141,6 +145,7 @@
                             android:textColorHint="#A0AFAFAF"
                             android:textColor="#000000"
                             android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
                             android:inputType="textPassword"
                             android:imeOptions="actionDone"
                             android:paddingStart="10dp"
@@ -174,7 +179,7 @@
                     android:text="Esqueceu sua senha?"
                     android:textColor="#235135"
                     android:textSize="13sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_medium"
                     android:gravity="end"
                     android:clickable="true"
                     android:focusable="true"
@@ -195,7 +200,7 @@
                         android:text="Entrar"
                         android:textColor="#F5F5DB"
                         android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:background="@drawable/button_login_background"
                         android:paddingVertical="12dp"/>
 
@@ -218,6 +223,7 @@
                     android:layout_marginTop="9dp"
                     android:text="Não tem uma conta? Cadastre-se"
                     android:textAlignment="center"
+                    android:fontFamily="@font/poppins_regular"
                     android:textColor="@color/black"
                     android:textSize="13sp"
                     android:clickable="true"

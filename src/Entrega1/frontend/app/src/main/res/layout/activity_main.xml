@@ -63,7 +63,7 @@
                     android:text="FAZER LOGIN"
                     android:textColor="#235135"
                     android:textSize="11sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:gravity="center"/>
 
             </LinearLayout>
@@ -109,7 +109,7 @@
                         android:text="CRIAR CONTA"
                         android:textColor="#FFFFFF"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:gravity="center"/>
 
                 </LinearLayout>
