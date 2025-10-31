@@ -214,26 +214,38 @@ public class AdminEditarProdutoActivity extends AppCompatActivity {
     }
 
     private void excluirProduto() {
-        supabaseClient.deleteProduct(produtoOriginal.getId(), new SupabaseClient.SupabaseCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean sucesso) {
-                runOnUiThread(() -> {
-                    Toast.makeText(AdminEditarProdutoActivity.this,
-                            "Produto excluído com sucesso!",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            }
+        // CORREÇÃO: Verificar se o ID não é nulo e converter String para int
+        String idString = produtoOriginal.getId();
+        if (idString == null || idString.isEmpty()) {
+            Toast.makeText(this, "Erro: Produto sem ID válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    Log.e(TAG, "Erro ao excluir produto: " + error);
-                    Toast.makeText(AdminEditarProdutoActivity.this,
-                            "Erro ao excluir produto: " + error,
-                            Toast.LENGTH_LONG).show();
-                });
-            }
-        });
+        try {
+            int id = Integer.parseInt(idString);
+            supabaseClient.deleteProduct(id, new SupabaseClient.SupabaseCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean sucesso) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(AdminEditarProdutoActivity.this,
+                                "Produto excluído com sucesso!",
+                                Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        Log.e(TAG, "Erro ao excluir produto: " + error);
+                        Toast.makeText(AdminEditarProdutoActivity.this,
+                                "Erro ao excluir produto: " + error,
+                                Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Erro: ID do produto inválido", Toast.LENGTH_SHORT).show();
+        }
     }
 }

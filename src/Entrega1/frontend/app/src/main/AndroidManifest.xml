@@ -42,6 +42,8 @@
         <activity android:name=".DetalhesPedidoActivity"/>
         <activity android:name=".CriarPedidoActivity"/>
         <activity android:name=".MeusPedidosActivity"/>
+        <activity android:name=".AdminEditarProdutoActivity"/>
+        <activity android:name=".AdminListaProdutosActivity"/>
 
 
     </application>

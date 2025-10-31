@@ -137,4 +137,14 @@ public class Produto implements Serializable {
                 ", preco=" + preco +
                 '}';
     }
+    public int getIdPrimitivo() {
+        if (id != null && !id.isEmpty()) {
+            try {
+                return Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+        return 0;
+    }
 }

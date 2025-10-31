@@ -89,7 +89,7 @@ public class AdminCardapioActivity extends AppCompatActivity {
         buttonAddAC.setOnClickListener(v -> adicionarProduto());
 
         botaoVoltar.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminCardapioActivity.this, AdminHomeActivity.class);
+            Intent intent = new Intent(AdminCardapioActivity.this, AdminManager.class);
             startActivity(intent);
             finish();
         });

@@ -1,0 +1,101 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardProduto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Imagem do Produto -->
+        <ImageView
+            android:id="@+id/imagemProduto"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Imagem do produto" />
+
+        <!-- Informações do Produto -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/nomeProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nome do Produto"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/precoProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="R$ 0,00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_green"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/estoqueProduto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estoque: 0"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textColor="@android:color/darker_gray" />
+
+                <TextView
+                    android:id="@+id/categoriaProduto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Categoria"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/darker_gray" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Botão Editar -->
+        <Button
+            android:id="@+id/btnEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar"
+            android:textSize="12sp"
+            android:backgroundTint="@color/dark_green"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

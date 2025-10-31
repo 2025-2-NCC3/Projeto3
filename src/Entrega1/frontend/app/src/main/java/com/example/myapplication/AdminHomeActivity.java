@@ -79,10 +79,13 @@ public class AdminHomeActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // CORREÇÃO: Ir para AdminListaProdutosActivity para listar os produtos
         btnGerenciarProdutos.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
+            Intent intent = new Intent(AdminHomeActivity.this, AdminListaProdutosActivity.class);
             startActivity(intent);
         });
+
+        // Descomente quando tiver essas activities prontas
         /*
         btnGerenciarPedidos.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, GerenciarPedidosActivity.class);
@@ -101,6 +104,7 @@ public class AdminHomeActivity extends AppCompatActivity {
             // startActivity(intent);
         });
         */
+
         btnVerCardapio.setOnClickListener(v -> {
             // Admin pode ver o cardápio como usuário
             Intent intent = new Intent(AdminHomeActivity.this, CardapioAlunosActivity.class);

@@ -1211,4 +1211,282 @@ public class SupabaseClient {
         @SerializedName("role")
         public String role; // "admin" ou "user"
     }
+    public Call createProduct(Produto produto, SupabaseCallback<Produto> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        String json = String.format(
+                "{\"nome\":\"%s\",\"preco\":%.2f,\"descricao\":\"%s\",\"caminho_imagem\":\"%s\",\"estoque\":%d,\"categoria\":%d}",
+                produto.getNome(),
+                produto.getPreco(),
+                produto.getDescricao() != null ? produto.getDescricao() : "",
+                produto.getCaminhoImagem() != null ? produto.getCaminhoImagem() : "",
+                produto.getEstoque(),
+                produto.getCategoria()
+        );
+
+        Log.d(TAG, "Criando produto: " + json);
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos")
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + getAuthToken())
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Prefer", "return=representation")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao criar produto", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta criar produto - Código: " + response.code());
+                Log.d(TAG, "Resposta criar produto - Body: " + responseBody);
+
+                if (response.isSuccessful() || response.code() == 201) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+
+                        if (produtos != null && !produtos.isEmpty()) {
+                            callback.onSuccess(produtos.get(0));
+                        } else {
+                            callback.onError("Erro ao processar resposta");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar resposta", e);
+                        callback.onError("Erro ao processar dados do produto");
+                    }
+                } else {
+                    callback.onError("Erro ao criar produto (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    /**
+     * Atualizar produto existente
+     */
+    public Call updateProduct(Produto produto, SupabaseCallback<Produto> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        String json = String.format(
+                "{\"nome\":\"%s\",\"preco\":%.2f,\"descricao\":\"%s\",\"caminho_imagem\":\"%s\",\"estoque\":%d,\"categoria\":%d}",
+                produto.getNome(),
+                produto.getPreco(),
+                produto.getDescricao() != null ? produto.getDescricao().replace("\"", "\\\"") : "",
+                produto.getCaminhoImagem() != null ? produto.getCaminhoImagem() : "",
+                produto.getEstoque(),
+                produto.getCategoria()
+        );
+
+        Log.d(TAG, "Atualizando produto ID " + produto.getId() + ": " + json);
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?id=eq." + produto.getId())
+                .patch(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + getAuthToken())
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Prefer", "return=representation")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao atualizar produto", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta atualizar produto - Código: " + response.code());
+                Log.d(TAG, "Resposta atualizar produto - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+
+                        if (produtos != null && !produtos.isEmpty()) {
+                            callback.onSuccess(produtos.get(0));
+                        } else {
+                            // Se não retornou o objeto, retornar o produto original
+                            callback.onSuccess(produto);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar resposta", e);
+                        // Em caso de erro, ainda considerar sucesso
+                        callback.onSuccess(produto);
+                    }
+                } else {
+                    callback.onError("Erro ao atualizar produto (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    /**
+     * Deletar produto
+     */
+    public Call deleteProduct(int produtoId, SupabaseCallback<Boolean> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Log.d(TAG, "Deletando produto ID: " + produtoId);
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?id=eq." + produtoId)
+                .delete()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + getAuthToken())
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao deletar produto", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                Log.d(TAG, "Resposta deletar produto - Código: " + response.code());
+
+                if (response.isSuccessful() || response.code() == 204) {
+                    Log.d(TAG, "Produto deletado com sucesso");
+                    callback.onSuccess(true);
+                } else {
+                    String responseBody = response.body() != null ? response.body().string() : "";
+                    Log.e(TAG, "Erro ao deletar: " + responseBody);
+                    callback.onError("Erro ao deletar produto (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    /**
+     * Método auxiliar para upload de imagem simplificado
+     * Este é um wrapper do uploadProductImage para facilitar o uso
+     */
+    public void uploadImage(android.net.Uri imageUri, SupabaseCallback<String> callback) {
+        try {
+            // Ler bytes da imagem
+            android.content.ContentResolver resolver = context.getContentResolver();
+            java.io.InputStream inputStream = resolver.openInputStream(imageUri);
+
+            if (inputStream == null) {
+                callback.onError("Não foi possível ler a imagem");
+                return;
+            }
+
+            byte[] bytes = getBytesFromInputStream(inputStream);
+            inputStream.close();
+
+            // Obter nome do arquivo
+            String fileName = getFileNameFromUri(imageUri);
+
+            // Fazer upload
+            uploadProductImage(bytes, fileName, "produtos", new SupabaseCallback<ImageUploadResponse>() {
+                @Override
+                public void onSuccess(ImageUploadResponse response) {
+                    callback.onSuccess(response.publicUrl);
+                }
+
+                @Override
+                public void onError(String error) {
+                    callback.onError(error);
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao processar imagem", e);
+            callback.onError("Erro ao processar imagem: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Métodos auxiliares para leitura de imagem
+     */
+    private byte[] getBytesFromInputStream(java.io.InputStream inputStream) throws IOException {
+        java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    private String getFileNameFromUri(android.net.Uri uri) {
+        String result = "image.jpg";
+
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+            android.database.Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        result = cursor.getString(nameIndex);
+                    }
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
+        }
+
+        if (result == null) {
+            result = uri.getPath();
+            if (result != null) {
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+        }
+
+        return result != null ? result : "image.jpg";
+    }
+
 }
