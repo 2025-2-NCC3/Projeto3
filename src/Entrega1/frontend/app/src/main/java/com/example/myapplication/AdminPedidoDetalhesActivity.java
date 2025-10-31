@@ -24,7 +24,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private static final String TAG = "AdminPedidoDetalhes";
 
     private SessionManager sessionManager;
-    private SupabaseOrderManager orderManager;
+    private SupabasePedidoManager orderManager;
 
     private TextView tvOrderId, tvStudentName, tvOrderDate, tvOrderStatus, tvOrderCode, tvOrderTotal;
     private RecyclerView recyclerViewItems;
@@ -33,7 +33,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private ScrollView layoutContent;  // MUDADO: LinearLayout para ScrollView
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshDetalhes;
 
-    private Order currentOrder;
+    private Pedido currentPedido;
     private String orderId;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", new Locale("pt", "BR"));
@@ -47,7 +47,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Iniciando");
 
         sessionManager = SessionManager.getInstance(this);
-        orderManager = SupabaseOrderManager.getInstance(this);
+        orderManager = SupabasePedidoManager.getInstance(this);
 
         initializeViews();
         loadOrderDetails();
@@ -95,15 +95,15 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         }
 
         String token = sessionManager.getAccessToken();
-        orderManager.getOrderById(orderId, token, new SupabaseOrderManager.OrderCallback() {
+        orderManager.getOrderById(orderId, token, new SupabasePedidoManager.OrderCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Pedido carregado com sucesso");
                 runOnUiThread(() -> {
                     hideLoading();
                     swipeRefreshDetalhes.setRefreshing(false);
-                    currentOrder = order;
-                    displayOrderDetails(order);
+                    currentPedido = pedido;
+                    displayOrderDetails(pedido);
                 });
             }
 
@@ -121,30 +121,30 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         });
     }
 
-    private void displayOrderDetails(Order order) {
+    private void displayOrderDetails(Pedido pedido) {
         Log.d(TAG, "Exibindo detalhes");
 
-        tvOrderId.setText("Pedido #" + order.getId().substring(0, Math.min(8, order.getId().length())));
-        tvStudentName.setText(order.getStudentName() != null ? order.getStudentName() : "Aluno ID: " + order.getStudentId());
-        tvOrderDate.setText("Data: " + dateFormat.format(order.getCreatedAt()));
+        tvOrderId.setText("Pedido #" + pedido.getId().substring(0, Math.min(8, pedido.getId().length())));
+        tvStudentName.setText(pedido.getStudentName() != null ? pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
+        tvOrderDate.setText("Data: " + dateFormat.format(pedido.getCreatedAt()));
 
         // Status com emoji e cor
-        String statusText = getStatusText(order.getStatus());
+        String statusText = getStatusText(pedido.getStatus());
         tvOrderStatus.setText(statusText);
-        tvOrderStatus.setTextColor(getStatusColor(order.getStatus()));
+        tvOrderStatus.setTextColor(getStatusColor(pedido.getStatus()));
 
-        tvOrderCode.setText("Código de Retirada: " + (order.getCode() != null ? order.getCode() : "N/A"));
-        tvOrderTotal.setText("Total: " + currencyFormat.format(order.getTotal()));
+        tvOrderCode.setText("Código de Retirada: " + (pedido.getCode() != null ? pedido.getCode() : "N/A"));
+        tvOrderTotal.setText("Total: " + currencyFormat.format(pedido.getTotal()));
 
         // Configurar adapter dos itens
-        OrderItemAdapter itemAdapter = new OrderItemAdapter(this);
-        if (order.getItems() != null && !order.getItems().isEmpty()) {
-            itemAdapter.atualizarItens(order.getItems());
+        PedidoItemAdapter itemAdapter = new PedidoItemAdapter(this);
+        if (pedido.getItems() != null && !pedido.getItems().isEmpty()) {
+            itemAdapter.atualizarItens(pedido.getItems());
         }
         recyclerViewItems.setAdapter(itemAdapter);
 
         // Configurar botões baseado no status
-        updateButtonsVisibility(order.getStatus());
+        updateButtonsVisibility(pedido.getStatus());
     }
 
     private String getStatusText(String status) {
@@ -216,16 +216,16 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnConfirmarRetirada.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        orderManager.confirmOrderPickup(currentOrder.getId(), token, new SupabaseOrderManager.OrderCallback() {
+        orderManager.confirmOrderPickup(currentPedido.getId(), token, new SupabasePedidoManager.OrderCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Retirada confirmada");
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
-                    currentOrder = order;
-                    displayOrderDetails(order);
+                    currentPedido = pedido;
+                    displayOrderDetails(pedido);
                     loadOrderDetails();
                 });
             }
@@ -259,16 +259,16 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnCancelarPedido.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        orderManager.cancelOrder(currentOrder.getId(), token, new SupabaseOrderManager.OrderCallback() {
+        orderManager.cancelOrder(currentPedido.getId(), token, new SupabasePedidoManager.OrderCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Pedido cancelado");
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
-                    currentOrder = order;
-                    displayOrderDetails(order);
+                    currentPedido = pedido;
+                    displayOrderDetails(pedido);
                     loadOrderDetails();
                 });
             }

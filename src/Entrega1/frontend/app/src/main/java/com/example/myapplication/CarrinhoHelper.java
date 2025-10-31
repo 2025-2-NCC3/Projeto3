@@ -151,16 +151,16 @@ public class CarrinhoHelper {
     }
 
     // Converter carrinho para OrderRequest com TODOS os dados
-    public OrderRequest criarOrderRequest(String studentId, String studentName) {
-        OrderRequest request = new OrderRequest();
+    public PedidoRequest criarOrderRequest(String studentId, String studentName) {
+        PedidoRequest request = new PedidoRequest();
         request.setStudentId(studentId);
         request.setStudentName(studentName);
 
-        List<OrderItemRequest> items = new ArrayList<>();
+        List<PedidoItemRequest> items = new ArrayList<>();
         for (ItemCarrinho itemCarrinho : itens) {
             Produto produto = itemCarrinho.getProduto();
 
-            OrderItemRequest item = new OrderItemRequest(
+            PedidoItemRequest item = new PedidoItemRequest(
                     produto.getId(),              // productId
                     produto.getNome(),            // productName
                     itemCarrinho.getQuantidade(), // quantity

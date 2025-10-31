@@ -28,8 +28,8 @@ public class MeusPedidosActivity extends AppCompatActivity {
     private LinearLayout layoutPedidosVazio;
     private ProgressBar progressBarCarregando;
     private PedidosAdapter adapter;
-    private List<Order> pedidos;
-    private SupabaseOrderManager orderManager;
+    private List<Pedido> pedidos;
+    private SupabasePedidoManager orderManager;
     private String studentId, accessToken;
 
     @Override
@@ -53,7 +53,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
     private void inicializarDados() {
-        orderManager = SupabaseOrderManager.getInstance(this);
+        orderManager = SupabasePedidoManager.getInstance(this);
 
         // Usar SessionManager
         SessionManager sessionManager = SessionManager.getInstance(this);
@@ -88,18 +88,18 @@ public class MeusPedidosActivity extends AppCompatActivity {
         layoutPedidosVazio.setVisibility(View.GONE);
 
         orderManager.getStudentOrders(studentId, accessToken,
-                new SupabaseOrderManager.OrdersCallback() {
+                new SupabasePedidoManager.OrdersCallback() {
                     @Override
-                    public void onSuccess(List<Order> orders) {
+                    public void onSuccess(List<Pedido> pedidos) {
                         runOnUiThread(() -> {
                             progressBarCarregando.setVisibility(View.GONE);
                             swipeRefresh.setRefreshing(false);
 
-                            pedidos.clear();
-                            pedidos.addAll(orders);
+                            MeusPedidosActivity.this.pedidos.clear();
+                            MeusPedidosActivity.this.pedidos.addAll(pedidos);
                             adapter.notifyDataSetChanged();
 
-                            if (pedidos.isEmpty()) {
+                            if (MeusPedidosActivity.this.pedidos.isEmpty()) {
                                 layoutPedidosVazio.setVisibility(View.VISIBLE);
                                 recyclerViewPedidos.setVisibility(View.GONE);
                             } else {
@@ -122,9 +122,9 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
     private class PedidosAdapter extends RecyclerView.Adapter<PedidosAdapter.ViewHolder> {
-        private List<Order> pedidos;
+        private List<Pedido> pedidos;
 
-        public PedidosAdapter(List<Order> pedidos) {
+        public PedidosAdapter(List<Pedido> pedidos) {
             this.pedidos = pedidos;
         }
 
@@ -137,7 +137,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Order pedido = pedidos.get(position);
+            Pedido pedido = pedidos.get(position);
 
             holder.tvCodigoPedido.setText(pedido.getCode());
 
@@ -177,7 +177,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
 
-    private void abrirDetalhesPedido(Order pedido) {
+    private void abrirDetalhesPedido(Pedido pedido) {
         Intent intent = new Intent(this, DetalhesPedidoActivity.class);
         intent.putExtra("pedido_id", pedido.getId());
         intent.putExtra("access_token", accessToken);

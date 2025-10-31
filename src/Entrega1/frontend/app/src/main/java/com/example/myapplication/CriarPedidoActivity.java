@@ -28,7 +28,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private MaterialButton btnCriarPedido;
 
     private CarrinhoHelper carrinhoHelper;
-    private SupabaseOrderManager orderManager;
+    private SupabasePedidoManager orderManager;
     private String studentId, studentName, accessToken;
     private AlertDialog currentDialog;
 
@@ -67,7 +67,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
     private boolean inicializarDados() {
         carrinhoHelper = CarrinhoHelper.getInstance(this);
-        orderManager = SupabaseOrderManager.getInstance(this);
+        orderManager = SupabasePedidoManager.getInstance(this);
 
         // Usar SessionManager em vez de SharedPreferences direto
         SessionManager sessionManager = SessionManager.getInstance(this);
@@ -168,17 +168,17 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
         mostrarLoading(true, "Criando pedido...");
 
-        OrderRequest request = carrinhoHelper.criarOrderRequest(studentId, studentName);
+        PedidoRequest request = carrinhoHelper.criarOrderRequest(studentId, studentName);
 
-        orderManager.createOrder(request, accessToken, new SupabaseOrderManager.OrderCallback() {
+        orderManager.createOrder(request, accessToken, new SupabasePedidoManager.OrderCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 runOnUiThread(() -> {
                     if (isFinishing() || isDestroyed()) return;
 
                     mostrarLoading(false, "");
                     carrinhoHelper.limparCarrinho();
-                    mostrarDialogoSucesso(order);
+                    mostrarDialogoSucesso(pedido);
                 });
             }
 
@@ -209,14 +209,14 @@ public class CriarPedidoActivity extends AppCompatActivity {
         }
     }
 
-    private void mostrarDialogoSucesso(Order order) {
+    private void mostrarDialogoSucesso(Pedido pedido) {
         if (isFinishing() || isDestroyed()) return;
 
         String mensagem = "🎉 Pedido realizado com sucesso!\n\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n" +
-                "📝 Código: " + order.getCode() + "\n" +
-                "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", order.getTotal()) + "\n" +
-                "📊 Status: " + order.getStatus() + "\n" +
+                "📝 Código: " + pedido.getCode() + "\n" +
+                "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", pedido.getTotal()) + "\n" +
+                "📊 Status: " + pedido.getStatus() + "\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n\n" +
                 "Acompanhe em 'Meus Pedidos'.";
 
