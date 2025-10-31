@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,9 +21,9 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     private ImageButton btnVoltar;
     private RecyclerView recyclerViewItens;
     private MaterialCardView cardPagamento;
-    private OrderItemAdapter adapter;
-    private Order pedidoAtual;
-    private SupabaseOrderManager orderManager;
+    private PedidoItemAdapter adapter;
+    private Pedido pedidoAtual;
+    private SupabasePedidoManager orderManager;
     private String accessToken;
 
     @Override
@@ -51,11 +50,11 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
 
 
-        orderManager = SupabaseOrderManager.getInstance(this);
+        orderManager = SupabasePedidoManager.getInstance(this);
 
         // Configurar RecyclerView
         recyclerViewItens.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new OrderItemAdapter(this);
+        adapter = new PedidoItemAdapter(this);
         recyclerViewItens.setAdapter(adapter);
 
         // Listeners
@@ -75,12 +74,12 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         }
 
         // Buscar pedido no Supabase
-        orderManager.getOrderById(pedidoId, accessToken, new SupabaseOrderManager.OrderCallback() {
+        orderManager.getOrderById(pedidoId, accessToken, new SupabasePedidoManager.OrderCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 runOnUiThread(() -> {
-                    pedidoAtual = order;
-                    exibirDadosPedido(order);
+                    pedidoAtual = pedido;
+                    exibirDadosPedido(pedido);
                 });
             }
 
@@ -95,22 +94,22 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         });
     }
 
-    private void exibirDadosPedido(Order order) {
+    private void exibirDadosPedido(Pedido pedido) {
         // Formatar e exibir dados
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
 
         // Código do pedido no header e na lista
-        String codigo = order.getCode() != null ? "#" + order.getCode() :
-                "#ORD-" + (order.getId().length() > 8 ? order.getId().substring(0, 8) : order.getId());
+        String codigo = pedido.getCode() != null ? "#" + pedido.getCode() :
+                "#ORD-" + (pedido.getId().length() > 8 ? pedido.getId().substring(0, 8) : pedido.getId());
 
         tvPedidoCodigo.setText(codigo);
         tvPedidoId.setText(codigo);
 
         // Data e hora
-        tvDataPedido.setText(dateFormat.format(order.getCreatedAt()));
+        tvDataPedido.setText(dateFormat.format(pedido.getCreatedAt()));
 
         // Status - mostrar texto legível
-        String status = order.getStatus();
+        String status = pedido.getStatus();
         String statusExibir = "";
         int corStatus = 0;
 
@@ -155,19 +154,19 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         tvStatus.setTextColor(corStatus);
 
         // Cliente
-        tvClienteNome.setText(order.getStudentName());
+        tvClienteNome.setText(pedido.getStudentName());
 
         // Desconto (por enquanto sempre 0)
         tvDesconto.setText("R$ 0,00");
 
         // Total
-        tvTotalPedido.setText(String.format(Locale.getDefault(), "R$ %.2f", order.getTotal()));
+        tvTotalPedido.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
 
         // Itens do pedido
-        adapter.atualizarItens(order.getItems());
+        adapter.atualizarItens(pedido.getItems());
 
         // Controlar visibilidade do botão cancelar
-        String statusUpper = order.getStatus().toUpperCase();
+        String statusUpper = pedido.getStatus().toUpperCase();
         if (statusUpper.equals("ENTREGUE") || statusUpper.equals("DELIVERED") ||
                 statusUpper.equals("RETIRADO") || statusUpper.equals("PICKED_UP") ||
                 statusUpper.equals("CANCELADO") || statusUpper.equals("CANCELLED")) {
@@ -202,14 +201,14 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         btnCancelarPedido.setText("CANCELANDO...");
 
         orderManager.cancelOrder(pedidoAtual.getId(), accessToken,
-                new SupabaseOrderManager.OrderCallback() {
+                new SupabasePedidoManager.OrderCallback() {
                     @Override
-                    public void onSuccess(Order order) {
+                    public void onSuccess(Pedido pedido) {
                         runOnUiThread(() -> {
                             Toast.makeText(DetalhesPedidoActivity.this,
                                     "✅ Pedido cancelado com sucesso", Toast.LENGTH_SHORT).show();
-                            pedidoAtual = order;
-                            exibirDadosPedido(order);
+                            pedidoAtual = pedido;
+                            exibirDadosPedido(pedido);
                         });
                     }
 

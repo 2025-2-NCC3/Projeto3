@@ -1,13 +1,13 @@
 package com.example.myapplication;
 
-public class OrderItemRequest {
+public class PedidoItemRequest {
     private String productId;
     private String productName;  // ⭐ NOVO
     private int quantity;
     private double price;  // ⭐ NOVO
 
     // Construtor completo (NOVO)
-    public OrderItemRequest(String productId, String productName, int quantity, double price) {
+    public PedidoItemRequest(String productId, String productName, int quantity, double price) {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
@@ -15,7 +15,7 @@ public class OrderItemRequest {
     }
 
     // Construtor antigo (manter para compatibilidade temporária)
-    public OrderItemRequest(String productId, int quantity) {
+    public PedidoItemRequest(String productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
         this.productName = "";

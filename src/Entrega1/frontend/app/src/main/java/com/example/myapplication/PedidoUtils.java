@@ -121,13 +121,13 @@ public class PedidoUtils {
     // VALIDAÇÕES
     // ========================================
 
-    public static boolean podeCancelarPedido(Order pedido) {
+    public static boolean podeCancelarPedido(Pedido pedido) {
         if (pedido == null) return false;
         String status = pedido.getStatus();
         return status.equals("PENDENTE") || status.equals("CONFIRMADO");
     }
 
-    public static boolean podeAlterarStatus(Order pedido) {
+    public static boolean podeAlterarStatus(Pedido pedido) {
         if (pedido == null) return false;
         String status = pedido.getStatus();
         return !status.equals("ENTREGUE") && !status.equals("CANCELADO");
@@ -169,11 +169,11 @@ public class PedidoUtils {
     // MENSAGENS
     // ========================================
 
-    public static String getMensagemSucesso(Order order) {
+    public static String getMensagemSucesso(Pedido pedido) {
         return "🎉 Pedido criado com sucesso!\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus());
+                "Código: " + pedido.getCode() + "\n" +
+                "Total: " + formatarPreco(pedido.getTotal()) + "\n" +
+                "Status: " + getStatusText(pedido.getStatus());
     }
 
     public static String getMensagemErro(String erro) {
@@ -194,12 +194,12 @@ public class PedidoUtils {
     // COMPARTILHAMENTO
     // ========================================
 
-    public static void compartilharPedido(Context context, Order order) {
+    public static void compartilharPedido(Context context, Pedido pedido) {
         String texto = "📦 Meu Pedido\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus()) + "\n" +
-                "Data: " + formatarData(order.getCreatedAt());
+                "Código: " + pedido.getCode() + "\n" +
+                "Total: " + formatarPreco(pedido.getTotal()) + "\n" +
+                "Status: " + getStatusText(pedido.getStatus()) + "\n" +
+                "Data: " + formatarData(pedido.getCreatedAt());
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

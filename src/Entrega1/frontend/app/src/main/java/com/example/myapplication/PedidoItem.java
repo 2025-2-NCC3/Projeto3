@@ -1,12 +1,12 @@
 package com.example.myapplication;
 
-public class OrderItem {
+public class PedidoItem {
     private String productId;  // MUDADO: int para String
     private String productName;
     private int quantity;
     private double price;
 
-    public OrderItem(String productId, String productName, int quantity, double price) {
+    public PedidoItem(String productId, String productName, int quantity, double price) {
         this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;

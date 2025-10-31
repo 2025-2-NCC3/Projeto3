@@ -17,17 +17,17 @@ import java.util.Locale;
 
 public class PedidoAdminAdapter extends RecyclerView.Adapter<PedidoAdminAdapter.ViewHolder> {
 
-    private List<Order> orders;
+    private List<Pedido> pedidos;
     private OnOrderClickListener listener;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", new Locale("pt", "BR"));
     private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
     public interface OnOrderClickListener {
-        void onOrderClick(Order order);
+        void onOrderClick(Pedido pedido);
     }
 
-    public PedidoAdminAdapter(List<Order> orders, OnOrderClickListener listener) {
-        this.orders = orders;
+    public PedidoAdminAdapter(List<Pedido> pedidos, OnOrderClickListener listener) {
+        this.pedidos = pedidos;
         this.listener = listener;
     }
 
@@ -41,16 +41,16 @@ public class PedidoAdminAdapter extends RecyclerView.Adapter<PedidoAdminAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Order order = orders.get(position);
+        Pedido pedido = pedidos.get(position);
 
-        holder.tvOrderId.setText("Pedido #" + order.getId());
-        holder.tvStudentName.setText(order.getStudentName() != null ? order.getStudentName() : "Aluno ID: " + order.getStudentId());
-        holder.tvOrderDate.setText(dateFormat.format(order.getCreatedAt()));
-        holder.tvOrderTotal.setText(currencyFormat.format(order.getTotal()));
-        holder.tvOrderCode.setText("Código: " + (order.getCode() != null ? order.getCode() : "N/A"));
+        holder.tvOrderId.setText("Pedido #" + pedido.getId());
+        holder.tvStudentName.setText(pedido.getStudentName() != null ? pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
+        holder.tvOrderDate.setText(dateFormat.format(pedido.getCreatedAt()));
+        holder.tvOrderTotal.setText(currencyFormat.format(pedido.getTotal()));
+        holder.tvOrderCode.setText("Código: " + (pedido.getCode() != null ? pedido.getCode() : "N/A"));
 
         // Configurar status visual
-        String status = order.getStatus();
+        String status = pedido.getStatus();
         holder.tvOrderStatus.setText(getStatusText(status));
         holder.tvOrderStatus.setTextColor(getStatusColor(status));
         holder.cardView.setCardBackgroundColor(getStatusBackgroundColor(status));
@@ -58,18 +58,18 @@ public class PedidoAdminAdapter extends RecyclerView.Adapter<PedidoAdminAdapter.
         // Click listener
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onOrderClick(order);
+                listener.onOrderClick(pedido);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return orders.size();
+        return pedidos.size();
     }
 
-    public void updateOrders(List<Order> newOrders) {
-        this.orders = newOrders;
+    public void updateOrders(List<Pedido> newPedidos) {
+        this.pedidos = newPedidos;
         notifyDataSetChanged();
     }
 

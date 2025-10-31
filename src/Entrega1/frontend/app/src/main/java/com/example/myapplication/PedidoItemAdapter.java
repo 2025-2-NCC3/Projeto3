@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.ItemViewHolder> {
+public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.ItemViewHolder> {
 
-    private List<OrderItem> itens;
+    private List<PedidoItem> itens;
     private Context context;
 
-    public OrderItemAdapter(Context context) {
+    public PedidoItemAdapter(Context context) {
         this.context = context;
         this.itens = new ArrayList<>();
     }
@@ -31,7 +31,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Item
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        OrderItem item = itens.get(position);
+        PedidoItem item = itens.get(position);
         holder.bind(item);
     }
 
@@ -40,7 +40,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Item
         return itens.size();
     }
 
-    public void atualizarItens(List<OrderItem> novoItens) {
+    public void atualizarItens(List<PedidoItem> novoItens) {
         if (novoItens != null) {
             this.itens = new ArrayList<>(novoItens);
         } else {
@@ -66,7 +66,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Item
             txtQuantidade = itemView.findViewById(R.id.txtQuantidade);
         }
 
-        public void bind(OrderItem item) {
+        public void bind(PedidoItem item) {
             // Nome do produto - com fallback
             String nomeProduto = item.getProductName();
             if (nomeProduto == null || nomeProduto.isEmpty()) {

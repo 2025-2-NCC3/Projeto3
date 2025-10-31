@@ -30,7 +30,7 @@ public class AdminPedidosActivity extends AppCompatActivity {
 
     private SessionManager sessionManager;
     private AdminManager adminManager;
-    private SupabaseOrderManager orderManager;
+    private SupabasePedidoManager orderManager;
 
     private RecyclerView recyclerViewPedidos;
     private SwipeRefreshLayout swipeRefresh;
@@ -46,8 +46,8 @@ public class AdminPedidosActivity extends AppCompatActivity {
     private String filtroData = "TODOS";
     private String ordenacao = "RECENTE";
 
-    private List<Order> todosOsPedidos = new ArrayList<>();
-    private List<Order> pedidosFiltrados = new ArrayList<>();
+    private List<Pedido> todosOsPedidos = new ArrayList<>();
+    private List<Pedido> pedidosFiltrados = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class AdminPedidosActivity extends AppCompatActivity {
 
         sessionManager = SessionManager.getInstance(this);
         adminManager = AdminManager.getInstance(this);
-        orderManager = SupabaseOrderManager.getInstance(this);
+        orderManager = SupabasePedidoManager.getInstance(this);
 
         if (!adminManager.isAdmin()) {
             Toast.makeText(this, "Acesso negado", Toast.LENGTH_SHORT).show();
@@ -221,12 +221,12 @@ public class AdminPedidosActivity extends AppCompatActivity {
             return;
         }
 
-        orderManager.getAllOrders(token, new SupabaseOrderManager.OrdersCallback() {
+        orderManager.getAllOrders(token, new SupabasePedidoManager.OrdersCallback() {
             @Override
-            public void onSuccess(List<Order> orders) {
+            public void onSuccess(List<Pedido> pedidos) {
                 runOnUiThread(() -> {
                     hideLoading();
-                    todosOsPedidos = orders;
+                    todosOsPedidos = pedidos;
                     aplicarFiltros();
                 });
             }
@@ -248,13 +248,13 @@ public class AdminPedidosActivity extends AppCompatActivity {
 
         // 1. Filtrar por Status
         if (!filtroAtual.equals("TODOS")) {
-            List<Order> temp = new ArrayList<>();
-            for (Order order : pedidosFiltrados) {
-                String status = order.getStatus().toUpperCase();
+            List<Pedido> temp = new ArrayList<>();
+            for (Pedido pedido : pedidosFiltrados) {
+                String status = pedido.getStatus().toUpperCase();
                 if (filtroAtual.equals("ENTREGUE") && (status.equals("ENTREGUE") || status.equals("RETIRADO"))) {
-                    temp.add(order);
+                    temp.add(pedido);
                 } else if (status.equals(filtroAtual)) {
-                    temp.add(order);
+                    temp.add(pedido);
                 }
             }
             pedidosFiltrados = temp;
@@ -262,12 +262,12 @@ public class AdminPedidosActivity extends AppCompatActivity {
 
         // 2. Filtrar por Data
         if (!filtroData.equals("TODOS")) {
-            List<Order> temp = new ArrayList<>();
+            List<Pedido> temp = new ArrayList<>();
             Calendar cal = Calendar.getInstance();
 
-            for (Order order : pedidosFiltrados) {
+            for (Pedido pedido : pedidosFiltrados) {
                 Calendar orderCal = Calendar.getInstance();
-                orderCal.setTime(order.getCreatedAt());
+                orderCal.setTime(pedido.getCreatedAt());
 
                 boolean incluir = false;
 
@@ -285,32 +285,32 @@ public class AdminPedidosActivity extends AppCompatActivity {
                         break;
                 }
 
-                if (incluir) temp.add(order);
+                if (incluir) temp.add(pedido);
             }
             pedidosFiltrados = temp;
         }
 
         // 3. Filtrar por Busca
         if (!textoBusca.isEmpty()) {
-            List<Order> temp = new ArrayList<>();
-            for (Order order : pedidosFiltrados) {
-                String codigo = order.getCode() != null ? order.getCode().toLowerCase() : "";
-                String nome = order.getStudentName() != null ? order.getStudentName().toLowerCase() : "";
-                String id = order.getId().toLowerCase();
+            List<Pedido> temp = new ArrayList<>();
+            for (Pedido pedido : pedidosFiltrados) {
+                String codigo = pedido.getCode() != null ? pedido.getCode().toLowerCase() : "";
+                String nome = pedido.getStudentName() != null ? pedido.getStudentName().toLowerCase() : "";
+                String id = pedido.getId().toLowerCase();
 
                 if (codigo.contains(textoBusca) ||
                         nome.contains(textoBusca) ||
                         id.contains(textoBusca)) {
-                    temp.add(order);
+                    temp.add(pedido);
                 }
             }
             pedidosFiltrados = temp;
         }
 
         // 4. Ordenar
-        Collections.sort(pedidosFiltrados, new Comparator<Order>() {
+        Collections.sort(pedidosFiltrados, new Comparator<Pedido>() {
             @Override
-            public int compare(Order o1, Order o2) {
+            public int compare(Pedido o1, Pedido o2) {
                 switch (ordenacao) {
                     case "RECENTE":
                         return o2.getCreatedAt().compareTo(o1.getCreatedAt());
@@ -351,10 +351,10 @@ public class AdminPedidosActivity extends AppCompatActivity {
         swipeRefresh.setRefreshing(false);
     }
 
-    private void showOrders(List<Order> orders) {
+    private void showOrders(List<Pedido> pedidos) {
         recyclerViewPedidos.setVisibility(View.VISIBLE);
         layoutVazio.setVisibility(View.GONE);
-        adapter.updateOrders(orders);
+        adapter.updateOrders(pedidos);
     }
 
     private void showEmptyState() {
