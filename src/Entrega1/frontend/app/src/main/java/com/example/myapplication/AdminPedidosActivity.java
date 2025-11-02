@@ -1,106 +1,123 @@
 package com.example.myapplication;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.button.MaterialButton;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AdminPedidosActivity extends AppCompatActivity {
 
     private static final String TAG = "AdminPedidosActivity";
 
-    private SessionManager sessionManager;
-    private AdminManager adminManager;
-    private SupabasePedidoManager orderManager;
-
-    private RecyclerView recyclerViewPedidos;
-    private SwipeRefreshLayout swipeRefresh;
-    private ProgressBar progressBar;
-    private LinearLayout layoutVazio;
+    private ImageButton btnVoltar;
     private EditText editBusca;
     private ImageButton btnLimparBusca;
-    private PedidoAdminAdapter adapter;
-
     private Button btnFiltroStatus, btnFiltroData, btnOrdenacao;
+    private SwipeRefreshLayout swipeRefresh;
+    private RecyclerView recyclerViewPedidos;
+    private ProgressBar progressBarCarregando;
+    private LinearLayout layoutPedidosVazio;
 
-    private String filtroAtual = "TODOS";
-    private String filtroData = "TODOS";
-    private String ordenacao = "RECENTE";
+    private AdminPedidosAdapter adapter;
+    private List<Pedido> pedidosTodos;
+    private List<Pedido> pedidosFiltrados;
 
-    private List<Pedido> todosOsPedidos = new ArrayList<>();
-    private List<Pedido> pedidosFiltrados = new ArrayList<>();
+    private SupabasePedidoManager pedidoManager;
+    private SessionManager sessionManager;
+    private AdminManager adminManager;
+    private String accessToken;
+
+    // Filtros
+    private String filtroStatus = "TODOS";
+    private Date filtroDataInicio = null;
+    private Date filtroDataFim = null;
+    private String ordenacao = "DATA_DESC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Verificar permissões de admin
         sessionManager = SessionManager.getInstance(this);
         adminManager = AdminManager.getInstance(this);
-        orderManager = SupabasePedidoManager.getInstance(this);
 
         if (!adminManager.isAdmin()) {
-            Toast.makeText(this, "Acesso negado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Acesso negado. Você não tem permissões de administrador.",
+                    Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         setContentView(R.layout.activity_admin_pedidos);
 
-        initializeViews();
-        setupListeners();
-        loadOrders();
+        inicializarViews();
+        inicializarDados();
+        configurarRecyclerView();
+        configurarListeners();
+        carregarPedidos();
     }
 
-    private void initializeViews() {
-        ImageButton btnVoltar = findViewById(R.id.btnVoltar);
-        btnVoltar.setOnClickListener(v -> finish());
-
-        recyclerViewPedidos = findViewById(R.id.recyclerViewPedidos);
-        swipeRefresh = findViewById(R.id.swipeRefresh);
-        progressBar = findViewById(R.id.progressBarCarregando);
-        layoutVazio = findViewById(R.id.layoutPedidosVazio);
-
+    private void inicializarViews() {
+        btnVoltar = findViewById(R.id.btnVoltar);
         editBusca = findViewById(R.id.editBusca);
         btnLimparBusca = findViewById(R.id.btnLimparBusca);
         btnFiltroStatus = findViewById(R.id.btnFiltroStatus);
         btnFiltroData = findViewById(R.id.btnFiltroData);
         btnOrdenacao = findViewById(R.id.btnOrdenacao);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+        recyclerViewPedidos = findViewById(R.id.recyclerViewPedidos);
+        progressBarCarregando = findViewById(R.id.progressBarCarregando);
+        layoutPedidosVazio = findViewById(R.id.layoutPedidosVazio);
+    }
 
+    private void inicializarDados() {
+        pedidoManager = SupabasePedidoManager.getInstance(this);
+        accessToken = sessionManager.getAccessToken();
+
+        pedidosTodos = new ArrayList<>();
+        pedidosFiltrados = new ArrayList<>();
+    }
+
+    private void configurarRecyclerView() {
         recyclerViewPedidos.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PedidoAdminAdapter(new ArrayList<>(), order -> {
-            Intent intent = new Intent(AdminPedidosActivity.this, AdminPedidoDetalhesActivity.class);
-            intent.putExtra("ORDER_ID", order.getId());
-            startActivity(intent);
-        });
+        adapter = new AdminPedidosAdapter(pedidosFiltrados);
         recyclerViewPedidos.setAdapter(adapter);
     }
 
-    private void setupListeners() {
-        swipeRefresh.setOnRefreshListener(this::loadOrders);
+    private void configurarListeners() {
+        btnVoltar.setOnClickListener(v -> finish());
 
-        btnFiltroStatus.setOnClickListener(v -> mostrarDialogoFiltroStatus());
-        btnFiltroData.setOnClickListener(v -> mostrarDialogoFiltroData());
-        btnOrdenacao.setOnClickListener(v -> mostrarDialogoOrdenacao());
-
+        // Busca em tempo real
         editBusca.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -115,41 +132,155 @@ public class AdminPedidosActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        btnLimparBusca.setOnClickListener(v -> editBusca.setText(""));
+        btnLimparBusca.setOnClickListener(v -> {
+            editBusca.setText("");
+            btnLimparBusca.setVisibility(View.GONE);
+        });
+
+        btnFiltroStatus.setOnClickListener(v -> mostrarDialogFiltroStatus());
+        btnFiltroData.setOnClickListener(v -> mostrarDialogFiltroData());
+        btnOrdenacao.setOnClickListener(v -> mostrarDialogOrdenacao());
+
+        swipeRefresh.setOnRefreshListener(() -> carregarPedidos());
+        swipeRefresh.setColorSchemeColors(
+                getResources().getColor(R.color.dark_green),
+                getResources().getColor(R.color.status_preparando),
+                getResources().getColor(R.color.status_pronto)
+        );
     }
 
-    private void mostrarDialogoFiltroStatus() {
-        String[] opcoes = {
-                "Todos os Status",
-                "⏳ Pendente",
-                "👨‍🍳 Preparando",
-                "✅ Pronto",
-                "🎉 Entregue/Retirado",
-                "❌ Cancelado"
-        };
+    private void carregarPedidos() {
+        if (!swipeRefresh.isRefreshing()) {
+            progressBarCarregando.setVisibility(View.VISIBLE);
+        }
+        recyclerViewPedidos.setVisibility(View.GONE);
+        layoutPedidosVazio.setVisibility(View.GONE);
 
-        int selecionado = 0;
-        switch (filtroAtual.toUpperCase()) {
-            case "PENDENTE": selecionado = 1; break;
-            case "PREPARANDO": selecionado = 2; break;
-            case "PRONTO": selecionado = 3; break;
-            case "ENTREGUE":
-            case "RETIRADO": selecionado = 4; break;
-            case "CANCELADO": selecionado = 5; break;
+        pedidoManager.getAllPedidos(accessToken, new SupabasePedidoManager.PedidosCallback() {
+            @Override
+            public void onSuccess(List<Pedido> pedidos) {
+                runOnUiThread(() -> {
+                    progressBarCarregando.setVisibility(View.GONE);
+                    swipeRefresh.setRefreshing(false);
+
+                    pedidosTodos.clear();
+                    pedidosTodos.addAll(pedidos);
+                    aplicarFiltros();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    progressBarCarregando.setVisibility(View.GONE);
+                    swipeRefresh.setRefreshing(false);
+                    Toast.makeText(AdminPedidosActivity.this,
+                            "Erro ao carregar pedidos: " + error,
+                            Toast.LENGTH_LONG).show();
+                    layoutPedidosVazio.setVisibility(View.VISIBLE);
+                });
+            }
+        });
+    }
+
+    private void aplicarFiltros() {
+        String textoBusca = editBusca.getText().toString().trim().toLowerCase();
+
+        pedidosFiltrados.clear();
+
+        for (Pedido pedido : pedidosTodos) {
+            try {
+                // Filtro de busca
+                boolean passaBusca = textoBusca.isEmpty() ||
+                        (pedido.getCode() != null && pedido.getCode().toLowerCase().contains(textoBusca)) ||
+                        (pedido.getStudentName() != null && pedido.getStudentName().toLowerCase().contains(textoBusca)) ||
+                        (pedido.getStudentId() != null && pedido.getStudentId().toLowerCase().contains(textoBusca));
+
+                // Filtro de status usando normalização
+                boolean passaStatus = filtroStatus.equals("TODOS") ||
+                        PedidoUtils.normalizarStatus(pedido.getStatus()).equals(filtroStatus);
+
+                // Filtro de data
+                boolean passaData = true;
+                if (filtroDataInicio != null && filtroDataFim != null && pedido.getCreatedAt() != null) {
+                    Date dataPedido = pedido.getCreatedAt();
+                    passaData = !dataPedido.before(filtroDataInicio) && !dataPedido.after(filtroDataFim);
+                }
+
+                if (passaBusca && passaStatus && passaData) {
+                    pedidosFiltrados.add(pedido);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Erro ao filtrar pedido: " + e.getMessage());
+            }
+        }
+
+        // Aplicar ordenação
+        ordenarPedidos();
+
+        adapter.notifyDataSetChanged();
+
+        if (pedidosFiltrados.isEmpty()) {
+            layoutPedidosVazio.setVisibility(View.VISIBLE);
+            recyclerViewPedidos.setVisibility(View.GONE);
+        } else {
+            layoutPedidosVazio.setVisibility(View.GONE);
+            recyclerViewPedidos.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void ordenarPedidos() {
+        Comparator<Pedido> comparator = null;
+
+        switch (ordenacao) {
+            case "DATA_DESC":
+                comparator = (o1, o2) -> {
+                    if (o1.getCreatedAt() == null) return 1;
+                    if (o2.getCreatedAt() == null) return -1;
+                    return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+                };
+                break;
+            case "DATA_ASC":
+                comparator = (o1, o2) -> {
+                    if (o1.getCreatedAt() == null) return 1;
+                    if (o2.getCreatedAt() == null) return -1;
+                    return o1.getCreatedAt().compareTo(o2.getCreatedAt());
+                };
+                break;
+            case "VALOR_DESC":
+                comparator = (o1, o2) -> Double.compare(o2.getTotal(), o1.getTotal());
+                break;
+            case "VALOR_ASC":
+                comparator = (o1, o2) -> Double.compare(o1.getTotal(), o2.getTotal());
+                break;
+        }
+
+        if (comparator != null) {
+            try {
+                Collections.sort(pedidosFiltrados, comparator);
+            } catch (Exception e) {
+                Log.e(TAG, "Erro ao ordenar pedidos: " + e.getMessage());
+            }
+        }
+    }
+
+    private void mostrarDialogFiltroStatus() {
+        String[] opcoes = {"Todos", "Pendente", "Confirmado", "Preparando", "Pronto", "Concluído", "Cancelado"};
+        String[] valores = {"TODOS", "PENDING", "CONFIRMED", "PREPARING", "READY", "COMPLETED", "CANCELLED"};
+
+        int itemSelecionado = 0;
+        for (int i = 0; i < valores.length; i++) {
+            if (valores[i].equals(filtroStatus)) {
+                itemSelecionado = i;
+                break;
+            }
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Filtrar por Status")
-                .setSingleChoiceItems(opcoes, selecionado, (dialog, which) -> {
-                    switch (which) {
-                        case 0: filtroAtual = "TODOS"; break;
-                        case 1: filtroAtual = "PENDENTE"; break;
-                        case 2: filtroAtual = "PREPARANDO"; break;
-                        case 3: filtroAtual = "PRONTO"; break;
-                        case 4: filtroAtual = "ENTREGUE"; break;
-                        case 5: filtroAtual = "CANCELADO"; break;
-                    }
-                    btnFiltroStatus.setText(opcoes[which]);
+                .setSingleChoiceItems(opcoes, itemSelecionado, (dialog, which) -> {
+                    filtroStatus = valores[which];
+                    btnFiltroStatus.setText("🎯 " + opcoes[which]);
                     aplicarFiltros();
                     dialog.dismiss();
                 })
@@ -157,52 +288,98 @@ public class AdminPedidosActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void mostrarDialogoFiltroData() {
-        String[] opcoes = {"Todos os Períodos", "Hoje", "Ontem", "Última Semana"};
-        int selecionado = 0;
-
-        switch (filtroData) {
-            case "HOJE": selecionado = 1; break;
-            case "ONTEM": selecionado = 2; break;
-            case "SEMANA": selecionado = 3; break;
-        }
+    private void mostrarDialogFiltroData() {
+        String[] opcoes = {"Hoje", "Última semana", "Último mês", "Período personalizado", "Limpar filtro"};
 
         new AlertDialog.Builder(this)
                 .setTitle("Filtrar por Data")
-                .setSingleChoiceItems(opcoes, selecionado, (dialog, which) -> {
+                .setItems(opcoes, (dialog, which) -> {
+                    Calendar cal = Calendar.getInstance();
+                    Date hoje = cal.getTime();
+
                     switch (which) {
-                        case 0: filtroData = "TODOS"; break;
-                        case 1: filtroData = "HOJE"; break;
-                        case 2: filtroData = "ONTEM"; break;
-                        case 3: filtroData = "SEMANA"; break;
+                        case 0: // Hoje
+                            cal.set(Calendar.HOUR_OF_DAY, 0);
+                            cal.set(Calendar.MINUTE, 0);
+                            cal.set(Calendar.SECOND, 0);
+                            filtroDataInicio = cal.getTime();
+                            filtroDataFim = hoje;
+                            btnFiltroData.setText("📅 Hoje");
+                            break;
+                        case 1: // Última semana
+                            cal.add(Calendar.DAY_OF_MONTH, -7);
+                            filtroDataInicio = cal.getTime();
+                            filtroDataFim = hoje;
+                            btnFiltroData.setText("📅 7 dias");
+                            break;
+                        case 2: // Último mês
+                            cal.add(Calendar.MONTH, -1);
+                            filtroDataInicio = cal.getTime();
+                            filtroDataFim = hoje;
+                            btnFiltroData.setText("📅 30 dias");
+                            break;
+                        case 3: // Personalizado
+                            selecionarPeriodoPersonalizado();
+                            return;
+                        case 4: // Limpar
+                            filtroDataInicio = null;
+                            filtroDataFim = null;
+                            btnFiltroData.setText("📅 Data");
+                            break;
                     }
-                    btnFiltroData.setText("📅 " + opcoes[which]);
                     aplicarFiltros();
-                    dialog.dismiss();
                 })
-                .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private void mostrarDialogoOrdenacao() {
-        String[] opcoes = {"Mais Recentes", "Mais Antigos", "Maior Valor", "Menor Valor"};
-        int selecionado = 0;
+    private void selecionarPeriodoPersonalizado() {
+        Calendar cal = Calendar.getInstance();
 
-        switch (ordenacao) {
-            case "ANTIGO": selecionado = 1; break;
-            case "VALOR_DESC": selecionado = 2; break;
-            case "VALOR_ASC": selecionado = 3; break;
+        DatePickerDialog pickerInicio = new DatePickerDialog(this,
+                (view, year, month, dayOfMonth) -> {
+                    Calendar inicio = Calendar.getInstance();
+                    inicio.set(year, month, dayOfMonth, 0, 0, 0);
+                    filtroDataInicio = inicio.getTime();
+
+                    DatePickerDialog pickerFim = new DatePickerDialog(this,
+                            (view2, year2, month2, dayOfMonth2) -> {
+                                Calendar fim = Calendar.getInstance();
+                                fim.set(year2, month2, dayOfMonth2, 23, 59, 59);
+                                filtroDataFim = fim.getTime();
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM", Locale.getDefault());
+                                btnFiltroData.setText("📅 " + sdf.format(filtroDataInicio) + " - " + sdf.format(filtroDataFim));
+                                aplicarFiltros();
+                            },
+                            cal.get(Calendar.YEAR),
+                            cal.get(Calendar.MONTH),
+                            cal.get(Calendar.DAY_OF_MONTH));
+                    pickerFim.setTitle("Data Final");
+                    pickerFim.show();
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH));
+        pickerInicio.setTitle("Data Inicial");
+        pickerInicio.show();
+    }
+
+    private void mostrarDialogOrdenacao() {
+        String[] opcoes = {"Mais recentes", "Mais antigos", "Maior valor", "Menor valor"};
+        String[] valores = {"DATA_DESC", "DATA_ASC", "VALOR_DESC", "VALOR_ASC"};
+
+        int itemSelecionado = 0;
+        for (int i = 0; i < valores.length; i++) {
+            if (valores[i].equals(ordenacao)) {
+                itemSelecionado = i;
+                break;
+            }
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Ordenar por")
-                .setSingleChoiceItems(opcoes, selecionado, (dialog, which) -> {
-                    switch (which) {
-                        case 0: ordenacao = "RECENTE"; break;
-                        case 1: ordenacao = "ANTIGO"; break;
-                        case 2: ordenacao = "VALOR_DESC"; break;
-                        case 3: ordenacao = "VALOR_ASC"; break;
-                    }
+                .setSingleChoiceItems(opcoes, itemSelecionado, (dialog, which) -> {
+                    ordenacao = valores[which];
                     btnOrdenacao.setText("📊 " + opcoes[which]);
                     aplicarFiltros();
                     dialog.dismiss();
@@ -211,161 +388,178 @@ public class AdminPedidosActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void loadOrders() {
-        showLoading();
+    private void confirmarPedido(Pedido pedido, int position) {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar Pedido")
+                .setMessage("Deseja confirmar o pedido " + pedido.getCode() + "?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    Toast.makeText(this, "Confirmando pedido...", Toast.LENGTH_SHORT).show();
 
-        String token = sessionManager.getAccessToken();
-        if (token == null) {
-            Toast.makeText(this, "Sessão expirada", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+                    pedidoManager.updatePedidoStatus(pedido.getId(), "CONFIRMED", accessToken,
+                            new SupabasePedidoManager.PedidoCallback() {
+                                @Override
+                                public void onSuccess(Pedido updatedPedido) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(AdminPedidosActivity.this,
+                                                "✓ Pedido confirmado com sucesso!",
+                                                Toast.LENGTH_SHORT).show();
+                                        carregarPedidos();
+                                    });
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(AdminPedidosActivity.this,
+                                                "Erro ao confirmar: " + error,
+                                                Toast.LENGTH_LONG).show();
+                                    });
+                                }
+                            });
+                })
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private void cancelarPedido(Pedido pedido, int position) {
+        new AlertDialog.Builder(this)
+                .setTitle("Cancelar Pedido")
+                .setMessage("Deseja cancelar o pedido " + pedido.getCode() + "?\n\nEsta ação não pode ser desfeita.")
+                .setPositiveButton("Sim, cancelar", (dialog, which) -> {
+                    Toast.makeText(this, "Cancelando pedido...", Toast.LENGTH_SHORT).show();
+
+                    pedidoManager.updatePedidoStatus(pedido.getId(), "CANCELLED", accessToken,
+                            new SupabasePedidoManager.PedidoCallback() {
+                                @Override
+                                public void onSuccess(Pedido updatedPedido) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(AdminPedidosActivity.this,
+                                                "✓ Pedido cancelado!",
+                                                Toast.LENGTH_SHORT).show();
+                                        carregarPedidos();
+                                    });
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(AdminPedidosActivity.this,
+                                                "Erro ao cancelar: " + error,
+                                                Toast.LENGTH_LONG).show();
+                                    });
+                                }
+                            });
+                })
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    // ============================================
+    // ADAPTER
+    // ============================================
+
+    private class AdminPedidosAdapter extends RecyclerView.Adapter<AdminPedidosAdapter.ViewHolder> {
+        private List<Pedido> pedidos;
+
+        public AdminPedidosAdapter(List<Pedido> pedidos) {
+            this.pedidos = pedidos;
         }
 
-        orderManager.getAllOrders(token, new SupabasePedidoManager.OrdersCallback() {
-            @Override
-            public void onSuccess(List<Pedido> pedidos) {
-                runOnUiThread(() -> {
-                    hideLoading();
-                    todosOsPedidos = pedidos;
-                    aplicarFiltros();
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_pedido_admin, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            if (position >= pedidos.size()) return;
+
+            try {
+                Pedido pedido = pedidos.get(position);
+
+                // Proteger contra valores null
+                holder.tvCodigoPedido.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
+                holder.tvNomeAluno.setText(pedido.getStudentName() != null ?
+                        pedido.getStudentName() : "Aluno #" + (pedido.getStudentId() != null ? pedido.getStudentId() : "N/A"));
+
+                holder.tvDataPedido.setText(pedido.getCreatedAt() != null ?
+                        PedidoUtils.formatarData(pedido.getCreatedAt()) : "Data não disponível");
+
+                holder.tvValorTotal.setText(PedidoUtils.formatarPreco(pedido.getTotal()));
+
+                // Usando StatusConfig
+                String status = pedido.getStatus() != null ? pedido.getStatus() : "PENDING";
+                PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(
+                        holder.itemView.getContext(),
+                        status
+                );
+
+                holder.tvStatus.setText(statusConfig.texto);
+                holder.tvStatus.setTextColor(statusConfig.corTexto);
+                holder.cardStatus.setCardBackgroundColor(statusConfig.corFundo);
+                holder.tvStatusIcon.setText(statusConfig.icone);
+                holder.tvStatusIcon.setTextColor(statusConfig.corTexto);
+
+                // Mostrar/esconder botões usando normalização
+                String statusNormalizado = PedidoUtils.normalizarStatus(status);
+                if (statusNormalizado.equals("PENDING")) {
+                    holder.botoesAcao.setVisibility(View.VISIBLE);
+                } else {
+                    holder.botoesAcao.setVisibility(View.GONE);
+                }
+
+                // Click no card abre AdminPedidoDetalhesActivity
+                holder.itemView.setOnClickListener(v -> {
+                    Intent intent = new Intent(AdminPedidosActivity.this, AdminPedidoDetalhesActivity.class);
+                    intent.putExtra("ORDER_ID", pedido.getId());
+                    startActivity(intent);
                 });
-            }
 
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    hideLoading();
-                    Toast.makeText(AdminPedidosActivity.this, "Erro: " + error, Toast.LENGTH_SHORT).show();
-                    showEmptyState();
-                });
-            }
-        });
-    }
+                // Botão Confirmar
+                holder.btnConfirmar.setOnClickListener(v -> confirmarPedido(pedido, position));
 
-    private void aplicarFiltros() {
-        pedidosFiltrados = new ArrayList<>(todosOsPedidos);
-        String textoBusca = editBusca.getText().toString().toLowerCase().trim();
+                // Botão Cancelar
+                holder.btnCancelar.setOnClickListener(v -> cancelarPedido(pedido, position));
 
-        // 1. Filtrar por Status
-        if (!filtroAtual.equals("TODOS")) {
-            List<Pedido> temp = new ArrayList<>();
-            for (Pedido pedido : pedidosFiltrados) {
-                String status = pedido.getStatus().toUpperCase();
-                if (filtroAtual.equals("ENTREGUE") && (status.equals("ENTREGUE") || status.equals("RETIRADO"))) {
-                    temp.add(pedido);
-                } else if (status.equals(filtroAtual)) {
-                    temp.add(pedido);
-                }
+            } catch (Exception e) {
+                Log.e(TAG, "Erro ao fazer bind do pedido na posição " + position + ": " + e.getMessage(), e);
             }
-            pedidosFiltrados = temp;
         }
 
-        // 2. Filtrar por Data
-        if (!filtroData.equals("TODOS")) {
-            List<Pedido> temp = new ArrayList<>();
-            Calendar cal = Calendar.getInstance();
-
-            for (Pedido pedido : pedidosFiltrados) {
-                Calendar orderCal = Calendar.getInstance();
-                orderCal.setTime(pedido.getCreatedAt());
-
-                boolean incluir = false;
-
-                switch (filtroData) {
-                    case "HOJE":
-                        incluir = isSameDay(cal, orderCal);
-                        break;
-                    case "ONTEM":
-                        cal.add(Calendar.DAY_OF_MONTH, -1);
-                        incluir = isSameDay(cal, orderCal);
-                        break;
-                    case "SEMANA":
-                        cal.add(Calendar.DAY_OF_MONTH, -7);
-                        incluir = orderCal.after(cal);
-                        break;
-                }
-
-                if (incluir) temp.add(pedido);
-            }
-            pedidosFiltrados = temp;
+        @Override
+        public int getItemCount() {
+            return pedidos.size();
         }
 
-        // 3. Filtrar por Busca
-        if (!textoBusca.isEmpty()) {
-            List<Pedido> temp = new ArrayList<>();
-            for (Pedido pedido : pedidosFiltrados) {
-                String codigo = pedido.getCode() != null ? pedido.getCode().toLowerCase() : "";
-                String nome = pedido.getStudentName() != null ? pedido.getStudentName().toLowerCase() : "";
-                String id = pedido.getId().toLowerCase();
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvCodigoPedido, tvNomeAluno, tvDataPedido, tvValorTotal, tvStatus, tvStatusIcon;
+            CardView cardStatus;
+            LinearLayout botoesAcao;
+            MaterialButton btnConfirmar, btnCancelar;
 
-                if (codigo.contains(textoBusca) ||
-                        nome.contains(textoBusca) ||
-                        id.contains(textoBusca)) {
-                    temp.add(pedido);
-                }
+            public ViewHolder(View itemView) {
+                super(itemView);
+                tvCodigoPedido = itemView.findViewById(R.id.tvCodigoPedido);
+                tvNomeAluno = itemView.findViewById(R.id.tvNomeAluno);
+                tvDataPedido = itemView.findViewById(R.id.tvDataPedido);
+                tvValorTotal = itemView.findViewById(R.id.tvValorTotal);
+                tvStatus = itemView.findViewById(R.id.tvStatus);
+                tvStatusIcon = itemView.findViewById(R.id.tvStatusIcon);
+                cardStatus = itemView.findViewById(R.id.cardStatus);
+                botoesAcao = itemView.findViewById(R.id.botoesAcao);
+                btnConfirmar = itemView.findViewById(R.id.btnConfirmar);
+                btnCancelar = itemView.findViewById(R.id.btnCancelar);
             }
-            pedidosFiltrados = temp;
         }
-
-        // 4. Ordenar
-        Collections.sort(pedidosFiltrados, new Comparator<Pedido>() {
-            @Override
-            public int compare(Pedido o1, Pedido o2) {
-                switch (ordenacao) {
-                    case "RECENTE":
-                        return o2.getCreatedAt().compareTo(o1.getCreatedAt());
-                    case "ANTIGO":
-                        return o1.getCreatedAt().compareTo(o2.getCreatedAt());
-                    case "VALOR_DESC":
-                        return Double.compare(o2.getTotal(), o1.getTotal());
-                    case "VALOR_ASC":
-                        return Double.compare(o1.getTotal(), o2.getTotal());
-                    default:
-                        return 0;
-                }
-            }
-        });
-
-        // 5. Atualizar UI
-        if (pedidosFiltrados.isEmpty()) {
-            showEmptyState();
-        } else {
-            showOrders(pedidosFiltrados);
-        }
-    }
-
-    private boolean isSameDay(Calendar cal1, Calendar cal2) {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
-    }
-
-    private void showLoading() {
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerViewPedidos.setVisibility(View.GONE);
-        layoutVazio.setVisibility(View.GONE);
-        swipeRefresh.setRefreshing(false);
-    }
-
-    private void hideLoading() {
-        progressBar.setVisibility(View.GONE);
-        swipeRefresh.setRefreshing(false);
-    }
-
-    private void showOrders(List<Pedido> pedidos) {
-        recyclerViewPedidos.setVisibility(View.VISIBLE);
-        layoutVazio.setVisibility(View.GONE);
-        adapter.updateOrders(pedidos);
-    }
-
-    private void showEmptyState() {
-        recyclerViewPedidos.setVisibility(View.GONE);
-        layoutVazio.setVisibility(View.VISIBLE);
-        adapter.updateOrders(new ArrayList<>());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadOrders();
+        new android.os.Handler().postDelayed(() -> {
+            carregarPedidos();
+        }, 300);
     }
 }

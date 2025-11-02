@@ -23,7 +23,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SupabasePedidoManager {
-    private static final String TAG = "SupabaseOrderManager";
+    private static final String TAG = "SupabasePedidoManager";
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private static SupabasePedidoManager instance;
@@ -42,28 +42,26 @@ public class SupabasePedidoManager {
         return instance;
     }
 
-    // Criar pedido no Supabase
-    public Call createOrder(PedidoRequest pedidoRequest, String accessToken, OrderCallback callback) {
+    // ✅ ATUALIZADO: createOrder → createPedido
+    public Call createPedido(PedidoRequest pedidoRequest, String accessToken, PedidoCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
-        // Criar Order a partir do OrderRequest
+        // Criar Pedido a partir do PedidoRequest
         Pedido pedido = new Pedido();
         pedido.setStudentId(pedidoRequest.getStudentId());
         pedido.setStudentName(pedidoRequest.getStudentName());
 
-        // Adicionar itens ao pedido (usando dados do OrderRequest, não do OrderManager)
+        // Adicionar itens ao pedido
         for (PedidoItemRequest itemRequest : pedidoRequest.getItems()) {
-            // ⭐ LOG 1: Verificar dados do ItemRequest
             Log.d(TAG, "========== ITEM REQUEST ==========");
             Log.d(TAG, "Produto ID: " + itemRequest.getProductId());
             Log.d(TAG, "Nome: " + itemRequest.getProductName());
             Log.d(TAG, "Preço: " + itemRequest.getPrice());
             Log.d(TAG, "Quantidade: " + itemRequest.getQuantity());
 
-            // Criar OrderItem diretamente do ItemRequest (sem buscar do OrderManager)
             PedidoItem item = new PedidoItem(
                     itemRequest.getProductId(),
                     itemRequest.getProductName(),
@@ -71,23 +69,15 @@ public class SupabasePedidoManager {
                     itemRequest.getPrice()
             );
 
-            // ⭐ LOG 2: Verificar OrderItem criado
-            Log.d(TAG, "========== ORDER ITEM ==========");
+            Log.d(TAG, "========== PEDIDO ITEM ==========");
             Log.d(TAG, "Preço item (getPrice): " + item.getPrice());
             Log.d(TAG, "Quantidade: " + item.getQuantity());
             Log.d(TAG, "Subtotal: " + item.getSubtotal());
             pedido.addItem(item);
         }
 
-        // Validar estoque antes de enviar (OPCIONAL - se quiser manter validação)
-        // String stockError = OrderManager.validateStock(order);
-        // if (stockError != null) {
-        //     callback.onError(stockError);
-        //     return null;
-        // }
-
-        // Converter para formato do Supabase - SEM nome_usuario
-        OrderSupabaseRequest supabaseRequest = new OrderSupabaseRequest(pedido);
+        // Converter para formato do Supabase
+        PedidoSupabaseRequest supabaseRequest = new PedidoSupabaseRequest(pedido);
         String json = gson.toJson(supabaseRequest);
         Log.d(TAG, "Criando pedido: " + json);
 
@@ -121,21 +111,19 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
-                        if (ordersResponse != null && !ordersResponse.isEmpty()) {
-                            OrderSupabaseResponse orderResponse = ordersResponse.get(0);
-                            Pedido createdPedido = convertSupabaseResponseToOrder(orderResponse);
+                        if (pedidosResponse != null && !pedidosResponse.isEmpty()) {
+                            PedidoSupabaseResponse pedidoResponse = pedidosResponse.get(0);
+                            Pedido createdPedido = convertSupabaseResponseToPedido(pedidoResponse);
 
-                            // ⭐ CORREÇÃO CRÍTICA: Copiar itens do order original para o createdOrder
                             Log.d(TAG, "Copiando " + pedido.getItems().size() + " itens para o pedido criado");
                             for (PedidoItem item : pedido.getItems()) {
                                 createdPedido.addItem(item);
                             }
 
-                            // Criar itens do pedido (agora createdOrder tem os itens)
-                            createOrderItems(String.valueOf(createdPedido.getId()), createdPedido.getItems(), accessToken, callback, createdPedido);
+                            createPedidoItems(String.valueOf(createdPedido.getId()), createdPedido.getItems(), accessToken, callback, createdPedido);
                         } else {
                             callback.onError("Resposta inválida do servidor");
                         }
@@ -152,19 +140,17 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    private void createOrderItems(String orderId, List<PedidoItem> items, String accessToken,
-                                  OrderCallback callback, Pedido createdPedido) {
+    private void createPedidoItems(String pedidoId, List<PedidoItem> items, String accessToken,
+                                   PedidoCallback callback, Pedido createdPedido) {
 
-        List<OrderItemSupabaseRequest> itemsRequest = new ArrayList<>();
+        List<PedidoItemSupabaseRequest> itemsRequest = new ArrayList<>();
         for (PedidoItem item : items) {
-            // ⭐ LOG 3: Verificar item ANTES de criar o request
             Log.d(TAG, "========== ANTES DO REQUEST ==========");
             Log.d(TAG, "Item: " + item.getProductName());
             Log.d(TAG, "Preço (item.getPrice()): " + item.getPrice());
 
-            OrderItemSupabaseRequest itemRequest = new OrderItemSupabaseRequest(orderId, item);
+            PedidoItemSupabaseRequest itemRequest = new PedidoItemSupabaseRequest(pedidoId, item);
 
-            // ⭐ LOG 4: Verificar o request DEPOIS de criado
             Log.d(TAG, "========== DEPOIS DO REQUEST ==========");
             Log.d(TAG, "precoProduto: " + itemRequest.precoProduto);
             Log.d(TAG, "quantidade: " + itemRequest.quantidade);
@@ -173,7 +159,6 @@ public class SupabasePedidoManager {
         }
 
         String json = gson.toJson(itemsRequest);
-        // ⭐ LOG 5: JSON COMPLETO que será enviado
         Log.d(TAG, "========== JSON FINAL ==========");
         Log.d(TAG, json);
 
@@ -201,16 +186,12 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
-                // ⭐ LOG 6: Resposta do servidor
                 Log.d(TAG, "========== RESPOSTA CRIAR ITENS ==========");
                 Log.d(TAG, "Código: " + response.code());
                 Log.d(TAG, "Body: " + responseBody);
 
                 if (response.isSuccessful()) {
-                    // ⭐ NOTA: Não atualizamos mais o estoque do OrderManager
-                    // pois ele tem dados desatualizados. O estoque deve ser
-                    // gerenciado no banco de dados (Supabase)
-                    createdPedido.setStatus(PedidoManager.STATUS_CONFIRMED);
+                    createdPedido.setStatus("CONFIRMED");
                     callback.onSuccess(createdPedido);
                 } else {
                     callback.onError("Erro ao salvar itens do pedido: " + response.code());
@@ -219,8 +200,8 @@ public class SupabasePedidoManager {
         });
     }
 
-    // Buscar pedidos do estudante
-    public Call getStudentOrders(String studentId, String accessToken, OrdersCallback callback) {
+    // ✅ ATUALIZADO: getStudentOrders → getStudentPedidos
+    public Call getStudentPedidos(String studentId, String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
@@ -250,13 +231,13 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
                         List<Pedido> pedidos = new ArrayList<>();
-                        if (ordersResponse != null) {
-                            for (OrderSupabaseResponse orderResponse : ordersResponse) {
-                                pedidos.add(convertSupabaseResponseToOrder(orderResponse));
+                        if (pedidosResponse != null) {
+                            for (PedidoSupabaseResponse pedidoResponse : pedidosResponse) {
+                                pedidos.add(convertSupabaseResponseToPedido(pedidoResponse));
                             }
                         }
 
@@ -274,14 +255,14 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // Atualizar status do pedido
-    public Call updateOrderStatus(String orderId, String newStatus, String accessToken, OrderCallback callback) {
+    // ✅ ATUALIZADO: updateOrderStatus → updatePedidoStatus
+    public Call updatePedidoStatus(String pedidoId, String newStatus, String accessToken, PedidoCallback callback) {
         StatusUpdateRequest statusRequest = new StatusUpdateRequest(newStatus);
         String json = gson.toJson(statusRequest);
 
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + orderId)
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId)
                 .patch(body)
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -305,11 +286,11 @@ public class SupabasePedidoManager {
                 if (response.isSuccessful()) {
                     String responseBody = response.body() != null ? response.body().string() : "";
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
-                        if (ordersResponse != null && !ordersResponse.isEmpty()) {
-                            Pedido updatedPedido = convertSupabaseResponseToOrder(ordersResponse.get(0));
+                        if (pedidosResponse != null && !pedidosResponse.isEmpty()) {
+                            Pedido updatedPedido = convertSupabaseResponseToPedido(pedidosResponse.get(0));
                             callback.onSuccess(updatedPedido);
                         } else {
                             callback.onError("Resposta inválida do servidor");
@@ -326,7 +307,7 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    private Pedido convertSupabaseResponseToOrder(OrderSupabaseResponse response) {
+    private Pedido convertSupabaseResponseToPedido(PedidoSupabaseResponse response) {
         Pedido pedido = new Pedido();
 
         try {
@@ -354,7 +335,7 @@ public class SupabasePedidoManager {
             // Definir code usando reflection
             java.lang.reflect.Field codeField = Pedido.class.getDeclaredField("code");
             codeField.setAccessible(true);
-            codeField.set(pedido, response.code != null ? response.code : "ORD" + response.id.substring(0, Math.min(6, response.id.length())));
+            codeField.set(pedido, response.code != null ? response.code : "PED" + response.id.substring(0, Math.min(6, response.id.length())));
 
             // Definir total usando reflection
             java.lang.reflect.Field totalField = Pedido.class.getDeclaredField("total");
@@ -373,7 +354,7 @@ public class SupabasePedidoManager {
     }
 
     // Classes para requisições e respostas
-    private static class OrderSupabaseRequest {
+    private static class PedidoSupabaseRequest {
         @SerializedName("id_usuario")
         public String idUsuario;
 
@@ -382,14 +363,14 @@ public class SupabasePedidoManager {
         @SerializedName("total_amount")
         public double totalAmount;
 
-        public OrderSupabaseRequest(Pedido pedido) {
+        public PedidoSupabaseRequest(Pedido pedido) {
             this.idUsuario = pedido.getStudentId();
             this.status = pedido.getStatus();
             this.totalAmount = pedido.getTotal();
         }
     }
 
-    private static class OrderItemSupabaseRequest {
+    private static class PedidoItemSupabaseRequest {
         @SerializedName("id_pedido")
         public String idPedido;
         @SerializedName("id_produto")
@@ -398,7 +379,7 @@ public class SupabasePedidoManager {
         @SerializedName("preco_produto")
         public double precoProduto;
 
-        public OrderItemSupabaseRequest(String idPedido, PedidoItem item) {
+        public PedidoItemSupabaseRequest(String idPedido, PedidoItem item) {
             this.idPedido = idPedido;
             this.idProduto = item.getProductId();
             this.quantidade = item.getQuantity();
@@ -406,7 +387,7 @@ public class SupabasePedidoManager {
         }
     }
 
-    private static class OrderSupabaseResponse {
+    private static class PedidoSupabaseResponse {
         public String id;
 
         @SerializedName("id_usuario")
@@ -431,24 +412,25 @@ public class SupabasePedidoManager {
         }
     }
 
-    public interface OrderCallback {
+    // ✅ ATUALIZADO: Callbacks renomeados
+    public interface PedidoCallback {
         void onSuccess(Pedido pedido);
         void onError(String error);
     }
 
-    public interface OrdersCallback {
+    public interface PedidosCallback {
         void onSuccess(List<Pedido> pedidos);
         void onError(String error);
     }
 
-    public Call getOrderById(String orderId, String accessToken, OrderCallback callback) {
+    public Call getPedidoById(String pedidoId, String accessToken, PedidoCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + orderId)
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -471,12 +453,12 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
-                        if (ordersResponse != null && !ordersResponse.isEmpty()) {
-                            Pedido pedido = convertSupabaseResponseToOrder(ordersResponse.get(0));
-                            getOrderItems(orderId, accessToken, pedido, callback);
+                        if (pedidosResponse != null && !pedidosResponse.isEmpty()) {
+                            Pedido pedido = convertSupabaseResponseToPedido(pedidosResponse.get(0));
+                            getPedidoItems(pedidoId, accessToken, pedido, callback);
                         } else {
                             callback.onError("Pedido não encontrado");
                         }
@@ -493,8 +475,8 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // Buscar TODOS os pedidos (para admin)
-    public Call getAllOrders(String accessToken, OrdersCallback callback) {
+    // ✅ ATUALIZADO: getAllOrders → getAllPedidos
+    public Call getAllPedidos(String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
@@ -524,13 +506,13 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
                         List<Pedido> pedidos = new ArrayList<>();
-                        if (ordersResponse != null) {
-                            for (OrderSupabaseResponse orderResponse : ordersResponse) {
-                                Pedido pedido = convertSupabaseResponseToOrder(orderResponse);
+                        if (pedidosResponse != null) {
+                            for (PedidoSupabaseResponse pedidoResponse : pedidosResponse) {
+                                Pedido pedido = convertSupabaseResponseToPedido(pedidoResponse);
                                 pedidos.add(pedido);
                             }
                         }
@@ -549,13 +531,13 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // Confirmar retirada do pedido
-    public Call confirmOrderPickup(String orderId, String accessToken, OrderCallback callback) {
-        return updateOrderStatus(orderId, "RETIRADO", accessToken, callback);
+    // ✅ ATUALIZADO: confirmOrderPickup → confirmPedidoPickup
+    public Call confirmPedidoPickup(String pedidoId, String accessToken, PedidoCallback callback) {
+        return updatePedidoStatus(pedidoId, "RETIRADO", accessToken, callback);
     }
 
-    // Buscar pedidos por status
-    public Call getOrdersByStatus(String status, String accessToken, OrdersCallback callback) {
+    // ✅ ATUALIZADO: getOrdersByStatus → getPedidosByStatus
+    public Call getPedidosByStatus(String status, String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
@@ -585,13 +567,13 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderSupabaseResponse>>(){}.getType();
-                        List<OrderSupabaseResponse> ordersResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoSupabaseResponse>>(){}.getType();
+                        List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
                         List<Pedido> pedidos = new ArrayList<>();
-                        if (ordersResponse != null) {
-                            for (OrderSupabaseResponse orderResponse : ordersResponse) {
-                                pedidos.add(convertSupabaseResponseToOrder(orderResponse));
+                        if (pedidosResponse != null) {
+                            for (PedidoSupabaseResponse pedidoResponse : pedidosResponse) {
+                                pedidos.add(convertSupabaseResponseToPedido(pedidoResponse));
                             }
                         }
 
@@ -609,9 +591,9 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    private void getOrderItems(String orderId, String accessToken, Pedido pedido, OrderCallback callback) {
+    private void getPedidoItems(String pedidoId, String accessToken, Pedido pedido, PedidoCallback callback) {
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + orderId)
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + pedidoId)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -634,11 +616,11 @@ public class SupabasePedidoManager {
 
                 if (response.isSuccessful()) {
                     try {
-                        Type listType = new TypeToken<List<OrderItemSupabaseResponse>>(){}.getType();
-                        List<OrderItemSupabaseResponse> itemsResponse = gson.fromJson(responseBody, listType);
+                        Type listType = new TypeToken<List<PedidoItemSupabaseResponse>>(){}.getType();
+                        List<PedidoItemSupabaseResponse> itemsResponse = gson.fromJson(responseBody, listType);
 
                         if (itemsResponse != null) {
-                            for (OrderItemSupabaseResponse itemResponse : itemsResponse) {
+                            for (PedidoItemSupabaseResponse itemResponse : itemsResponse) {
                                 PedidoItem item = new PedidoItem(
                                         String.valueOf(itemResponse.idProduto),
                                         itemResponse.nomeProduto,
@@ -661,11 +643,11 @@ public class SupabasePedidoManager {
         });
     }
 
-    public Call cancelOrder(String orderId, String accessToken, OrderCallback callback) {
-        return updateOrderStatus(orderId, "CANCELADO", accessToken, callback);
+    public Call cancelPedido(String pedidoId, String accessToken, PedidoCallback callback) {
+        return updatePedidoStatus(pedidoId, "CANCELADO", accessToken, callback);
     }
 
-    private static class OrderItemSupabaseResponse {
+    private static class PedidoItemSupabaseResponse {
         public int id;
         @SerializedName("id_pedido")
         public int idPedido;

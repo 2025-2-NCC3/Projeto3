@@ -10,11 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -24,17 +23,17 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private static final String TAG = "AdminPedidoDetalhes";
 
     private SessionManager sessionManager;
-    private SupabasePedidoManager orderManager;
+    private SupabasePedidoManager pedidoManager;
 
     private TextView tvOrderId, tvStudentName, tvOrderDate, tvOrderStatus, tvOrderCode, tvOrderTotal;
     private RecyclerView recyclerViewItems;
     private Button btnConfirmarRetirada, btnCancelarPedido;
     private ProgressBar progressBar;
-    private ScrollView layoutContent;  // MUDADO: LinearLayout para ScrollView
+    private ScrollView layoutContent;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshDetalhes;
 
     private Pedido currentPedido;
-    private String orderId;
+    private String pedidoId;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", new Locale("pt", "BR"));
     private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
@@ -47,10 +46,10 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Iniciando");
 
         sessionManager = SessionManager.getInstance(this);
-        orderManager = SupabasePedidoManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
         initializeViews();
-        loadOrderDetails();
+        loadPedidoDetails();
     }
 
     private void initializeViews() {
@@ -70,32 +69,32 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnConfirmarRetirada = findViewById(R.id.btnConfirmarRetirada);
         btnCancelarPedido = findViewById(R.id.btnCancelarPedido);
         progressBar = findViewById(R.id.progressBar);
-        layoutContent = findViewById(R.id.layoutContent);  // Agora é ScrollView
+        layoutContent = findViewById(R.id.layoutContent);
         swipeRefreshDetalhes = findViewById(R.id.swipeRefreshDetalhes);
 
         btnConfirmarRetirada.setOnClickListener(v -> confirmarRetirada());
         btnCancelarPedido.setOnClickListener(v -> cancelarPedido());
-        swipeRefreshDetalhes.setOnRefreshListener(this::loadOrderDetails);
+        swipeRefreshDetalhes.setOnRefreshListener(this::loadPedidoDetails);
 
         Log.d(TAG, "Views inicializadas");
     }
 
-    private void loadOrderDetails() {
-        orderId = getIntent().getStringExtra("ORDER_ID");
-        if (orderId == null) {
+    private void loadPedidoDetails() {
+        pedidoId = getIntent().getStringExtra("ORDER_ID");
+        if (pedidoId == null) {
             Toast.makeText(this, "ID do pedido inválido", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        Log.d(TAG, "Carregando pedido: " + orderId);
+        Log.d(TAG, "Carregando pedido: " + pedidoId);
 
         if (!swipeRefreshDetalhes.isRefreshing()) {
             showLoading();
         }
 
         String token = sessionManager.getAccessToken();
-        orderManager.getOrderById(orderId, token, new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.getPedidoById(pedidoId, token, new SupabasePedidoManager.PedidoCallback() {
             @Override
             public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Pedido carregado com sucesso");
@@ -103,7 +102,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                     hideLoading();
                     swipeRefreshDetalhes.setRefreshing(false);
                     currentPedido = pedido;
-                    displayOrderDetails(pedido);
+                    displayPedidoDetails(pedido);
                 });
             }
 
@@ -121,17 +120,17 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         });
     }
 
-    private void displayOrderDetails(Pedido pedido) {
+    private void displayPedidoDetails(Pedido pedido) {
         Log.d(TAG, "Exibindo detalhes");
 
         tvOrderId.setText("Pedido #" + pedido.getId().substring(0, Math.min(8, pedido.getId().length())));
         tvStudentName.setText(pedido.getStudentName() != null ? pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
         tvOrderDate.setText("Data: " + dateFormat.format(pedido.getCreatedAt()));
 
-        // Status com emoji e cor
-        String statusText = getStatusText(pedido.getStatus());
+        // Status com emoji e cor USANDO COLORS.XML
+        String statusText = PedidoUtils.getStatusIcon(pedido.getStatus()) + " " + PedidoUtils.getStatusText(pedido.getStatus());
         tvOrderStatus.setText(statusText);
-        tvOrderStatus.setTextColor(getStatusColor(pedido.getStatus()));
+        tvOrderStatus.setTextColor(PedidoUtils.getStatusColor(this, pedido.getStatus()));
 
         tvOrderCode.setText("Código de Retirada: " + (pedido.getCode() != null ? pedido.getCode() : "N/A"));
         tvOrderTotal.setText("Total: " + currencyFormat.format(pedido.getTotal()));
@@ -145,34 +144,6 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
 
         // Configurar botões baseado no status
         updateButtonsVisibility(pedido.getStatus());
-    }
-
-    private String getStatusText(String status) {
-        String statusUpper = status.toUpperCase();
-        switch (statusUpper) {
-            case "PENDENTE": return "⏳ Pendente";
-            case "PREPARANDO": return "👨‍🍳 Preparando";
-            case "PRONTO": return "✅ Pronto";
-            case "CONFIRMADO": return "✅ Confirmado";
-            case "ENTREGUE": return "🎉 Entregue";
-            case "RETIRADO": return "🎉 Retirado";
-            case "CANCELADO": return "❌ Cancelado";
-            default: return status;
-        }
-    }
-
-    private int getStatusColor(String status) {
-        String statusUpper = status.toUpperCase();
-        switch (statusUpper) {
-            case "PENDENTE": return 0xFFFF9800;
-            case "PREPARANDO": return 0xFF2196F3;
-            case "PRONTO":
-            case "CONFIRMADO": return 0xFF4CAF50;
-            case "ENTREGUE":
-            case "RETIRADO": return 0xFF009688;
-            case "CANCELADO": return 0xFFF44336;
-            default: return 0xFF757575;
-        }
     }
 
     private void updateButtonsVisibility(String status) {
@@ -216,7 +187,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnConfirmarRetirada.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        orderManager.confirmOrderPickup(currentPedido.getId(), token, new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.confirmPedidoPickup(currentPedido.getId(), token, new SupabasePedidoManager.PedidoCallback() {
             @Override
             public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Retirada confirmada");
@@ -225,8 +196,8 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
                     currentPedido = pedido;
-                    displayOrderDetails(pedido);
-                    loadOrderDetails();
+                    displayPedidoDetails(pedido);
+                    loadPedidoDetails();
                 });
             }
 
@@ -259,7 +230,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnCancelarPedido.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        orderManager.cancelOrder(currentPedido.getId(), token, new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.cancelPedido(currentPedido.getId(), token, new SupabasePedidoManager.PedidoCallback() {
             @Override
             public void onSuccess(Pedido pedido) {
                 Log.d(TAG, "Pedido cancelado");
@@ -268,8 +239,8 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
                             "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
                     currentPedido = pedido;
-                    displayOrderDetails(pedido);
-                    loadOrderDetails();
+                    displayPedidoDetails(pedido);
+                    loadPedidoDetails();
                 });
             }
 

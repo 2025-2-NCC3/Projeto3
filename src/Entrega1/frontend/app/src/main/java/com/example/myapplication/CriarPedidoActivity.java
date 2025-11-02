@@ -28,7 +28,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private MaterialButton btnCriarPedido;
 
     private CarrinhoHelper carrinhoHelper;
-    private SupabasePedidoManager orderManager;
+    private SupabasePedidoManager pedidoManager;
     private String studentId, studentName, accessToken;
     private AlertDialog currentDialog;
 
@@ -67,7 +67,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
     private boolean inicializarDados() {
         carrinhoHelper = CarrinhoHelper.getInstance(this);
-        orderManager = SupabasePedidoManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
         // Usar SessionManager em vez de SharedPreferences direto
         SessionManager sessionManager = SessionManager.getInstance(this);
@@ -102,7 +102,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
         double valorTotal = carrinhoHelper.getSubtotal();
 
         tvQuantidadeItens.setText(String.valueOf(itens.size()));
-        tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", valorTotal));
+        tvValorTotal.setText(String.format(new Locale("pt", "BR"), "R$ %.2f", valorTotal));
 
         StringBuilder listaProdutos = new StringBuilder();
         for (ItemCarrinho item : itens) {
@@ -168,9 +168,9 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
         mostrarLoading(true, "Criando pedido...");
 
-        PedidoRequest request = carrinhoHelper.criarOrderRequest(studentId, studentName);
+        PedidoRequest request = carrinhoHelper.criarPedidoRequest(studentId, studentName);
 
-        orderManager.createOrder(request, accessToken, new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.createPedido(request, accessToken, new SupabasePedidoManager.PedidoCallback() {
             @Override
             public void onSuccess(Pedido pedido) {
                 runOnUiThread(() -> {

@@ -150,8 +150,8 @@ public class CarrinhoHelper {
         }
     }
 
-    // Converter carrinho para OrderRequest com TODOS os dados
-    public PedidoRequest criarOrderRequest(String studentId, String studentName) {
+    // ✅ ATUALIZADO: Converter carrinho para PedidoRequest com TODOS os dados
+    public PedidoRequest criarPedidoRequest(String studentId, String studentName) {
         PedidoRequest request = new PedidoRequest();
         request.setStudentId(studentId);
         request.setStudentName(studentName);
@@ -187,7 +187,6 @@ public class CarrinhoHelper {
         return null;
     }
 
-    // ⭐ NOVO: Método para obter resumo do carrinho (útil para debug)
     public String getResumoCarrinho() {
         if (itens.isEmpty()) {
             return "Carrinho vazio";
@@ -202,7 +201,8 @@ public class CarrinhoHelper {
                     .append(item.getQuantidade())
                     .append(" un.\n");
         }
-        resumo.append("Subtotal: R$ ").append(String.format("%.2f", getSubtotal()));
+
+        resumo.append("Subtotal: R$ ").append(String.format(new java.util.Locale("pt", "BR"), "%.2f", getSubtotal()));
 
         return resumo.toString();
     }

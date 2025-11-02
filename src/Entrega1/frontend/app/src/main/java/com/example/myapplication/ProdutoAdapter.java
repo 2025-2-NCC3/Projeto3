@@ -57,7 +57,8 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
 
         // Configurar informações do produto
         holder.tituloProduto.setText(produto.getNome());
-        holder.precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
+        // ⭐ MUDANÇA AQUI - Usando PedidoUtils para formatar com vírgula
+        holder.precoProduto.setText(PedidoUtils.formatarPreco(produto.getPreco()));
 
         // Carregar imagem
         String caminhoImagem = produto.getCaminhoImagem();
@@ -99,7 +100,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
             }
         });
 
-        // ⭐ CORRIGIDO: Click no botão adicionar - adiciona ao carrinho
+        // Click no botão adicionar - adiciona ao carrinho
         holder.btnAdicionar.setOnClickListener(v -> {
             if (!temEstoque) {
                 Toast.makeText(context, "❌ Produto sem estoque", Toast.LENGTH_SHORT).show();
