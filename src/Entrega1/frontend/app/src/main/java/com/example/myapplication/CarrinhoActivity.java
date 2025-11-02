@@ -20,7 +20,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
-import java.util.Locale;
 
 public class CarrinhoActivity extends AppCompatActivity {
 
@@ -93,7 +92,8 @@ public class CarrinhoActivity extends AppCompatActivity {
             btnLimparCarrinho.setEnabled(true);
 
             double subtotal = carrinhoHelper.getSubtotal();
-            txtSubtotal.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
+            // ⭐ MUDANÇA AQUI - Usando PedidoUtils
+            txtSubtotal.setText(PedidoUtils.formatarPreco(subtotal));
 
             adapter.notifyDataSetChanged();
         }
@@ -137,9 +137,9 @@ public class CarrinhoActivity extends AppCompatActivity {
             holder.txtNomeProduto.setText(produto.getNome());
             holder.txtDescricaoProduto.setText(produto.getDescricao());
 
-            // Preços
-            holder.txtPrecoUnitario.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
-            holder.txtPrecoTotalItem.setText(String.format(Locale.getDefault(), "R$ %.2f", item.getSubtotal()));
+            // ⭐ MUDANÇAS AQUI - Preços com vírgula
+            holder.txtPrecoUnitario.setText(PedidoUtils.formatarPreco(produto.getPreco()));
+            holder.txtPrecoTotalItem.setText(PedidoUtils.formatarPreco(item.getSubtotal()));
 
             // Quantidade
             holder.txtQuantidade.setText(String.valueOf(item.getQuantidade()));

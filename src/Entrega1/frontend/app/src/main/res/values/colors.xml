@@ -1,29 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ============================================ -->
+    <!-- CORES BASE -->
+    <!-- ============================================ -->
     <color name="black">#FF000000</color>
-    <color name="gray">#7C7C7C</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="off_white">#F4F4F4</color>
-    <color name="verdefecap">#235135</color>
-    <color name="beige">#FDF4E2</color>
+    <color name="gray">#7C7C7C</color>
+
+    <!-- ============================================ -->
+    <!-- CORES VERDE (Identidade Principal) -->
+    <!-- ============================================ -->
     <color name="dark_green">#235135</color>
-    <color name="background_beige">#ece3da</color>
-    <color name="bright_green">#1FE423</color>
     <color name="medium_green">#4A7C59</color>
     <color name="light_green">#A8C6A9</color>
+
+    <!-- ============================================ -->
+    <!-- CORES BEGE/CREME (Identidade Secundária) -->
+    <!-- ============================================ -->
+    <color name="beige">#FDF4E2</color>
+    <color name="off_white">#F4F4F4</color>
     <color name="light_beige">#F5F0EB</color>
-    <color name="warm_beige">#E8DBCE</color>
-    <color name="accent_gold">#D4AF37</color>
+    <color name="background_beige">#ECE3DA</color>
+    <color name="text_beige">#F5F5DB</color>
+
+    <!-- ============================================ -->
+    <!-- CORES MARROM/TERRA -->
+    <!-- ============================================ -->
     <color name="brown">#9C5827</color>
+    <color name="text_dark">#333333</color>
+    <color name="text_medium">#666666</color>
     <color name="text_light">#8A8175</color>
-    <color name="light_gray">#FFCCCCCC</color>
-    <color name="orange">#FFFF8C00</color>
-    <color name="green">#FF008000</color>
-    <color name="red">#FFFF0000</color>
-    <!-- Cores para Status -->
-    <color name="status_pendente">#FFA500</color>
-    <color name="status_preparando">#4169E1</color>
-    <color name="status_pronto">#32CD32</color>
-    <color name="status_entregue">#228B22</color>
-    <color name="status_cancelado">#DC143C</color>
+
+    <!-- ============================================ -->
+    <!-- CORES UI (Dividers, Ícones, etc) -->
+    <!-- ============================================ -->
+    <color name="divider_gray">#E0E0E0</color>
+    <color name="icon_gray">#BDBDBD</color>
+    <color name="empty_state">#9E9E9E</color>
+
+    <!-- ============================================ -->
+    <!-- CORES DE AÇÃO -->
+    <!-- ============================================ -->
+    <color name="accent_teal">#2ABEA8</color>
+    <color name="status_badge">#C97B5A</color>
+    <color name="cancel_red">#8B4A3D</color>
+    <color name="confirm_green">#6B8E6E</color>
+
+    <!-- ============================================ -->
+    <!-- STATUS DE PEDIDOS - Cores VIBRANTES para Texto/Badge -->
+    <!-- ============================================ -->
+    <color name="status_pendente">#FF9800</color>        <!-- Laranja vibrante -->
+    <color name="status_preparando">#2196F3</color>      <!-- Azul vibrante -->
+    <color name="status_pronto">#4CAF50</color>          <!-- Verde vibrante -->
+    <color name="status_confirmado">#4CAF50</color>      <!-- Verde vibrante -->
+    <color name="status_entregue">#009688</color>        <!-- Teal vibrante -->
+    <color name="status_cancelado">#F44336</color>       <!-- Vermelho vibrante -->
+
+    <!-- STATUS DE PEDIDOS - Cores SUAVES para Background -->
+    <!-- ============================================ -->
+    <color name="status_pendente_bg">#FFF3E0</color>     <!-- Laranja claro -->
+    <color name="status_preparando_bg">#E3F2FD</color>   <!-- Azul claro -->
+    <color name="status_pronto_bg">#E8F5E9</color>       <!-- Verde claro -->
+    <color name="status_confirmado_bg">#E8F5E9</color>   <!-- Verde claro -->
+    <color name="status_entregue_bg">#E0F2F1</color>     <!-- Teal claro -->
+    <color name="status_cancelado_bg">#FFEBEE</color>    <!-- Vermelho claro -->
+    <color name="status_default">#757575</color>         <!-- Cinza -->
+    <color name="status_default_bg">#F5F5F5</color>      <!-- Cinza claro -->
+
+    <!-- ============================================ -->
+    <!-- ALTERNATIVA: STATUS MAIS ESCUROS (para texto em fundo claro) -->
+    <!-- Use estes se quiser cores mais fortes nos badges -->
+    <!-- ============================================ -->
+    <color name="status_pendente_dark">#F57C00</color>      <!-- Laranja escuro -->
+    <color name="status_preparando_dark">#1976D2</color>    <!-- Azul escuro -->
+    <color name="status_pronto_dark">#388E3C</color>        <!-- Verde escuro -->
+    <color name="status_confirmado_dark">#388E3C</color>    <!-- Verde escuro -->
+    <color name="status_entregue_dark">#00796B</color>      <!-- Teal escuro -->
+    <color name="status_cancelado_dark">#D32F2F</color>     <!-- Vermelho escuro -->
 </resources>

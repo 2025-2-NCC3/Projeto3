@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -20,10 +19,9 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     private MaterialButton btnCancelarPedido;
     private ImageButton btnVoltar;
     private RecyclerView recyclerViewItens;
-    private MaterialCardView cardPagamento;
     private PedidoItemAdapter adapter;
     private Pedido pedidoAtual;
-    private SupabasePedidoManager orderManager;
+    private SupabasePedidoManager pedidoManager;
     private String accessToken;
 
     @Override
@@ -48,9 +46,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         btnVoltar = findViewById(R.id.btn_voltar);
         recyclerViewItens = findViewById(R.id.recycler_itens_pedido);
 
-
-
-        orderManager = SupabasePedidoManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
         // Configurar RecyclerView
         recyclerViewItens.setLayoutManager(new LinearLayoutManager(this));
@@ -74,7 +70,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         }
 
         // Buscar pedido no Supabase
-        orderManager.getOrderById(pedidoId, accessToken, new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.getPedidoById(pedidoId, accessToken, new SupabasePedidoManager.PedidoCallback() {
             @Override
             public void onSuccess(Pedido pedido) {
                 runOnUiThread(() -> {
@@ -100,7 +96,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         // Código do pedido no header e na lista
         String codigo = pedido.getCode() != null ? "#" + pedido.getCode() :
-                "#ORD-" + (pedido.getId().length() > 8 ? pedido.getId().substring(0, 8) : pedido.getId());
+                "#PED-" + (pedido.getId().length() > 8 ? pedido.getId().substring(0, 8) : pedido.getId());
 
         tvPedidoCodigo.setText(codigo);
         tvPedidoId.setText(codigo);
@@ -108,50 +104,10 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         // Data e hora
         tvDataPedido.setText(dateFormat.format(pedido.getCreatedAt()));
 
-        // Status - mostrar texto legível
-        String status = pedido.getStatus();
-        String statusExibir = "";
-        int corStatus = 0;
-
-        switch (status.toUpperCase()) {
-            case "PENDING":
-            case "PENDENTE":
-                statusExibir = "PENDENTE";
-                corStatus = 0xFFC97B5A; // Laranja/amarelado
-                break;
-            case "PREPARING":
-            case "PREPARANDO":
-                statusExibir = "PREPARANDO";
-                corStatus = 0xFF3D7A4C; // Verde escuro
-                break;
-            case "READY":
-            case "PRONTO":
-                statusExibir = "PRONTO";
-                corStatus = 0xFFA8C3A0; // Verde claro
-                break;
-            case "DELIVERED":
-            case "ENTREGUE":
-                statusExibir = "ENTREGUE";
-                corStatus = 0xFF235135; // Verde muito escuro
-                break;
-            case "PICKED_UP":
-            case "RETIRADO":
-                statusExibir = "RETIRADO";
-                corStatus = 0xFF235135; // Verde muito escuro
-                break;
-            case "CANCELLED":
-            case "CANCELADO":
-                statusExibir = "CANCELADO";
-                corStatus = 0xFF8B4A3D; // Vermelho/marrom
-                break;
-            default:
-                statusExibir = status.toUpperCase();
-                corStatus = 0xFF6E6B65; // Cinza padrão
-                break;
-        }
-
-        tvStatus.setText(statusExibir);
-        tvStatus.setTextColor(corStatus);
+        // Usando StatusConfig
+        PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(this, pedido.getStatus());
+        tvStatus.setText(statusConfig.texto);
+        tvStatus.setTextColor(statusConfig.corTexto);
 
         // Cliente
         tvClienteNome.setText(pedido.getStudentName());
@@ -160,23 +116,24 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         tvDesconto.setText("R$ 0,00");
 
         // Total
-        tvTotalPedido.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
+        tvTotalPedido.setText(PedidoUtils.formatarPreco(pedido.getTotal()));
 
         // Itens do pedido
         adapter.atualizarItens(pedido.getItems());
 
         // Controlar visibilidade do botão cancelar
-        String statusUpper = pedido.getStatus().toUpperCase();
-        if (statusUpper.equals("ENTREGUE") || statusUpper.equals("DELIVERED") ||
-                statusUpper.equals("RETIRADO") || statusUpper.equals("PICKED_UP") ||
-                statusUpper.equals("CANCELADO") || statusUpper.equals("CANCELLED")) {
-            btnCancelarPedido.setEnabled(false);
-            btnCancelarPedido.setAlpha(0.5f);
-            btnCancelarPedido.setText("PEDIDO " + statusExibir);
-        } else {
+        configurarBotaoCancelar(pedido);
+    }
+
+    private void configurarBotaoCancelar(Pedido pedido) {
+        if (PedidoUtils.podeCancelarPedido(pedido)) {
             btnCancelarPedido.setEnabled(true);
             btnCancelarPedido.setAlpha(1.0f);
             btnCancelarPedido.setText("CANCELAR PEDIDO");
+        } else {
+            btnCancelarPedido.setEnabled(false);
+            btnCancelarPedido.setAlpha(0.5f);
+            btnCancelarPedido.setText("PEDIDO " + PedidoUtils.getStatusText(pedido.getStatus()));
         }
     }
 
@@ -200,8 +157,8 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         btnCancelarPedido.setEnabled(false);
         btnCancelarPedido.setText("CANCELANDO...");
 
-        orderManager.cancelOrder(pedidoAtual.getId(), accessToken,
-                new SupabasePedidoManager.OrderCallback() {
+        pedidoManager.cancelPedido(pedidoAtual.getId(), accessToken,
+                new SupabasePedidoManager.PedidoCallback() {
                     @Override
                     public void onSuccess(Pedido pedido) {
                         runOnUiThread(() -> {
