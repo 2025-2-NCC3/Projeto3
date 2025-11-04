@@ -12,7 +12,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     TextView nomeUsuario, emailUsuario;
     ConstraintLayout boxHistorico, boxDados, boxPagamento, boxConfig;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +35,7 @@ public class PerfilActivity extends AppCompatActivity {
         nomeUsuario.setText("Nome exemplo");
         emailUsuario.setText("EmailExemplo123@gmail.com");
 
+        NavbarHelper.setupNavbar(this, "perfil");
         boxHistorico.setOnClickListener(v -> {
             Intent intent = new Intent(PerfilActivity.this, HistoricoActivity.class);
             startActivity(intent);

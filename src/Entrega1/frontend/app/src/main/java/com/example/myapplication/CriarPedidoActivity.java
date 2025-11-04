@@ -1,17 +1,18 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -21,13 +22,13 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private TextView tvNomeCliente, tvIdCliente, tvQuantidadeItens;
     private TextView tvListaProdutos, tvValorTotal;
     private EditText etObservacoes;
-    private CardView cardStatus;
+    private MaterialCardView cardStatus;
     private ProgressBar progressBar;
     private TextView tvStatus;
-    private Button btnCriarPedido;
+    private MaterialButton btnCriarPedido;
 
     private CarrinhoHelper carrinhoHelper;
-    private SupabaseOrderManager orderManager;
+    private SupabasePedidoManager pedidoManager;
     private String studentId, studentName, accessToken;
     private AlertDialog currentDialog;
 
@@ -66,7 +67,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
     private boolean inicializarDados() {
         carrinhoHelper = CarrinhoHelper.getInstance(this);
-        orderManager = SupabaseOrderManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
         // Usar SessionManager em vez de SharedPreferences direto
         SessionManager sessionManager = SessionManager.getInstance(this);
@@ -101,7 +102,7 @@ public class CriarPedidoActivity extends AppCompatActivity {
         double valorTotal = carrinhoHelper.getSubtotal();
 
         tvQuantidadeItens.setText(String.valueOf(itens.size()));
-        tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", valorTotal));
+        tvValorTotal.setText(String.format(new Locale("pt", "BR"), "R$ %.2f", valorTotal));
 
         StringBuilder listaProdutos = new StringBuilder();
         for (ItemCarrinho item : itens) {
@@ -167,17 +168,17 @@ public class CriarPedidoActivity extends AppCompatActivity {
 
         mostrarLoading(true, "Criando pedido...");
 
-        OrderRequest request = carrinhoHelper.criarOrderRequest(studentId, studentName);
+        PedidoRequest request = carrinhoHelper.criarPedidoRequest(studentId, studentName);
 
-        orderManager.createOrder(request, accessToken, new SupabaseOrderManager.OrderCallback() {
+        pedidoManager.createPedido(request, accessToken, new SupabasePedidoManager.PedidoCallback() {
             @Override
-            public void onSuccess(Order order) {
+            public void onSuccess(Pedido pedido) {
                 runOnUiThread(() -> {
                     if (isFinishing() || isDestroyed()) return;
 
                     mostrarLoading(false, "");
                     carrinhoHelper.limparCarrinho();
-                    mostrarDialogoSucesso(order);
+                    mostrarDialogoSucesso(pedido);
                 });
             }
 
@@ -204,18 +205,18 @@ public class CriarPedidoActivity extends AppCompatActivity {
             cardStatus.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             btnCriarPedido.setEnabled(true);
-            btnCriarPedido.setText("✅ Confirmar Pedido");
+            btnCriarPedido.setText("✅ CONFIRMAR PEDIDO");
         }
     }
 
-    private void mostrarDialogoSucesso(Order order) {
+    private void mostrarDialogoSucesso(Pedido pedido) {
         if (isFinishing() || isDestroyed()) return;
 
         String mensagem = "🎉 Pedido realizado com sucesso!\n\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n" +
-                "📝 Código: " + order.getCode() + "\n" +
-                "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", order.getTotal()) + "\n" +
-                "📊 Status: " + order.getStatus() + "\n" +
+                "📝 Código: " + pedido.getCode() + "\n" +
+                "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", pedido.getTotal()) + "\n" +
+                "📊 Status: " + pedido.getStatus() + "\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n\n" +
                 "Acompanhe em 'Meus Pedidos'.";
 

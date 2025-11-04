@@ -22,7 +22,7 @@ public class HistoricoActivity extends AppCompatActivity {
 
     Button botaoVoltar;
     LinearLayout boxLista;
-    private List<Order> compras;
+    private List<Pedido> pedidos;
     private SupabaseClient supabaseClient;
     private SessionManager sessionManager;
 
@@ -34,7 +34,7 @@ public class HistoricoActivity extends AppCompatActivity {
         // Inicializar componentes
         botaoVoltar = findViewById(R.id.botaoVoltar);
         boxLista = findViewById(R.id.boxLista);
-        compras = new ArrayList<>();
+        pedidos = new ArrayList<>();
         sessionManager = SessionManager.getInstance(getApplicationContext());
 
         // Inicializar SupabaseClient
@@ -57,21 +57,21 @@ public class HistoricoActivity extends AppCompatActivity {
         // Mostrar mensagem de carregamento
         Toast.makeText(this, "Carregando histórico...", Toast.LENGTH_SHORT).show();
 
-        supabaseClient.getAllPurchases(new SupabaseClient.SupabaseCallback<List<Order>>() {
+        supabaseClient.getAllPurchases(new SupabaseClient.SupabaseCallback<List<Pedido>>() {
             @Override
-            public void onSuccess(List<Order> historicoDoBank) {
+            public void onSuccess(List<Pedido> historicoDoBank) {
                 runOnUiThread(() -> {
                     Log.d(TAG, "Compras carregados do Supabase: " + historicoDoBank.size());
 
                     // Atualizar lista de produtos
-                    compras.clear();
-                    compras.addAll(historicoDoBank);
+                    pedidos.clear();
+                    pedidos.addAll(historicoDoBank);
 
                     // Exibir produtos na tela
-                    exibirCompras(compras);
+                    exibirCompras(pedidos);
 
                     Toast.makeText(HistoricoActivity.this,
-                            "Histórico carregado: " + compras.size() + " itens",
+                            "Histórico carregado: " + pedidos.size() + " itens",
                             Toast.LENGTH_SHORT).show();
                 });
             }
@@ -90,13 +90,13 @@ public class HistoricoActivity extends AppCompatActivity {
         });
     }
 
-    private void exibirCompras(List<Order> comprasParaExibir) {
+    private void exibirCompras(List<Pedido> comprasParaExibir) {
         // Limpar compras anteriores
         boxLista.removeAllViews();
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        for (Order order : comprasParaExibir) {
+        for (Pedido pedido : comprasParaExibir) {
 
             // Cria a visualização da compra que será adicionada no layout
             View compraView = inflater.inflate(R.layout.historico, boxLista, false);
@@ -107,10 +107,10 @@ public class HistoricoActivity extends AppCompatActivity {
             TextView dataCompra = compraView.findViewById(R.id.dataCompra);
 
             // Altera a informação de cada elemento
-            dataCompra.setText((CharSequence) order.getCreatedAt());
+            dataCompra.setText((CharSequence) pedido.getCreatedAt());
 
             // Formatar preço
-            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", order.getTotal()));
+            valorCompra.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
 
             // Adiciona a visualização configurada no activity_historico
             boxLista.addView(compraView);
@@ -120,7 +120,7 @@ public class HistoricoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(HistoricoActivity.this, InfoCompraActivity.class);
-                    intent.putExtra("compraInfo", order);
+                    intent.putExtra("compraInfo", pedido);
                     startActivity(intent);
                 }
             });

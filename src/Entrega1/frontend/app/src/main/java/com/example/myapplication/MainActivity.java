@@ -1,34 +1,33 @@
-// com/example/myapplication/MainActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private Button btnMainLogin;
-    private Button btnMainRegister;
+    private CardView btnMainLogin;
+    private CardView btnMainRegister;
     private SessionManager sessionManager;
+    private AdminManager adminManager;  // ← ADICIONAR
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Inicializar SessionManager
+        // Inicializar Managers
         sessionManager = SessionManager.getInstance(this);
+        adminManager = AdminManager.getInstance(this);  // ← ADICIONAR
 
         // VERIFICAÇÃO DE ROTA PRIVADA
-        // Se o usuário já estiver logado, redirecionar para o CardapioAlunosActivity
         if (sessionManager.isLoggedIn()) {
-            Log.d(TAG, "Usuário já está autenticado, redirecionando para CardapioAlunosActivity");
-            goToCardapio();
-            return; // Importante: retorna aqui para não continuar a execução
+            Log.d(TAG, "Usuário já está autenticado, redirecionando");
+            redirectToAppropriateScreen();  // ← MUDAR AQUI
+            return;
         }
 
         // Se não estiver logado, mostra a tela de boas-vindas
@@ -55,16 +54,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Redireciona para o cardápio (área logada)
+     * Redireciona para a tela apropriada baseado no role do usuário
      */
-    private void goToCardapio() {
-        Intent intent = new Intent(MainActivity.this, CardapioAlunosActivity.class);
-        intent.putExtra("user_email", sessionManager.getUserEmail());
-        intent.putExtra("user_id", sessionManager.getUserId());
+    private void redirectToAppropriateScreen() {  // ← NOVO MÉTODO
+        Intent intent;
 
-        // Remove todas as activities anteriores da pilha
+        if (adminManager.isAdmin()) {
+            Log.d(TAG, "Redirecionando admin para AdminHomeActivity");
+            intent = new Intent(MainActivity.this, AdminHomeActivity.class);
+        } else {
+            Log.d(TAG, "Redirecionando aluno para CardapioAlunosActivity");
+            intent = new Intent(MainActivity.this, CardapioAlunosActivity.class);
+            intent.putExtra("user_email", sessionManager.getUserEmail());
+            intent.putExtra("user_id", sessionManager.getUserId());
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         startActivity(intent);
         finish();
     }
@@ -73,11 +78,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // Verifica novamente quando a activity volta ao foco
-        // Útil caso o usuário faça logout e volte
         if (sessionManager.isLoggedIn()) {
             Log.d(TAG, "Usuário autenticado detectado no onResume");
-            goToCardapio();
+            redirectToAppropriateScreen();  // ← MUDAR AQUI TAMBÉM
         }
     }
 }

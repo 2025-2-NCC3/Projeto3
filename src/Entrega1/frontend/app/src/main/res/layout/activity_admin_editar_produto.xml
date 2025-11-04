@@ -3,63 +3,56 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="@drawable/background_gradient"
-    tools:context=".AdminCardapioActivity">
+    tools:context=".AdminEditarProdutoActivity">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideEsquerda"
-        android:layout_width="wrap_content"
+    <!-- Cabeçalho -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="10dp" />
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideDireita"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="10dp" />
+        <Button
+            android:id="@+id/botaoVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:backgroundTint="@color/dark_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideTopo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Editar Produto"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/botaoVoltar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Voltar"
-        android:backgroundTint="@color/dark_green"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
-
-    <TextView
-        android:id="@+id/tituloPagina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:text="Adicionar ao Cardápio"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/botaoVoltar"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/tituloPagina"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        android:layout_marginTop="16dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
@@ -166,30 +159,52 @@
                 android:id="@+id/buttonSelecionarImagem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selecionar Imagem"
+                android:text="Selecionar Nova Imagem"
                 android:backgroundTint="@color/dark_green"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
+
             <ImageView
                 android:id="@+id/imageViewPreview"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                android:visibility="gone"
-                android:layout_marginBottom="8dp" />
+                android:visibility="visible"
+                android:layout_marginBottom="16dp" />
 
-            <!-- Botão Adicionar -->
-            <Button
-                android:id="@+id/ButtonAddAC"
+            <!-- Botões de Ação -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Adicionar Produto"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:layout_marginTop="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
 
+                <Button
+                    android:id="@+id/ButtonSalvarAlteracoes"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="Salvar Alterações"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/dark_green"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/ButtonExcluir"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:text="Excluir"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@android:color/holo_red_dark"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

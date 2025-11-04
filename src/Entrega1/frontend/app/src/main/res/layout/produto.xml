@@ -1,47 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/boxProduto"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:clickable="true"
-android:focusable="true"
-android:layout_marginTop="10dp"
-android:orientation="horizontal"
->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/boxProduto"
+    android:layout_width="153dp"
+    android:layout_height="143dp"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="12dp">
 
-<ImageView
-    android:id="@+id/imagemProduto"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:contentDescription="Foto do produto"
-    android:src="@drawable/coxinha_exemplo"
-    />
-
-    <LinearLayout
-        android:id="@+id/infoProduto"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tituloProduto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="exemploNome"
-            android:textSize="28sp"
-            />
+        <!-- Imagem do Produto -->
+        <ImageView
+            android:id="@+id/imagemProduto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/coxinha_exemplo"
+            android:contentDescription="Imagem do produto" />
 
-        <TextView
-            android:id="@+id/precoProduto"
-            android:layout_width="wrap_content"
+        <!-- Gradiente sobre a imagem -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/product_gradient" />
+
+        <!-- Informações do Produto -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="exemplo"
-            android:textSize="28sp"
-            />
-    </LinearLayout>
-</LinearLayout>
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+
+            <!-- Nome do Produto -->
+            <TextView
+                android:id="@+id/tituloProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iced Latte"
+                android:textColor="#F5F5DB"
+                android:textSize="16dp"
+                android:fontFamily="@font/poppins_regular"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Container do Preço e Botão Adicionar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Preço -->
+                <TextView
+                    android:id="@+id/precoProduto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="R$ 150,00"
+                    android:textColor="#F5F5DB"
+                    android:textSize="18dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textStyle="bold" />
+
+                <!-- Botão Adicionar ao Carrinho -->
+                <ImageView
+                    android:id="@+id/btnAdicionar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_add_circle"
+                    app:tint="#F5F5DB"
+                    android:contentDescription="Adicionar ao carrinho"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>

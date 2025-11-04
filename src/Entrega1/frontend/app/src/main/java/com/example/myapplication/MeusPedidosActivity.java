@@ -1,6 +1,6 @@
 package com.example.myapplication;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class MeusPedidosActivity extends AppCompatActivity {
 
@@ -29,8 +26,9 @@ public class MeusPedidosActivity extends AppCompatActivity {
     private LinearLayout layoutPedidosVazio;
     private ProgressBar progressBarCarregando;
     private PedidosAdapter adapter;
-    private List<Order> pedidos;
-    private SupabaseOrderManager orderManager;
+    private List<Pedido> pedidos;
+
+    private SupabasePedidoManager pedidoManager;
     private String studentId, accessToken;
 
     @Override
@@ -54,7 +52,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
     }
 
     private void inicializarDados() {
-        orderManager = SupabaseOrderManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
         // Usar SessionManager
         SessionManager sessionManager = SessionManager.getInstance(this);
@@ -78,6 +76,14 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
     private void configurarListeners() {
         btnVoltar.setOnClickListener(v -> finish());
+
+        // Configurar cores do SwipeRefreshLayout
+        swipeRefresh.setColorSchemeColors(
+                getResources().getColor(R.color.dark_green),
+                getResources().getColor(R.color.status_preparando),
+                getResources().getColor(R.color.status_pronto)
+        );
+
         swipeRefresh.setOnRefreshListener(() -> carregarPedidos());
     }
 
@@ -88,44 +94,48 @@ public class MeusPedidosActivity extends AppCompatActivity {
         recyclerViewPedidos.setVisibility(View.GONE);
         layoutPedidosVazio.setVisibility(View.GONE);
 
-        orderManager.getStudentOrders(studentId, accessToken,
-                new SupabaseOrderManager.OrdersCallback() {
-                    @Override
-                    public void onSuccess(List<Order> orders) {
-                        runOnUiThread(() -> {
-                            progressBarCarregando.setVisibility(View.GONE);
-                            swipeRefresh.setRefreshing(false);
+        new Thread(() -> {
+            pedidoManager.getStudentPedidos(studentId, accessToken,
+                    new SupabasePedidoManager.PedidosCallback() {
+                        @Override
+                        public void onSuccess(List<Pedido> listaPedidos) {
+                            runOnUiThread(() -> {
+                                progressBarCarregando.setVisibility(View.GONE);
+                                swipeRefresh.setRefreshing(false);
 
-                            pedidos.clear();
-                            pedidos.addAll(orders);
-                            adapter.notifyDataSetChanged();
+                                pedidos.clear();
+                                pedidos.addAll(listaPedidos);
+                                adapter.notifyDataSetChanged();
 
-                            if (pedidos.isEmpty()) {
+                                if (pedidos.isEmpty()) {
+                                    layoutPedidosVazio.setVisibility(View.VISIBLE);
+                                    recyclerViewPedidos.setVisibility(View.GONE);
+                                } else {
+                                    layoutPedidosVazio.setVisibility(View.GONE);
+                                    recyclerViewPedidos.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            runOnUiThread(() -> {
+                                progressBarCarregando.setVisibility(View.GONE);
+                                swipeRefresh.setRefreshing(false);
+                                Toast.makeText(MeusPedidosActivity.this,
+                                        "Erro: " + error,
+                                        Toast.LENGTH_LONG).show();
                                 layoutPedidosVazio.setVisibility(View.VISIBLE);
-                                recyclerViewPedidos.setVisibility(View.GONE);
-                            } else {
-                                layoutPedidosVazio.setVisibility(View.GONE);
-                                recyclerViewPedidos.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        runOnUiThread(() -> {
-                            progressBarCarregando.setVisibility(View.GONE);
-                            swipeRefresh.setRefreshing(false);
-                            Toast.makeText(MeusPedidosActivity.this, "Erro: " + error, Toast.LENGTH_LONG).show();
-                            layoutPedidosVazio.setVisibility(View.VISIBLE);
-                        });
-                    }
-                });
+                            });
+                        }
+                    });
+        }).start();
     }
 
     private class PedidosAdapter extends RecyclerView.Adapter<PedidosAdapter.ViewHolder> {
-        private List<Order> pedidos;
+        private List<Pedido> pedidos;
 
-        public PedidosAdapter(List<Order> pedidos) {
+        public PedidosAdapter(List<Pedido> pedidos) {
             this.pedidos = pedidos;
         }
 
@@ -138,21 +148,24 @@ public class MeusPedidosActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Order pedido = pedidos.get(position);
+            Pedido pedido = pedidos.get(position);
 
-            holder.tvCodigoPedido.setText(pedido.getCode());
+            // Obter configuração do status
+            PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(
+                    holder.itemView.getContext(),
+                    pedido.getStatus()
+            );
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
-            holder.tvDataPedido.setText(formatter.format(pedido.getCreatedAt()));
+            holder.tvStatus.setText(statusConfig.texto);           // Texto: "PREPARANDO"
+            holder.tvStatus.setTextColor(statusConfig.corTexto);   // COR VIBRANTE!
 
-            holder.tvValorTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
+            holder.tvStatusIcon.setText(statusConfig.icone);       // Ícone: "👨‍🍳"
+            holder.tvStatusIcon.setTextColor(statusConfig.corTexto); // COR VIBRANTE!
 
-            String status = pedido.getStatus();
-            holder.tvStatus.setText(PedidoUtils.getStatusText(status));
-            holder.cardStatus.setCardBackgroundColor(PedidoUtils.getStatusColor(status));
-            holder.tvStatusIcon.setText(PedidoUtils.getStatusIcon(status));
+            holder.cardStatus.setCardBackgroundColor(statusConfig.corFundo); // COR PASTEL!
 
-            holder.itemView.setOnClickListener(v -> mostrarDetalhesPedido(pedido));
+            // Click listener para abrir detalhes
+            holder.itemView.setOnClickListener(v -> abrirDetalhesPedido(pedido));
         }
 
         @Override
@@ -176,25 +189,19 @@ public class MeusPedidosActivity extends AppCompatActivity {
         }
     }
 
-    private void mostrarDetalhesPedido(Order pedido) {
-        StringBuilder detalhes = new StringBuilder();
-        detalhes.append("📋 Código: ").append(pedido.getCode()).append("\n\n");
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
-        detalhes.append("📅 Data: ").append(formatter.format(pedido.getCreatedAt())).append("\n\n");
-        detalhes.append("💰 Total: R$ ").append(String.format(Locale.getDefault(), "%.2f", pedido.getTotal())).append("\n\n");
-        detalhes.append("📊 Status: ").append(PedidoUtils.getStatusText(pedido.getStatus()));
-
-        new AlertDialog.Builder(this)
-                .setTitle("Detalhes do Pedido")
-                .setMessage(detalhes.toString())
-                .setPositiveButton("OK", null)
-                .show();
+    private void abrirDetalhesPedido(Pedido pedido) {
+        Intent intent = new Intent(this, DetalhesPedidoActivity.class);
+        intent.putExtra("pedido_id", pedido.getId());
+        intent.putExtra("access_token", accessToken);
+        startActivity(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        carregarPedidos();
+        // Adicionar delay para não sobrecarregar
+        new android.os.Handler().postDelayed(() -> {
+            carregarPedidos();
+        }, 300); // 300ms de delay
     }
 }

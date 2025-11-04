@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +20,9 @@ public class InfoCompraActivity extends AppCompatActivity {
 
     private TextView precoTotal, nomeProduto, descricaoProduto;
     private Button botaoVoltar;
-    private Order order;
+    private Pedido pedido;
     LinearLayout boxListaItems;
-    private List<OrderItem> produtos;
+    private List<PedidoItem> produtos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +39,11 @@ public class InfoCompraActivity extends AppCompatActivity {
         // Receber o intent com as informações do pedido clicado
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            order = bundle.getSerializable("compraInfo", Order.class);
+            pedido = bundle.getSerializable("compraInfo", Pedido.class);
 
-            if (order != null) {
-                Log.d(TAG, "Compra recebida: " + order.getId());
-                carregarInformacoesPedido(order);
+            if (pedido != null) {
+                Log.d(TAG, "Compra recebida: " + pedido.getId());
+                carregarInformacoesPedido(pedido);
             } else {
                 Toast.makeText(this, "Erro ao carregar compra", Toast.LENGTH_SHORT).show();
                 finish();
@@ -55,15 +54,15 @@ public class InfoCompraActivity extends AppCompatActivity {
         }
     }
 
-    private void carregarInformacoesPedido(Order order) {
-        produtos = order.getItems();
-        precoTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", order.getTotal()));
+    private void carregarInformacoesPedido(Pedido pedido) {
+        produtos = pedido.getItems();
+        precoTotal.setText(String.format(Locale.getDefault(), "R$ %.2f", pedido.getTotal()));
 
         // Limpar produtos anteriores
         boxListaItems.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        for (OrderItem item : produtos) {
+        for (PedidoItem item : produtos) {
             // Cria a visualização do item que será adicionado no layout
             View productView = inflater.inflate(R.layout.info_compra, boxListaItems, false);
 

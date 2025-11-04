@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#F5F5F5"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Código do Pedido -->
+        <TextView
+            android:id="@+id/tvCodigoPedido"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="ORD-0021"
+            android:textColor="#9C5827"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cardStatus"/>
+
+        <!-- Badge de Status -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#C97B5A"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:minWidth="100dp">
+
+                <TextView
+                    android:id="@+id/tvStatusIcon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:text="⏱"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"/>
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PENDENTE"
+                    android:textColor="#F5F5DB"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:letterSpacing="-0.01"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Nome do Aluno -->
+        <LinearLayout
+            android:id="@+id/containerAluno"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/tvCodigoPedido"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👤"
+                android:textSize="14sp"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/tvNomeAluno"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="João da Silva"
+                android:textColor="#333333"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+        <!-- Data e Hora -->
+        <LinearLayout
+            android:id="@+id/containerData"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/containerAluno"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🕐"
+                android:textSize="14sp"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/tvDataPedido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="23/10/2025 às 14:20"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_regular"
+                android:letterSpacing="-0.01"/>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#E0E0E0"
+            app:layout_constraintTop_toBottomOf="@id/containerData"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Total -->
+        <LinearLayout
+            android:id="@+id/containerTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total:"
+                android:textColor="#666666"
+                android:textSize="11sp"
+                android:fontFamily="@font/poppins_regular"/>
+
+            <TextView
+                android:id="@+id/tvValorTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 470,00"
+                android:textColor="#235135"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"/>
+
+        </LinearLayout>
+
+        <!-- Botões de Ação (CONFIRMAR e CANCELAR) -->
+        <LinearLayout
+            android:id="@+id/botoesAcao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/containerTotal">
+
+            <!-- Botão Cancelar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelar"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:text="CANCELAR"
+                android:textSize="9sp"
+                android:fontFamily="@font/poppins_bold"
+                android:minWidth="86dp"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_marginEnd="10dp"
+                app:strokeColor="#8B4A3D"
+                android:textColor="#8B4A3D"
+                app:strokeWidth="2dp"
+                app:cornerRadius="10dp"
+                app:iconGravity="textStart"
+                app:icon="@drawable/ic_cancel"
+                app:iconTint="#8B4A3D"
+                app:iconSize="16dp"
+                app:iconPadding="6dp"
+                android:letterSpacing="-0.02"
+                android:contentDescription="Cancelar pedido"/>
+
+            <!-- Botão Confirmar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfirmar"
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:text="CONFIRMAR"
+                android:textColor="#F5F5DB"
+                android:textSize="9sp"
+                android:fontFamily="@font/poppins_bold"
+                android:minWidth="91dp"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:backgroundTint="#6B8E6E"
+                app:cornerRadius="10dp"
+                app:iconGravity="textStart"
+                app:icon="@drawable/ic_check"
+                app:iconTint="#F5F5DB"
+                app:iconSize="13dp"
+                app:iconPadding="8dp"
+                android:letterSpacing="-0.02"
+                android:contentDescription="Confirmar pedido"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

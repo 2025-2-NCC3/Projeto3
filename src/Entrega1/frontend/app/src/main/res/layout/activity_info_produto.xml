@@ -1,136 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient"
-    android:padding="20dp"
+    android:background="#FFFFFF"
     tools:context=".InfoProdutoActivity">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideEsquerda"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="10dp" />
+    <!-- Imagem do Produto com Gradiente -->
+    <FrameLayout
+        android:id="@+id/imagemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="@drawable/rounded_bottom_shape"
+        android:clipChildren="true"
+        android:clipToOutline="true">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideDireita"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="10dp" />
+        <ImageView
+            android:id="@+id/imagemProduto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/coxinha_exemplo"
+            android:contentDescription="Imagem do produto"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideTopo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
+        <!-- Gradiente sobre a imagem -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/product_gradient"/>
 
-    <!-- Botão Voltar -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/botaoVoltar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Voltar"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/dark_green"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintTop_toBottomOf="@+id/guideTopo" />
+        <!-- Botão Voltar -->
+        <ImageButton
+            android:id="@+id/botaoVoltar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Voltar"
+            app:tint="#F5F5DB"
+            android:padding="12dp"/>
 
-    <!-- Card do Produto -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardProduto"
-        android:layout_width="0dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@color/light_beige"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="6dp"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintTop_toBottomOf="@id/botaoVoltar">
+    </FrameLayout>
+
+    <!-- Card com informações do produto -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="310dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <!-- Imagem do Produto -->
-            <ImageView
-                android:id="@+id/imagemProduto"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/image_placeholder"
-                android:contentDescription="Foto do delicioso produto"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@drawable/coxinha_exemplo" />
-
-            <!-- Informações do Produto -->
-            <TextView
-                android:id="@+id/nomeProduto"
+            <!-- Card Principal -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Nome do Produto"
-                android:textColor="@color/dark_green"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#FFFFFF">
 
-            <TextView
-                android:id="@+id/precoProduto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="R$ 0,00"
-                android:textColor="@color/medium_green"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
 
+                    <!-- Nome do Produto -->
+                    <TextView
+                        android:id="@+id/nomeProduto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Coxinha de Frango"
+                        android:textColor="#9C5827"
+                        android:textSize="24sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="-0.01"/>
+
+                    <!-- Container Categoria e Estoque -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/categoriaProduto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="LANCHES"
+                            android:textColor="#9C5827"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:letterSpacing="0.05"
+                            android:background="@drawable/category_badge"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"/>
+
+
+
+                    </LinearLayout>
+
+                    <!-- Preço -->
+                    <TextView
+                        android:id="@+id/precoProduto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="R$ 6,00"
+                        android:textColor="#235135"
+                        android:textSize="28sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="-0.01"/>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#EFEFEF"/>
+
+                    <!-- Descrição -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Descrição"
+                        android:textColor="#235135"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:letterSpacing="-0.01"/>
+
+                    <TextView
+                        android:id="@+id/descricaoProduto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Deliciosa coxinha de frango temperada com catupiry, massa crocante e recheio suculento. Perfeita para o seu lanche!"
+                        android:textColor="#666666"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:lineSpacingExtra="4dp"/>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#EFEFEF"/>
+
+                    <!-- Quantidade -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Quantidade"
+                        android:textColor="#235135"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:letterSpacing="-0.01"/>
+
+                    <!-- Controle de Quantidade -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/quantity_selector_background"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+
+                        <ImageButton
+                            android:id="@+id/btnDiminuir"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_remove_circle"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Diminuir quantidade"
+                            app:tint="#9C5827"/>
+
+                        <TextView
+                            android:id="@+id/txtQuantidade"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="1"
+                            android:textColor="#235135"
+                            android:textSize="24sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:gravity="center"/>
+
+                        <ImageButton
+                            android:id="@+id/btnAumentar"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_add_circle"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Aumentar quantidade"
+                            app:tint="#9C5827"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Espaçamento inferior para o botão flutuante -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/light_green"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:id="@+id/descricaoProduto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Descrição do Produto blablablablabala"
-                android:textColor="@color/dark_green"
-                android:textSize="14sp"
-                android:lineSpacingExtra="2dp" />
+                android:layout_height="100dp"/>
 
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Botão Comprar -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/botaoComprar"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/dark_green"
-        android:text="Adicionar ao Carrinho"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:cornerRadius="16dp"
-        app:icon="@drawable/ic_shopping_cart"
-        app:iconGravity="textStart"
-        app:iconPadding="8dp"
-        app:iconTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideDireita"
-        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
-        app:layout_constraintTop_toBottomOf="@id/cardProduto" />
+    <!-- Botão Adicionar ao Carrinho Fixo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:background="#FFFFFF"
+        android:elevation="8dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Preço Total -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PREÇO TOTAL"
+                android:textColor="#9E9E9E"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="0.05"/>
+
+            <TextView
+                android:id="@+id/txtPrecoTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 6,00"
+                android:textColor="#235135"
+                android:textSize="24sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"/>
+
+        </LinearLayout>
+
+        <!-- Botão Adicionar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdicionarCarrinho"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1.2"
+            android:layout_marginStart="16dp"
+            android:text="ADICIONAR"
+            android:textColor="#F5F5DB"
+            android:textSize="14sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:icon="@drawable/ic_shopping_cart"
+            app:iconGravity="textStart"
+            app:iconTint="#F5F5DB"
+            app:backgroundTint="#3D7A4C"
+            app:cornerRadius="12dp"
+            app:elevation="4dp"/>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

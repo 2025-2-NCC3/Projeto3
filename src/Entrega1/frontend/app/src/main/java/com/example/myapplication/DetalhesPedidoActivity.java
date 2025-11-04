@@ -1,28 +1,28 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.example.myapplication.R;
-import com.example.myapplication.Order;
-import com.example.myapplication.OrderItem;
-import com.example.myapplication.SupabaseOrderManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.button.MaterialButton;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class DetalhesPedidoActivity extends AppCompatActivity {
 
-    private TextView tvPedidoId, tvDataPedido, tvStatus, tvClienteNome, tvTotalPedido;
-    private Button btnCancelarPedido, btnVoltar;
+    private TextView tvPedidoCodigo, tvPedidoId, tvDataPedido, tvStatus, tvClienteNome;
+    private TextView tvDesconto, tvTotalPedido;
+    private MaterialButton btnCancelarPedido;
+    private ImageButton btnVoltar;
     private RecyclerView recyclerViewItens;
-    private OrderItemAdapter adapter;
-    private Order pedidoAtual;
-    private SupabaseOrderManager orderManager;
+    private PedidoItemAdapter adapter;
+    private Pedido pedidoAtual;
+    private SupabasePedidoManager pedidoManager;
+    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,139 +34,152 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
     }
 
     private void inicializarComponentes() {
+        // Views do layout
+        tvPedidoCodigo = findViewById(R.id.tv_pedido_codigo);
         tvPedidoId = findViewById(R.id.tv_pedido_id);
         tvDataPedido = findViewById(R.id.tv_data_pedido);
         tvStatus = findViewById(R.id.tv_status);
         tvClienteNome = findViewById(R.id.tv_cliente_nome);
+        tvDesconto = findViewById(R.id.tv_desconto);
         tvTotalPedido = findViewById(R.id.tv_total_pedido);
         btnCancelarPedido = findViewById(R.id.btn_cancelar_pedido);
         btnVoltar = findViewById(R.id.btn_voltar);
         recyclerViewItens = findViewById(R.id.recycler_itens_pedido);
 
-        orderManager = SupabaseOrderManager.getInstance(this);
+        pedidoManager = SupabasePedidoManager.getInstance(this);
 
+        // Configurar RecyclerView
         recyclerViewItens.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new OrderItemAdapter(getApplicationContext());
+        adapter = new PedidoItemAdapter(this);
         recyclerViewItens.setAdapter(adapter);
 
-        btnCancelarPedido.setOnClickListener(v -> cancelarPedido());
+        // Listeners
+        btnCancelarPedido.setOnClickListener(v -> confirmarCancelamento());
         btnVoltar.setOnClickListener(v -> finish());
     }
 
     private void carregarDadosPedido() {
-        // Receber o ID do pedido (agora String) e access token da intent
-        String pedidoId = getIntent().getStringExtra("pedido_id");  // MUDADO: getStringExtra
-        String accessToken = getIntent().getStringExtra("access_token");
+        // Receber dados da Intent
+        String pedidoId = getIntent().getStringExtra("pedido_id");
+        accessToken = getIntent().getStringExtra("access_token");
 
-        if (pedidoId == null || pedidoId.isEmpty() || accessToken == null) {  // MUDADO: verificar se é null ou vazio
+        if (pedidoId == null || pedidoId.isEmpty() || accessToken == null) {
             Toast.makeText(this, "Erro ao carregar pedido", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         // Buscar pedido no Supabase
-        orderManager.getOrderById(pedidoId, accessToken, new SupabaseOrderManager.OrderCallback() {  // Já passa String
+        pedidoManager.getPedidoById(pedidoId, accessToken, new SupabasePedidoManager.PedidoCallback() {
             @Override
-            public void onSuccess(Order order) {
-                pedidoAtual = order;
-                exibirDadosPedido(order);
+            public void onSuccess(Pedido pedido) {
+                runOnUiThread(() -> {
+                    pedidoAtual = pedido;
+                    exibirDadosPedido(pedido);
+                });
             }
 
             @Override
             public void onError(String erro) {
-                Toast.makeText(DetalhesPedidoActivity.this,
-                        "Erro ao carregar: " + erro, Toast.LENGTH_SHORT).show();
-                finish();
+                runOnUiThread(() -> {
+                    Toast.makeText(DetalhesPedidoActivity.this,
+                            "Erro ao carregar: " + erro, Toast.LENGTH_SHORT).show();
+                    finish();
+                });
             }
         });
     }
 
-    private void exibirDadosPedido(Order order) {
-        // ID do pedido
-        tvPedidoId.setText("Pedido #" + order.getId());
+    private void exibirDadosPedido(Pedido pedido) {
+        // Formatar e exibir dados
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault());
 
-        // Data formatada
-        String dataFormatada = formatarData(order.getCreatedAt().getTime());
-        tvDataPedido.setText("Data: " + dataFormatada);
+        // Código do pedido no header e na lista
+        String codigo = pedido.getCode() != null ? "#" + pedido.getCode() :
+                "#PED-" + (pedido.getId().length() > 8 ? pedido.getId().substring(0, 8) : pedido.getId());
 
-        // Status com cor
-        tvStatus.setText("Status: " + order.getStatus());
-        definirCorStatus(order.getStatus());
+        tvPedidoCodigo.setText(codigo);
+        tvPedidoId.setText(codigo);
 
-        // Nome do cliente
-        tvClienteNome.setText("Cliente: " + order.getStudentName());
+        // Data e hora
+        tvDataPedido.setText(dateFormat.format(pedido.getCreatedAt()));
 
-        // Total do pedido
-        tvTotalPedido.setText("Total: R$ " + String.format("%.2f", order.getTotal()));
+        // Usando StatusConfig
+        PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(this, pedido.getStatus());
+        tvStatus.setText(statusConfig.texto);
+        tvStatus.setTextColor(statusConfig.corTexto);
+
+        // Cliente
+        tvClienteNome.setText(pedido.getStudentName());
+
+        // Desconto (por enquanto sempre 0)
+        tvDesconto.setText("R$ 0,00");
+
+        // Total
+        tvTotalPedido.setText(PedidoUtils.formatarPreco(pedido.getTotal()));
 
         // Itens do pedido
-        adapter.atualizarItens(order.getItems());
+        adapter.atualizarItens(pedido.getItems());
 
-        // Controlar botão de cancelar
-        if (order.getStatus().equalsIgnoreCase("entregue") ||
-                order.getStatus().equalsIgnoreCase("cancelado")) {
-            btnCancelarPedido.setEnabled(false);
-            btnCancelarPedido.setAlpha(0.5f);
-        } else {
+        // Controlar visibilidade do botão cancelar
+        configurarBotaoCancelar(pedido);
+    }
+
+    private void configurarBotaoCancelar(Pedido pedido) {
+        if (PedidoUtils.podeCancelarPedido(pedido)) {
             btnCancelarPedido.setEnabled(true);
             btnCancelarPedido.setAlpha(1.0f);
+            btnCancelarPedido.setText("CANCELAR PEDIDO");
+        } else {
+            btnCancelarPedido.setEnabled(false);
+            btnCancelarPedido.setAlpha(0.5f);
+            btnCancelarPedido.setText("PEDIDO " + PedidoUtils.getStatusText(pedido.getStatus()));
         }
+    }
+
+    private void confirmarCancelamento() {
+        if (pedidoAtual == null) return;
+
+        String codigo = pedidoAtual.getCode() != null ? pedidoAtual.getCode() : "N/A";
+
+        new AlertDialog.Builder(this)
+                .setTitle("Cancelar Pedido")
+                .setMessage("Tem certeza que deseja cancelar este pedido?\n\nCódigo: " + codigo)
+                .setPositiveButton("Sim, Cancelar", (dialog, which) -> cancelarPedido())
+                .setNegativeButton("Não", null)
+                .show();
     }
 
     private void cancelarPedido() {
-        if (pedidoAtual == null) return;
+        if (pedidoAtual == null || accessToken == null) return;
 
-        String accessToken = getIntent().getStringExtra("access_token");
-        if (accessToken == null) {
-            Toast.makeText(this, "Erro: token de acesso não encontrado", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Desabilitar botão durante o processo
+        btnCancelarPedido.setEnabled(false);
+        btnCancelarPedido.setText("CANCELANDO...");
 
-        // getId() já retorna String agora
-        orderManager.cancelOrder(pedidoAtual.getId(), accessToken, new SupabaseOrderManager.OrderCallback() {
-            @Override
-            public void onSuccess(Order order) {
-                Toast.makeText(DetalhesPedidoActivity.this,
-                        "Pedido cancelado com sucesso", Toast.LENGTH_SHORT).show();
-                pedidoAtual = order;
-                exibirDadosPedido(order);
-            }
+        pedidoManager.cancelPedido(pedidoAtual.getId(), accessToken,
+                new SupabasePedidoManager.PedidoCallback() {
+                    @Override
+                    public void onSuccess(Pedido pedido) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(DetalhesPedidoActivity.this,
+                                    "✅ Pedido cancelado com sucesso", Toast.LENGTH_SHORT).show();
+                            pedidoAtual = pedido;
+                            exibirDadosPedido(pedido);
+                        });
+                    }
 
-            @Override
-            public void onError(String erro) {
-                Toast.makeText(DetalhesPedidoActivity.this,
-                        "Erro ao cancelar: " + erro, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+                    @Override
+                    public void onError(String erro) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(DetalhesPedidoActivity.this,
+                                    "❌ Erro ao cancelar: " + erro, Toast.LENGTH_SHORT).show();
 
-    private String formatarData(long timestamp) {
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        return sdf.format(date);
-    }
-
-    private void definirCorStatus(String status) {
-        int cor;
-        switch (status.toLowerCase()) {
-            case "pendente":
-                cor = getResources().getColor(R.color.status_pendente);
-                break;
-            case "preparando":
-                cor = getResources().getColor(R.color.status_preparando);
-                break;
-            case "pronto":
-                cor = getResources().getColor(R.color.status_pronto);
-                break;
-            case "entregue":
-                cor = getResources().getColor(R.color.status_entregue);
-                break;
-            case "cancelado":
-                cor = getResources().getColor(R.color.status_cancelado);
-                break;
-            default:
-                cor = getResources().getColor(R.color.black);
-        }
-        tvStatus.setTextColor(cor);
+                            // Reabilitar botão em caso de erro
+                            btnCancelarPedido.setEnabled(true);
+                            btnCancelarPedido.setText("CANCELAR PEDIDO");
+                        });
+                    }
+                });
     }
 }
