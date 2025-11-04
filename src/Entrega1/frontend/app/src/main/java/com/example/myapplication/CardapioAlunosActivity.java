@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -66,6 +67,10 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Carregar produtos do banco de dados
             carregarProdutosDoSupabase();
 
+        // Carregar produtos do banco de dados
+        carregarProdutosDoSupabase();
+        // Carregar a navbar ebaa
+        NavbarHelper.setupNavbar(this, "cardapio");
             // Atualizar badge do carrinho
             atualizarBadgeCarrinho();
 

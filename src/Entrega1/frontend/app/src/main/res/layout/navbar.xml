@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/dark_green"
+    android:padding="8dp"
+    android:elevation="8dp">
+
+    <Button
+        android:id="@+id/btnNavCardapio"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Cardápio"
+        android:textColor="@android:color/white"
+        android:drawableTop="@android:drawable/ic_menu_gallery"
+        android:drawableTint="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnNavHistorico"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Histórico"
+        android:textColor="@android:color/white"
+        android:drawableTop="@android:drawable/ic_menu_sort_by_size"
+        android:drawableTint="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnNavCarrinho"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Carrinho"
+        android:textColor="@android:color/white"
+        android:drawableTop="@android:drawable/ic_menu_add"
+        android:drawableTint="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnNavPerfil"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Perfil"
+        android:textColor="@android:color/white"
+        android:drawableTop="@android:drawable/ic_menu_myplaces"
+        android:drawableTint="@android:color/white" />
+
+</LinearLayout>

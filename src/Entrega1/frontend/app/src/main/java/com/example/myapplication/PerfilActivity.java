@@ -28,6 +28,7 @@ public class PerfilActivity extends AppCompatActivity {
         nomeUsuario.setText("Nome exemplo");
         emailUsuario.setText("EmailExemplo123@gmail.com");
 
+        NavbarHelper.setupNavbar(this, "perfil");
     }
 
     private void buscarNomeUsuario(String userId) {

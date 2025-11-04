@@ -94,6 +94,10 @@ public class AdminCardapioActivity extends AppCompatActivity {
         // Botão Salvar Produto
         btnSalvarProduto.setOnClickListener(v -> adicionarProduto());
 
+
+        botaoVoltar.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminCardapioActivity.this, AdminManager.class);
+            startActivity(intent);
         // Botão Cancelar
         btnCancelar.setOnClickListener(v -> {
             limparCampos();
