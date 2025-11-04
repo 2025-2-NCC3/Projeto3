@@ -172,7 +172,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Filtros de Categoria -->
     <HorizontalScrollView

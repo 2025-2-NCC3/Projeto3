@@ -20,14 +20,6 @@ public class AdminHomeActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private AdminManager adminManager;
 
-    private TextView textWelcome;
-    private Button btnGerenciarProdutos;
-
-    private Button btnAdicionarProdutos;
-    private Button btnGerenciarPedidos;
-    private Button btnGerenciarUsuarios;
-    private Button btnRelatorios;
-    private Button btnVerCardapio;
     private TextView tituloPagina;
     private EditText searchInput;
     private ImageButton btnLogout;
@@ -76,15 +68,6 @@ public class AdminHomeActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        textWelcome = findViewById(R.id.textWelcome);
-        btnAdicionarProdutos = findViewById(R.id.btnAdicionarProdutos);
-        btnGerenciarProdutos = findViewById(R.id.btnGerenciarProdutos);
-        btnGerenciarPedidos = findViewById(R.id.btnGerenciarPedidos);
-        btnGerenciarUsuarios = findViewById(R.id.btnGerenciarUsuarios);
-        btnRelatorios = findViewById(R.id.btnRelatorios);
-        btnVerCardapio = findViewById(R.id.btnVerCardapio);
-
-        // Exibir nome do admin
         tituloPagina = findViewById(R.id.tituloPagina);
         searchInput = findViewById(R.id.searchInput);
         btnLogout = findViewById(R.id.btnLogout);
@@ -108,20 +91,6 @@ public class AdminHomeActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // CORREÇÃO: Ir para AdminListaProdutosActivity para listar os produtos
-        btnGerenciarProdutos.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, AdminListaProdutosActivity.class);
-            startActivity(intent);
-        });
-        btnAdicionarProdutos.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
-            startActivity(intent);
-        });
-
-        // Descomente quando tiver essas activities prontas
-        /*
-        btnGerenciarPedidos.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, GerenciarPedidosActivity.class);
         // Botão Logout
         btnLogout.setOnClickListener(v -> showLogoutDialog());
 
@@ -131,9 +100,9 @@ public class AdminHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Editar Cardápio (Gerenciar Produtos)
+        // Editar Cardápio (vai para a tela de adicionar produtos)
         cardEditarCardapio.setOnClickListener(v -> {
-            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
+            Intent intent = new Intent(AdminHomeActivity.this, AdminListaProdutosActivity.class);
             startActivity(intent);
         });
 
@@ -151,10 +120,6 @@ public class AdminHomeActivity extends AppCompatActivity {
         cardGerenciarUsuarios.setOnClickListener(v -> {
             Toast.makeText(this, "Gerenciar Usuários em desenvolvimento", Toast.LENGTH_SHORT).show();
         });
-        */
-
-        btnVerCardapio.setOnClickListener(v -> {
-            // Admin pode ver o cardápio como usuário
 
         // Ver Cardápio
         cardVerCardapio.setOnClickListener(v -> {

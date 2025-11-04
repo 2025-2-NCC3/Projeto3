@@ -19,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-        <!-- Dentro do FrameLayout do header, adicione: -->
 
         <!-- Fundo verde -->
         <View
@@ -40,7 +39,7 @@
             android:scaleType="centerInside"
             android:src="@drawable/logo_tia" />
 
-        <!-- Botão Voltar -->
+        <!-- Botão Logout -->
         <ImageButton
             android:id="@+id/btnLogout"
             android:layout_width="48dp"
@@ -199,16 +198,6 @@
                     </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
-
-            </androidx.cardview.widget.CardView>
-            <Button
-                android:id="@+id/btnAdicionarProdutos"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="12dp"
-                android:text="📦 AdicionarProdutos"
-                android:textSize="16sp"
-                />
 
                 <!-- Card 2: Editar Cardápio -->
                 <com.google.android.material.card.MaterialCardView
@@ -438,6 +427,5 @@
         </LinearLayout>
 
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
