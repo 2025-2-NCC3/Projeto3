@@ -171,20 +171,7 @@
                 </LinearLayout>
 
                 <!-- Esqueceu a senha -->
-                <TextView
-                    android:id="@+id/forgotPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
-                    android:text="Esqueceu sua senha?"
-                    android:textColor="#235135"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:gravity="end"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:padding="4dp"/>
+
 
                 <!-- Container do Botão e Loading -->
                 <FrameLayout

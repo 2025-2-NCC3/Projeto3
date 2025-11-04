@@ -28,6 +28,7 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
     private static final String TAG = "AdminListaProdutos";
 
     private Button botaoVoltar;
+    private Button botaoAdicionarProduto;
     private EditText editTextBuscar;
     private LinearLayout boxListaProdutos;
 
@@ -44,7 +45,14 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
         botaoVoltar = findViewById(R.id.botaoVoltar);
         editTextBuscar = findViewById(R.id.editTextBuscar);
         boxListaProdutos = findViewById(R.id.boxListaProdutos);
+        botaoAdicionarProduto = findViewById(R.id.btnAdicionarProduto);
 
+        botaoAdicionarProduto.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AdminCardapioActivity.class);
+            startActivity(intent);
+        });
+
+        // Inicializar Supabase
         supabaseClient = SupabaseClient.getInstance(this);
         listaProdutosCompleta = new ArrayList<>();
         listaProdutosFiltrada = new ArrayList<>();
