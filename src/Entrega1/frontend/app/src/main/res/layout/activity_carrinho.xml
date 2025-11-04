@@ -1,186 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="#FFFFFF"
     tools:context=".CarrinhoActivity">
 
-    <!-- Header -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/dark_green"
-        android:elevation="4dp">
+    <!-- Header com Imagem e Overlay -->
+    <FrameLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="196dp"
+        android:background="@drawable/rounded_bottom_shape"
+        android:clipChildren="true"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Fundo verde -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_green"/>
+
+        <!-- Logo transparente -->
+        <ImageView
+            android:id="@+id/headerImage"
+            android:layout_width="228dp"
+            android:layout_height="247dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:alpha="0.2"
+            android:contentDescription="Header do carrinho"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_tia" />
+
+        <!-- Botão Voltar -->
         <ImageButton
-            android:id="@+id/btnVoltar"
+            android:id="@+id/botaoVoltar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_revert"
-            android:contentDescription="Voltar" />
+            android:contentDescription="Voltar"
+            app:tint="#F5F5DB"
+            android:padding="12dp"/>
+
+        <!-- Título "Meu Carrinho" -->
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="130dp"
+            android:text="Meu Carrinho"
+            android:textColor="#F5F5DB"
+            android:textSize="26sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"/>
+
+    </FrameLayout>
+
+    <!-- Texto "Seus Itens" -->
+    <TextView
+        android:id="@+id/txtSeusItens"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:text="Seus Itens (0)"
+        android:textColor="#235135"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_medium"
+        android:letterSpacing="-0.01"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Lista de Produtos no Carrinho -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCarrinho"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/txtSeusItens"
+        app:layout_constraintBottom_toTopOf="@id/containerResumo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Texto quando carrinho vazio -->
+    <LinearLayout
+        android:id="@+id/layoutCarrinhoVazio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recyclerViewCarrinho"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerViewCarrinho"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Meu Carrinho"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="🛒"
+            android:textSize="48sp"/>
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Seu carrinho está vazio"
+            android:textColor="#9E9E9E"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_medium"/>
 
-    <!-- Conteúdo -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+    </LinearLayout>
 
-        <!-- RecyclerView com itens do carrinho -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewCarrinho"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/layoutResumo"
-            android:padding="8dp"
-            android:clipToPadding="false" />
+    <!-- Container Resumo e Botões -->
+    <LinearLayout
+        android:id="@+id/containerResumo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Mensagem carrinho vazio -->
-        <LinearLayout
-            android:id="@+id/layoutCarrinhoVazio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/layoutResumo"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="32dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🛒"
-                android:textSize="80sp"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seu carrinho está vazio"
-                android:textColor="#666666"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Adicione produtos para continuar"
-                android:textColor="#999999"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <!-- Layout de resumo e botões -->
-        <LinearLayout
-            android:id="@+id/layoutResumo"
+        <!-- Card do Subtotal -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Informações do pedido -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Quantidade:"
-                    android:textColor="#666666"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tvQuantidadeTotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 itens"
-                    android:textColor="#333333"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#EEEEEE"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="#9C5827">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Total:"
-                    android:textColor="#333333"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="SUB TOTAL"
+                    android:textColor="#F5F5DB"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:letterSpacing="-0.01"/>
 
                 <TextView
-                    android:id="@+id/tvSubtotal"
+                    android:id="@+id/txtSubtotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="R$ 0,00"
-                    android:textColor="#FF6B35"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textColor="#F5F5DB"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_bold"/>
 
             </LinearLayout>
 
-            <!-- Botões -->
-            <Button
-                android:id="@+id/btnFinalizarPedido"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Finalizar Pedido"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:background="@drawable/button_primary"
-                android:layout_marginBottom="8dp" />
+        </com.google.android.material.card.MaterialCardView>
 
-            <Button
-                android:id="@+id/btnLimparCarrinho"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Limpar Carrinho"
-                android:textColor="#FF5252"
-                android:textSize="14sp"
-                style="?attr/borderlessButtonStyle" />
+        <!-- Botão Finalizar Pedido -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinalizarPedido"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="FINALIZAR PEDIDO"
+            android:textColor="#F5F5DB"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:backgroundTint="#3D7A4C"
+            app:cornerRadius="10dp"
+            app:elevation="4dp"/>
 
-        </LinearLayout>
+        <!-- Botão Limpar Carrinho -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLimparCarrinho"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="LIMPAR CARRINHO"
+            android:textColor="#AFAFAF"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:strokeColor="#AFAFAF"
+            app:strokeWidth="2dp"
+            app:cornerRadius="10dp"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

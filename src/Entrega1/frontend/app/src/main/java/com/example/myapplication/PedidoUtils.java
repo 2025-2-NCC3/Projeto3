@@ -2,8 +2,176 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import androidx.core.content.ContextCompat;
+import java.util.Locale;
 
 public class PedidoUtils {
+
+    // ========================================
+    // CONFIGURAÇÃO DE STATUS
+    // ========================================
+
+    public static class StatusConfig {
+        public final int corTexto;
+        public final int corFundo;
+        public final String texto;
+        public final String icone;
+        public final String descricao;
+
+        public StatusConfig(int corTexto, int corFundo, String texto, String icone, String descricao) {
+            this.corTexto = corTexto;
+            this.corFundo = corFundo;
+            this.texto = texto;
+            this.icone = icone;
+            this.descricao = descricao;
+        }
+    }
+
+    /**
+     * Método principal para obter todas as configurações de um status
+     * @param context Contexto da aplicação
+     * @param status Status do pedido (PENDING, PREPARING, etc)
+     * @return StatusConfig com todas as configurações
+     */
+    public static StatusConfig getStatusConfig(Context context, String status) {
+        if (status == null) {
+            return new StatusConfig(
+                    ContextCompat.getColor(context, R.color.status_default),
+                    ContextCompat.getColor(context, R.color.status_default_bg),
+                    "DESCONHECIDO",
+                    "❓",
+                    "Status desconhecido"
+            );
+        }
+
+        String statusNormalizado = normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "PENDING":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_pendente),
+                        ContextCompat.getColor(context, R.color.status_pendente_bg),
+                        "PENDENTE",
+                        "⏱",
+                        "Aguardando confirmação"
+                );
+
+            case "CONFIRMED":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_confirmado),
+                        ContextCompat.getColor(context, R.color.status_confirmado_bg),
+                        "CONFIRMADO",
+                        "✓",
+                        "Pedido confirmado"
+                );
+
+            case "PREPARING":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_preparando),
+                        ContextCompat.getColor(context, R.color.status_preparando_bg),
+                        "PREPARANDO",
+                        "👨‍🍳",
+                        "Sendo preparado"
+                );
+
+            case "READY":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_pronto),
+                        ContextCompat.getColor(context, R.color.status_pronto_bg),
+                        "PRONTO",
+                        "🔔",
+                        "Pronto para retirada"
+                );
+
+            case "COMPLETED":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_entregue),
+                        ContextCompat.getColor(context, R.color.status_entregue_bg),
+                        "CONCLUÍDO",
+                        "✓",
+                        "Pedido concluído"
+                );
+
+            case "CANCELLED":
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_cancelado),
+                        ContextCompat.getColor(context, R.color.status_cancelado_bg),
+                        "CANCELADO",
+                        "✕",
+                        "Pedido cancelado"
+                );
+
+            default:
+                return new StatusConfig(
+                        ContextCompat.getColor(context, R.color.status_default),
+                        ContextCompat.getColor(context, R.color.status_default_bg),
+                        status.toUpperCase(),
+                        "❓",
+                        "Status: " + status
+                );
+        }
+    }
+
+    // ========================================
+    // MÉTODOS INDIVIDUAIS (mantidos para compatibilidade)
+    // ========================================
+
+    public static int getStatusColor(Context context, String status) {
+        return getStatusConfig(context, status).corTexto;
+    }
+
+    public static int getStatusBackgroundColor(Context context, String status) {
+        return getStatusConfig(context, status).corFundo;
+    }
+
+    public static String getStatusText(String status) {
+        // Contexto não necessário, usar valores padrão
+        if (status == null) return "DESCONHECIDO";
+
+        String statusNormalizado = normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "PENDING": return "PENDENTE";
+            case "CONFIRMED": return "CONFIRMADO";
+            case "PREPARING": return "PREPARANDO";
+            case "READY": return "PRONTO";
+            case "COMPLETED": return "CONCLUÍDO";
+            case "CANCELLED": return "CANCELADO";
+            default: return status.toUpperCase();
+        }
+    }
+
+    public static String getStatusIcon(String status) {
+        if (status == null) return "❓";
+
+        String statusNormalizado = normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "PENDING": return "⏱";
+            case "CONFIRMED": return "✓";
+            case "PREPARING": return "👨‍🍳";
+            case "READY": return "🔔";
+            case "COMPLETED": return "✓";
+            case "CANCELLED": return "✕";
+            default: return "❓";
+        }
+    }
+
+    public static String getStatusDescricao(String status) {
+        if (status == null) return "Status desconhecido";
+
+        String statusNormalizado = normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "PENDING": return "Aguardando confirmação";
+            case "CONFIRMED": return "Pedido confirmado";
+            case "PREPARING": return "Sendo preparado";
+            case "READY": return "Pronto para retirada";
+            case "COMPLETED": return "Pedido concluído";
+            case "CANCELLED": return "Pedido cancelado";
+            default: return "Status desconhecido";
+        }
+    }
 
     // ========================================
     // NAVEGAÇÃO ENTRE TELAS
@@ -24,113 +192,71 @@ public class PedidoUtils {
         context.startActivity(intent);
     }
 
+    public static void abrirDetalhesPedido(Context context, String pedidoId, String accessToken) {
+        Intent intent = new Intent(context, DetalhesPedidoActivity.class);
+        intent.putExtra("pedido_id", pedidoId);
+        intent.putExtra("access_token", accessToken);
+        context.startActivity(intent);
+    }
+
+    public static void abrirDetalhesPedidoAdmin(Context context, String pedidoId) {
+        Intent intent = new Intent(context, AdminPedidoDetalhesActivity.class);
+        intent.putExtra("ORDER_ID", pedidoId);
+        context.startActivity(intent);
+    }
+
     // ========================================
     // FORMATAÇÃO
     // ========================================
 
     public static String formatarPreco(double preco) {
-        return String.format("R$ %.2f", preco);
+        return String.format(new Locale("pt", "BR"), "R$ %.2f", preco);
     }
 
     public static String formatarData(java.util.Date data) {
-        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", java.util.Locale.getDefault());
         return formatter.format(data);
     }
 
-    // ========================================
-    // STATUS DO PEDIDO
-    // ========================================
-
-    public static int getStatusColor(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return 0xFFFFF9C4; // Amarelo claro
-            case "CONFIRMADO":
-                return 0xFFC8E6C9; // Verde claro
-            case "PREPARANDO":
-                return 0xFFFFE0B2; // Laranja claro
-            case "PRONTO":
-                return 0xFF81C784; // Verde
-            case "ENTREGUE":
-                return 0xFFB2DFDB; // Azul claro
-            case "CANCELADO":
-                return 0xFFFFCDD2; // Vermelho claro
-            default:
-                return 0xFFE0E0E0; // Cinza
-        }
+    public static String formatarDataCurta(java.util.Date data) {
+        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+        return formatter.format(data);
     }
 
-    public static String getStatusText(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return "Pendente";
-            case "CONFIRMADO":
-                return "Confirmado";
-            case "PREPARANDO":
-                return "Preparando";
-            case "PRONTO":
-                return "Pronto";
-            case "ENTREGUE":
-                return "Entregue";
-            case "CANCELADO":
-                return "Cancelado";
-            default:
-                return status;
-        }
-    }
-
-    public static String getStatusIcon(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return "⏳";
-            case "CONFIRMADO":
-                return "✅";
-            case "PREPARANDO":
-                return "👨‍🍳";
-            case "PRONTO":
-                return "🔔";
-            case "ENTREGUE":
-                return "✨";
-            case "CANCELADO":
-                return "❌";
-            default:
-                return "📦";
-        }
-    }
-
-    public static String getStatusDescricao(String status) {
-        switch (status) {
-            case "PENDENTE":
-                return "Aguardando confirmação";
-            case "CONFIRMADO":
-                return "Pedido confirmado";
-            case "PREPARANDO":
-                return "Sendo preparado";
-            case "PRONTO":
-                return "Pronto para retirada";
-            case "ENTREGUE":
-                return "Pedido entregue";
-            case "CANCELADO":
-                return "Pedido cancelado";
-            default:
-                return "Status desconhecido";
-        }
+    public static String formatarHora(java.util.Date data) {
+        java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+        return formatter.format(data);
     }
 
     // ========================================
     // VALIDAÇÕES
     // ========================================
 
-    public static boolean podeCancelarPedido(Order pedido) {
+    public static boolean podeCancelarPedido(Pedido pedido) {
         if (pedido == null) return false;
-        String status = pedido.getStatus();
-        return status.equals("PENDENTE") || status.equals("CONFIRMADO");
+        String statusNormalizado = normalizarStatus(pedido.getStatus());
+        return statusNormalizado.equals("PENDING") || statusNormalizado.equals("CONFIRMED");
     }
 
-    public static boolean podeAlterarStatus(Order pedido) {
+    public static boolean podeAlterarStatus(Pedido pedido) {
         if (pedido == null) return false;
-        String status = pedido.getStatus();
-        return !status.equals("ENTREGUE") && !status.equals("CANCELADO");
+        String statusNormalizado = normalizarStatus(pedido.getStatus());
+        return !statusNormalizado.equals("COMPLETED") && !statusNormalizado.equals("CANCELLED");
+    }
+
+    public static boolean podeConfirmarRetirada(String status) {
+        if (status == null) return false;
+        String statusNormalizado = normalizarStatus(status);
+        return statusNormalizado.equals("PENDING") ||
+                statusNormalizado.equals("CONFIRMED") ||
+                statusNormalizado.equals("PREPARING") ||
+                statusNormalizado.equals("READY");
+    }
+
+    public static boolean podeSerAvaliado(String status) {
+        if (status == null) return false;
+        String statusNormalizado = normalizarStatus(status);
+        return statusNormalizado.equals("COMPLETED");
     }
 
     public static boolean isEmailValido(String email) {
@@ -146,6 +272,39 @@ public class PedidoUtils {
             return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         }
         return false;
+    }
+
+    // ========================================
+    // NORMALIZAÇÃO DE STATUS
+    // ========================================
+
+    /**
+     * Converte qualquer variação de status para o padrão inglês
+     */
+    public static String normalizarStatus(String status) {
+        if (status == null) return "PENDING";
+
+        String statusUpper = status.toUpperCase().trim();
+
+        switch (statusUpper) {
+            case "PENDENTE":
+                return "PENDING";
+            case "CONFIRMADO":
+                return "CONFIRMED";
+            case "PREPARANDO":
+                return "PREPARING";
+            case "PRONTO":
+                return "READY";
+            case "CONCLUÍDO":
+            case "CONCLUIDO":
+            case "ENTREGUE":
+            case "RETIRADO":
+                return "COMPLETED";
+            case "CANCELADO":
+                return "CANCELLED";
+            default:
+                return statusUpper;
+        }
     }
 
     // ========================================
@@ -169,11 +328,11 @@ public class PedidoUtils {
     // MENSAGENS
     // ========================================
 
-    public static String getMensagemSucesso(Order order) {
+    public static String getMensagemSucesso(Pedido pedido) {
         return "🎉 Pedido criado com sucesso!\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus());
+                "Código: " + pedido.getCode() + "\n" +
+                "Total: " + formatarPreco(pedido.getTotal()) + "\n" +
+                "Status: " + getStatusText(pedido.getStatus());
     }
 
     public static String getMensagemErro(String erro) {
@@ -191,15 +350,53 @@ public class PedidoUtils {
     }
 
     // ========================================
+    // FORMATAÇÃO DE ITENS
+    // ========================================
+
+    public static String formatarListaItens(Pedido pedido) {
+        if (pedido == null || pedido.getItems() == null || pedido.getItems().isEmpty()) {
+            return "Sem itens";
+        }
+
+        StringBuilder itensText = new StringBuilder();
+        for (int i = 0; i < pedido.getItems().size(); i++) {
+            PedidoItem item = pedido.getItems().get(i);
+            itensText.append("• ")
+                    .append(item.getQuantity())
+                    .append("x ")
+                    .append(item.getProductName() != null ? item.getProductName() : "Item");
+
+            if (i < pedido.getItems().size() - 1) {
+                itensText.append("\n");
+            }
+        }
+        return itensText.toString();
+    }
+
+    public static String formatarResumoItens(Pedido pedido) {
+        if (pedido == null || pedido.getItems() == null || pedido.getItems().isEmpty()) {
+            return "0 itens";
+        }
+
+        int totalItens = 0;
+        for (PedidoItem item : pedido.getItems()) {
+            totalItens += item.getQuantity();
+        }
+
+        return totalItens + (totalItens == 1 ? " item" : " itens");
+    }
+
+    // ========================================
     // COMPARTILHAMENTO
     // ========================================
 
-    public static void compartilharPedido(Context context, Order order) {
-        String texto = "📦 Meu Pedido\n\n" +
-                "Código: " + order.getCode() + "\n" +
-                "Total: " + formatarPreco(order.getTotal()) + "\n" +
-                "Status: " + getStatusText(order.getStatus()) + "\n" +
-                "Data: " + formatarData(order.getCreatedAt());
+    public static void compartilharPedido(Context context, Pedido pedido) {
+        String texto = "📦 Meu Pedido - Cantina\n\n" +
+                "Código: " + pedido.getCode() + "\n" +
+                "Total: " + formatarPreco(pedido.getTotal()) + "\n" +
+                "Status: " + getStatusText(pedido.getStatus()) + "\n" +
+                "Data: " + formatarData(pedido.getCreatedAt()) + "\n\n" +
+                "Itens:\n" + formatarListaItens(pedido);
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -211,19 +408,38 @@ public class PedidoUtils {
     }
 
     // ========================================
+    // HELPERS PARA ADMIN
+    // ========================================
+
+    public static int getStatusPrioridade(String status) {
+        if (status == null) return 99;
+
+        String statusNormalizado = normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "READY": return 1;
+            case "PREPARING": return 2;
+            case "CONFIRMED": return 3;
+            case "PENDING": return 4;
+            case "COMPLETED": return 5;
+            case "CANCELLED": return 6;
+            default: return 99;
+        }
+    }
+
+    // ========================================
     // CONSTANTES ÚTEIS
     // ========================================
 
-    public static final String EXTRA_ORDER_ID = "order_id";
-    public static final String EXTRA_ORDER_CODE = "order_code";
+    public static final String EXTRA_PEDIDO_ID = "pedido_id";
+    public static final String EXTRA_PEDIDO_CODE = "pedido_code";
     public static final String EXTRA_PRODUTO = "produto";
     public static final String EXTRA_QUANTIDADE = "quantidade";
 
-    // Status
-    public static final String STATUS_PENDENTE = "PENDENTE";
-    public static final String STATUS_CONFIRMADO = "CONFIRMADO";
-    public static final String STATUS_PREPARANDO = "PREPARANDO";
-    public static final String STATUS_PRONTO = "PRONTO";
-    public static final String STATUS_ENTREGUE = "ENTREGUE";
-    public static final String STATUS_CANCELADO = "CANCELADO";
+    public static final String STATUS_PENDING = "PENDING";
+    public static final String STATUS_CONFIRMED = "CONFIRMED";
+    public static final String STATUS_PREPARING = "PREPARING";
+    public static final String STATUS_READY = "READY";
+    public static final String STATUS_COMPLETED = "COMPLETED";
+    public static final String STATUS_CANCELLED = "CANCELLED";
 }

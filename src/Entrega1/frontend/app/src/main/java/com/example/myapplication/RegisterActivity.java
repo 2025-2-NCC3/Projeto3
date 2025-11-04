@@ -2,10 +2,13 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +22,15 @@ public class RegisterActivity extends AppCompatActivity {
     private Button buttonRegister;
     private TextView textViewLogin;
     private ProgressBar progressBar;
+    private ImageView togglePassword, toggleConfirmPassword;
+    private boolean isPasswordVisible = false;
+    private boolean isConfirmPasswordVisible = false;
+    private CheckBox checkboxTerms;
+
     private SupabaseClient supabaseClient;
     private Call currentCall;
-
     private SessionManager sessionManager;
     private AdminManager adminManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,9 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         supabaseClient = SupabaseClient.getInstance(getApplicationContext());
+        sessionManager = SessionManager.getInstance(getApplicationContext());
+        adminManager = AdminManager.getInstance(getApplicationContext());
+
         initializeViews();
         setupListeners();
     }
@@ -44,11 +53,47 @@ public class RegisterActivity extends AppCompatActivity {
         buttonRegister = findViewById(R.id.buttonRegister);
         textViewLogin = findViewById(R.id.textViewLogin);
         progressBar = findViewById(R.id.progressBar);
+        togglePassword = findViewById(R.id.togglePassword);
+        toggleConfirmPassword = findViewById(R.id.toggleConfirmPassword);
     }
 
     private void setupListeners() {
         buttonRegister.setOnClickListener(v -> registerUser());
         textViewLogin.setOnClickListener(v -> finish());
+
+        // Configurar toggle de senha
+        togglePassword.setOnClickListener(v -> togglePasswordVisibility());
+        toggleConfirmPassword.setOnClickListener(v -> toggleConfirmPasswordVisibility());
+    }
+
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Ocultar senha
+            editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            togglePassword.setImageResource(R.drawable.ic_eye_off);
+            isPasswordVisible = false;
+        } else {
+            // Mostrar senha
+            editTextPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            togglePassword.setImageResource(R.drawable.ic_eye);
+            isPasswordVisible = true;
+        }
+        editTextPassword.setSelection(editTextPassword.getText().length());
+    }
+
+    private void toggleConfirmPasswordVisibility() {
+        if (isConfirmPasswordVisible) {
+            // Ocultar senha
+            editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            toggleConfirmPassword.setImageResource(R.drawable.ic_eye_off);
+            isConfirmPasswordVisible = false;
+        } else {
+            // Mostrar senha
+            editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            toggleConfirmPassword.setImageResource(R.drawable.ic_eye);
+            isConfirmPasswordVisible = true;
+        }
+        editTextConfirmPassword.setSelection(editTextConfirmPassword.getText().length());
     }
 
     private void registerUser() {
@@ -180,6 +225,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (!password.equals(confirmPassword)) {
             editTextConfirmPassword.setError("Senhas não coincidem");
+            return false;
+        }
+        if (!checkboxTerms.isChecked()) {
+            Toast.makeText(this, "Você deve aceitar os Termos de Uso para continuar", Toast.LENGTH_SHORT).show();
             return false;
         }
 

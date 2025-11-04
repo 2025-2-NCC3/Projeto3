@@ -44,6 +44,11 @@
         <activity android:name=".MeusPedidosActivity"/>
         <activity android:name=".AdminEditarProdutoActivity"/>
         <activity android:name=".AdminListaProdutosActivity"/>
+        <activity android:name=".AdminPedidosActivity">
+        </activity>
+        <activity android:name=".AdminPedidoDetalhesActivity">
+        </activity>
+
 
 
     </application>

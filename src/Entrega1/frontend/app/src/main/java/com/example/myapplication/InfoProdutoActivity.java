@@ -3,7 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Locale;
 
@@ -22,11 +23,17 @@ public class InfoProdutoActivity extends AppCompatActivity {
     private TextView nomeProduto;
     private TextView descricaoProduto;
     private TextView precoProduto;
-    private Button botaoVoltar;
-    private Button botaoComprar;
+    private TextView categoriaProduto;
+    private TextView txtQuantidade;
+    private TextView txtPrecoTotal;
+    private ImageButton botaoVoltar;
+    private ImageButton btnDiminuir;
+    private ImageButton btnAumentar;
+    private MaterialButton btnAdicionarCarrinho;
 
     private Produto produto;
     private CarrinhoHelper carrinhoHelper;
+    private int quantidade = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,8 @@ public class InfoProdutoActivity extends AppCompatActivity {
             if (produto != null) {
                 Log.d(TAG, "Produto recebido: " + produto.getNome());
                 carregarInformacoesProduto(produto);
+                configurarListeners();
+                atualizarPrecoTotal();
             } else {
                 Toast.makeText(this, "Erro ao carregar produto", Toast.LENGTH_SHORT).show();
                 finish();
@@ -52,32 +61,6 @@ public class InfoProdutoActivity extends AppCompatActivity {
             Toast.makeText(this, "Nenhum produto selecionado", Toast.LENGTH_SHORT).show();
             finish();
         }
-
-        // Configurar botão voltar
-        if (botaoVoltar != null) {
-            botaoVoltar.setOnClickListener(v -> finish());
-        }
-
-        // Configurar botão comprar
-        if (botaoComprar != null) {
-            botaoComprar.setOnClickListener(v -> {
-                if (produto != null && produto.getEstoque() > 0) {
-                    // Adiciona ao carrinho
-                    carrinhoHelper.adicionarProduto(produto, 1);
-                    Toast.makeText(InfoProdutoActivity.this,
-                            produto.getNome() + " adicionado ao carrinho!",
-                            Toast.LENGTH_SHORT).show();
-
-                    // Vai para a tela do carrinho
-                    Intent intent = new Intent(InfoProdutoActivity.this, CarrinhoActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(InfoProdutoActivity.this,
-                            "Produto indisponível no momento",
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
     }
 
     private void inicializarComponentes() {
@@ -85,10 +68,73 @@ public class InfoProdutoActivity extends AppCompatActivity {
         nomeProduto = findViewById(R.id.nomeProduto);
         descricaoProduto = findViewById(R.id.descricaoProduto);
         precoProduto = findViewById(R.id.precoProduto);
+        categoriaProduto = findViewById(R.id.categoriaProduto);
+        txtQuantidade = findViewById(R.id.txtQuantidade);
+        txtPrecoTotal = findViewById(R.id.txtPrecoTotal);
         botaoVoltar = findViewById(R.id.botaoVoltar);
-        botaoComprar = findViewById(R.id.botaoComprar);
+        btnDiminuir = findViewById(R.id.btnDiminuir);
+        btnAumentar = findViewById(R.id.btnAumentar);
+        btnAdicionarCarrinho = findViewById(R.id.btnAdicionarCarrinho);
 
         Log.d(TAG, "Componentes inicializados");
+    }
+
+    private void configurarListeners() {
+        // Botão voltar
+        botaoVoltar.setOnClickListener(v -> finish());
+
+        // Botão diminuir quantidade
+        btnDiminuir.setOnClickListener(v -> {
+            if (quantidade > 1) {
+                quantidade--;
+                atualizarQuantidade();
+            } else {
+                Toast.makeText(this, "Quantidade mínima é 1", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Botão aumentar quantidade
+        btnAumentar.setOnClickListener(v -> {
+            if (produto != null && quantidade < produto.getEstoque()) {
+                quantidade++;
+                atualizarQuantidade();
+            } else {
+                Toast.makeText(this, "Estoque máximo atingido", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Botão adicionar ao carrinho
+        btnAdicionarCarrinho.setOnClickListener(v -> {
+            if (produto != null && produto.getEstoque() > 0) {
+                // Adiciona ao carrinho com a quantidade selecionada
+                carrinhoHelper.adicionarProduto(produto, quantidade);
+
+                Toast.makeText(InfoProdutoActivity.this,
+                        quantidade + "x " + produto.getNome() + " adicionado ao carrinho!",
+                        Toast.LENGTH_SHORT).show();
+
+                // Vai para a tela do carrinho
+                Intent intent = new Intent(InfoProdutoActivity.this, CarrinhoActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(InfoProdutoActivity.this,
+                        "Produto indisponível no momento",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void atualizarQuantidade() {
+        txtQuantidade.setText(String.valueOf(quantidade));
+        atualizarPrecoTotal();
+    }
+
+    private void atualizarPrecoTotal() {
+        if (produto != null && txtPrecoTotal != null) {
+            double precoTotal = produto.getPreco() * quantidade;
+            txtPrecoTotal.setText(PedidoUtils.formatarPreco(precoTotal));
+        }
     }
 
     private void carregarInformacoesProduto(Produto produto) {
@@ -99,23 +145,39 @@ public class InfoProdutoActivity extends AppCompatActivity {
 
         // Definir descrição
         if (descricaoProduto != null) {
-            descricaoProduto.setText(produto.getDescricao());
+            String descricao = produto.getDescricao();
+            if (descricao == null || descricao.isEmpty()) {
+                descricao = "Sem descrição disponível.";
+            }
+            descricaoProduto.setText(descricao);
         }
 
         // Definir preço
         if (precoProduto != null) {
-            precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
+            precoProduto.setText(PedidoUtils.formatarPreco(produto.getPreco()));
         }
 
-        // Habilitar/desabilitar botão comprar baseado no estoque
-        if (botaoComprar != null) {
+        // Definir categoria
+        if (categoriaProduto != null) {
+            String categoria = getCategoriaTexto(produto.getCategoria());
+            categoriaProduto.setText(categoria.toUpperCase());
+        }
+
+
+        // Habilitar/desabilitar botão adicionar baseado no estoque
+        if (btnAdicionarCarrinho != null) {
             if (produto.getEstoque() > 0) {
-                botaoComprar.setEnabled(true);
-                botaoComprar.setText("Comprar Agora");
+                btnAdicionarCarrinho.setEnabled(true);
             } else {
-                botaoComprar.setEnabled(false);
-                botaoComprar.setText("Produto Indisponível");
+                btnAdicionarCarrinho.setEnabled(false);
+                btnAdicionarCarrinho.setText("INDISPONÍVEL");
             }
+        }
+
+        // Desabilitar botões de quantidade se sem estoque
+        if (produto.getEstoque() == 0) {
+            btnDiminuir.setEnabled(false);
+            btnAumentar.setEnabled(false);
         }
 
         // Carregar imagem do produto
@@ -129,7 +191,7 @@ public class InfoProdutoActivity extends AppCompatActivity {
 
                     Glide.with(this)
                             .load(caminhoImagem)
-                            .placeholder(R.drawable.image_placeholder)
+                            .placeholder(R.drawable.sem_imagem)
                             .error(R.drawable.sem_imagem)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(imagemProduto);
@@ -159,5 +221,16 @@ public class InfoProdutoActivity extends AppCompatActivity {
         }
 
         Log.d(TAG, "Informações do produto carregadas com sucesso");
+    }
+
+    private String getCategoriaTexto(int categoriaId) {
+        switch (categoriaId) {
+            case 1: return "Bebidas";
+            case 2: return "Pratos Principais";
+            case 3: return "Sobremesas";
+            case 4: return "Entradas";
+            case 5: return "Lanches";
+            default: return "Outros";
+        }
     }
 }

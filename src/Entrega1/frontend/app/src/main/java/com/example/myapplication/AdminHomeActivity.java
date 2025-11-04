@@ -1,17 +1,17 @@
-// com/example/myapplication/AdminHomeActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.card.MaterialCardView;
 
 public class AdminHomeActivity extends AppCompatActivity {
 
@@ -28,6 +28,22 @@ public class AdminHomeActivity extends AppCompatActivity {
     private Button btnGerenciarUsuarios;
     private Button btnRelatorios;
     private Button btnVerCardapio;
+    private TextView tituloPagina;
+    private EditText searchInput;
+    private ImageButton btnLogout;
+    private MaterialCardView cardGerenciarPedidos;
+    private MaterialCardView cardEditarCardapio;
+    private MaterialCardView cardEstoque;
+    private MaterialCardView cardRelatorios;
+    private MaterialCardView cardGerenciarUsuarios;
+    private MaterialCardView cardVerCardapio;
+
+    private OnBackPressedCallback backPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            showLogoutDialog();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +60,6 @@ public class AdminHomeActivity extends AppCompatActivity {
         }
 
         if (!adminManager.isAdmin()) {
-            // Não é admin, redirecionar para tela de usuário
             Toast.makeText(this, "Acesso negado. Você não tem permissões de administrador.", Toast.LENGTH_LONG).show();
             goToCardapio();
             return;
@@ -52,17 +67,12 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_admin_home);
 
-        setupToolbar();
         initializeViews();
         setupListeners();
-    }
+        updateWelcomeMessage();
 
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            setTitle("Painel Administrativo");
-        }
+        // Adicionar callback do back button
+        getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
     }
 
     private void initializeViews() {
@@ -75,9 +85,25 @@ public class AdminHomeActivity extends AppCompatActivity {
         btnVerCardapio = findViewById(R.id.btnVerCardapio);
 
         // Exibir nome do admin
+        tituloPagina = findViewById(R.id.tituloPagina);
+        searchInput = findViewById(R.id.searchInput);
+        btnLogout = findViewById(R.id.btnLogout);
+        cardGerenciarPedidos = findViewById(R.id.cardGerenciarPedidos);
+        cardEditarCardapio = findViewById(R.id.cardEditarCardapio);
+        cardEstoque = findViewById(R.id.cardEstoque);
+        cardRelatorios = findViewById(R.id.cardRelatorios);
+        cardGerenciarUsuarios = findViewById(R.id.cardGerenciarUsuarios);
+        cardVerCardapio = findViewById(R.id.cardVerCardapio);
+    }
+
+    private void updateWelcomeMessage() {
         String userEmail = sessionManager.getUserEmail();
-        if (userEmail != null) {
-            textWelcome.setText("Bem-vindo, " + userEmail.split("@")[0]);
+        if (userEmail != null && !userEmail.isEmpty()) {
+            String nome = userEmail.split("@")[0];
+            nome = nome.substring(0, 1).toUpperCase() + nome.substring(1);
+            tituloPagina.setText("Bem-vinda, " + nome + "!");
+        } else {
+            tituloPagina.setText("Bem-vinda, Tia!");
         }
     }
 
@@ -96,57 +122,64 @@ public class AdminHomeActivity extends AppCompatActivity {
         /*
         btnGerenciarPedidos.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, GerenciarPedidosActivity.class);
+        // Botão Logout
+        btnLogout.setOnClickListener(v -> showLogoutDialog());
+
+        // Gerenciar Pedidos
+        cardGerenciarPedidos.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminHomeActivity.this, AdminPedidosActivity.class);
             startActivity(intent);
         });
 
-        btnGerenciarUsuarios.setOnClickListener(v -> {
-            Toast.makeText(this, "Em desenvolvimento", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminHomeActivity.this, GerenciarUsuariosActivity.class);
-            // startActivity(intent);
+        // Editar Cardápio (Gerenciar Produtos)
+        cardEditarCardapio.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
+            startActivity(intent);
         });
 
-        btnRelatorios.setOnClickListener(v -> {
-            Toast.makeText(this, "Em desenvolvimento", Toast.LENGTH_SHORT).show();
-            // Intent intent = new Intent(AdminHomeActivity.this, RelatoriosActivity.class);
-            // startActivity(intent);
+        // Estoque
+        cardEstoque.setOnClickListener(v -> {
+            Toast.makeText(this, "Estoque em desenvolvimento", Toast.LENGTH_SHORT).show();
+        });
+
+        // Relatórios
+        cardRelatorios.setOnClickListener(v -> {
+            Toast.makeText(this, "Relatórios em desenvolvimento", Toast.LENGTH_SHORT).show();
+        });
+
+        // Gerenciar Usuários
+        cardGerenciarUsuarios.setOnClickListener(v -> {
+            Toast.makeText(this, "Gerenciar Usuários em desenvolvimento", Toast.LENGTH_SHORT).show();
         });
         */
 
         btnVerCardapio.setOnClickListener(v -> {
             // Admin pode ver o cardápio como usuário
+
+        // Ver Cardápio
+        cardVerCardapio.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, CardapioAlunosActivity.class);
             startActivity(intent);
         });
+
+        // Barra de pesquisa
+        searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            String query = searchInput.getText().toString().trim();
+            if (!query.isEmpty()) {
+                Toast.makeText(this, "Busca: " + query, Toast.LENGTH_SHORT).show();
+                // TODO: Implementar lógica de busca
+            }
+            return false;
+        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_admin, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_logout) {
-            logout();
-            return true;
-        } else if (id == R.id.action_perfil) {
-            Toast.makeText(this, "Perfil em desenvolvimento", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void logout() {
-        // Limpar sessões
-        sessionManager.logout();
-        adminManager.clearAdminData();
-
-        Toast.makeText(this, "Logout realizado com sucesso", Toast.LENGTH_SHORT).show();
-        goToMain();
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Sair")
+                .setMessage("Deseja fazer logout?")
+                .setPositiveButton("Sim", (dialog, which) -> logout())
+                .setNegativeButton("Não", null)
+                .show();
     }
 
     private void goToMain() {
@@ -163,11 +196,10 @@ public class AdminHomeActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        // Não permitir voltar com botão "voltar"
-        // Ou pode mostrar dialog de confirmação
-        super.onBackPressed();
-        Toast.makeText(this, "Use o botão Sair para fazer logout", Toast.LENGTH_SHORT).show();
+    private void logout() {
+        sessionManager.logout();
+        adminManager.clearAdminData();
+        Toast.makeText(this, "Logout realizado com sucesso", Toast.LENGTH_SHORT).show();
+        goToMain();
     }
 }

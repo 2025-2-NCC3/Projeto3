@@ -1,142 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center_horizontal"
-    android:background="@drawable/background_gradient">
+    android:background="#235135"
+    android:fillViewport="true">
 
-    <!-- Header -->
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_app_logo"
-        app:tint="@color/dark_green" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Entrar"
-        android:textColor="@color/dark_green"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Faça login na sua conta"
-        android:textColor="@color/medium_green"
-        android:textSize="16sp"
-        android:layout_marginBottom="40dp" />
-
-    <!-- Formulário - Email -->
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/dark_green"
-        app:hintTextColor="@color/dark_green"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:paddingBottom="32dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
+        <!-- Imagem no Topo -->
+        <ImageView
+            android:id="@+id/imagemLogin"
+            android:layout_width="0dp"
+            android:layout_height="220dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginTop="32dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_tia"
+            android:contentDescription="Ilustração de login"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Texto de Boas-vindas -->
+        <LinearLayout
+            android:id="@+id/welcomeLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:textColor="@color/dark_green" />
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/imagemLogin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bem-vindo de volta!"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"/>
 
-    <!-- Formulário - Senha -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="28dp"
-        app:endIconMode="password_toggle"
-        app:endIconTint="@color/dark_green"
-        app:boxBackgroundColor="@color/white"
-        app:boxStrokeColor="@color/dark_green"
-        app:hintTextColor="@color/dark_green"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Faça login na sua conta"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="4dp"/>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPassword"
-            android:layout_width="match_parent"
+        </LinearLayout>
+
+        <!-- Card de Login -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Senha"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:textColor="@color/dark_green" />
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/welcomeLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="30dp"
+                android:paddingTop="30dp"
+                android:paddingBottom="24dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonLogin"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/dark_green"
-        android:text="Entrar"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:cornerRadius="14dp"
-        app:icon="@drawable/ic_login"
-        app:iconGravity="textStart"
-        app:iconPadding="8dp"
-        app:iconTint="@color/white" />
+                <!-- Campo Email -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminateTint="@color/dark_green"
-        android:visibility="gone"
-        android:layout_marginBottom="16dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="#000000"
+                        android:textSize="14sp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/editTextEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="2dp"
+                        android:hint="seu@email.com"
+                        android:textColorHint="#A0AFAFAF"
+                        android:textColor="#000000"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionNext"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:background="@drawable/input_border"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Não tem conta? "
-            android:textColor="@color/medium_green"
-            android:textSize="14sp" />
+                </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Criar conta"
-            android:textColor="@color/dark_green"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
+                <!-- Campo Senha -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="9dp">
 
-    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Senha"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="#000000"
+                        android:textSize="14sp"/>
 
-</LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="2dp">
+
+                        <EditText
+                            android:id="@+id/editTextPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="Sua senha"
+                            android:textColorHint="#A0AFAFAF"
+                            android:textColor="#000000"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionDone"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="40dp"
+                            android:background="@drawable/input_border"/>
+
+                        <!-- Ícone de mostrar/ocultar senha -->
+                        <ImageView
+                            android:id="@+id/togglePassword"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:src="@drawable/ic_eye_off"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="Mostrar/Ocultar senha"
+                            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <!-- Esqueceu a senha -->
+                <TextView
+                    android:id="@+id/forgotPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:text="Esqueceu sua senha?"
+                    android:textColor="#235135"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="end"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="4dp"/>
+
+                <!-- Container do Botão e Loading -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp">
+
+                    <!-- Botão Entrar -->
+                    <Button
+                        android:id="@+id/buttonLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Entrar"
+                        android:textColor="#F5F5DB"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:background="@drawable/button_login_background"
+                        android:paddingVertical="12dp"/>
+
+                    <!-- ProgressBar -->
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        android:indeterminateTint="#F5F5DB"/>
+
+                </FrameLayout>
+
+                <!-- Link Cadastro -->
+                <TextView
+                    android:id="@+id/textViewRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:text="Não tem uma conta? Cadastre-se"
+                    android:textAlignment="center"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="4dp"
+                    android:letterSpacing="-0.01"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
