@@ -1031,7 +1031,6 @@ public class SupabaseClient {
     }
 
     // ===== MÉTODOS PARA UPLOAD DE IMAGENS =====
-
     public Call uploadProductImage(byte[] imageBytes, String fileName, String bucketName, SupabaseCallback<ImageUploadResponse> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -1263,8 +1262,123 @@ public class SupabaseClient {
         });
     }
 
-    // ===== MÉTODOS AUXILIARES =====
+    // ===== MÉTODOS PARA COMPRAS DO HISTÓRICO =====
 
+    // Buscar todos os pedidos do usuário
+    public Call getAllPurchases(SupabaseCallback<List<Pedido>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/pedidos?select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando todos os pedidos: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar pedidos", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar pedidos - Código: " + response.code());
+                Log.d(TAG, "Resposta buscar pedidos - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Pedido> pedidos = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(pedidos);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar histórico de pedidos", e);
+                        callback.onError("Erro ao processar dados dos pedidos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar pedidos (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar compra por ID
+    public Call getPurchaseById(int id, SupabaseCallback<Pedido> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/pedidos?id=eq." + id + "&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Log.d(TAG, "Buscando pedido por ID: " + request.url());
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produto por ID", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produto por ID - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Pedido> pedidos = gson.fromJson(responseBody, listType);
+
+                        if (pedidos != null && !pedidos.isEmpty()) {
+                            callback.onSuccess(pedidos.get(0));
+                        } else {
+                            callback.onError("Pedido não encontrada");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar pedidos", e);
+                        callback.onError("Erro ao processar dados dos pedidos");
+                    }
+                } else {
+                    callback.onError("Pedidos não encontrados (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // ===== MÉTODOS AUXILIARES =====
     private String getFileExtension(String fileName) {
         if (fileName != null && fileName.contains(".")) {
             return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();

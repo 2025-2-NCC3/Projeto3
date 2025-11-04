@@ -1,15 +1,18 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class PerfilActivity extends AppCompatActivity {
 
     TextView nomeUsuario, emailUsuario;
-    
+    ConstraintLayout boxHistorico, boxDados, boxPagamento, boxConfig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,11 +27,20 @@ public class PerfilActivity extends AppCompatActivity {
 
         nomeUsuario = findViewById(R.id.nomeUsuario);
         emailUsuario = findViewById(R.id.emailUsuario);
+        boxHistorico = findViewById(R.id.boxHistorico);
+        boxDados = findViewById(R.id.boxDados);
+        boxPagamento = findViewById(R.id.boxPagamento);
+        boxConfig = findViewById(R.id.boxConfig);
 
         nomeUsuario.setText("Nome exemplo");
         emailUsuario.setText("EmailExemplo123@gmail.com");
 
         NavbarHelper.setupNavbar(this, "perfil");
+        boxHistorico.setOnClickListener(v -> {
+            Intent intent = new Intent(PerfilActivity.this, HistoricoActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     private void buscarNomeUsuario(String userId) {
