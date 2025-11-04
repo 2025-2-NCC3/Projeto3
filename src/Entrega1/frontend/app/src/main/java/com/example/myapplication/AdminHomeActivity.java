@@ -22,6 +22,8 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private TextView textWelcome;
     private Button btnGerenciarProdutos;
+
+    private Button btnAdicionarProdutos;
     private Button btnGerenciarPedidos;
     private Button btnGerenciarUsuarios;
     private Button btnRelatorios;
@@ -65,6 +67,7 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private void initializeViews() {
         textWelcome = findViewById(R.id.textWelcome);
+        btnAdicionarProdutos = findViewById(R.id.btnAdicionarProdutos);
         btnGerenciarProdutos = findViewById(R.id.btnGerenciarProdutos);
         btnGerenciarPedidos = findViewById(R.id.btnGerenciarPedidos);
         btnGerenciarUsuarios = findViewById(R.id.btnGerenciarUsuarios);
@@ -82,6 +85,10 @@ public class AdminHomeActivity extends AppCompatActivity {
         // CORREÇÃO: Ir para AdminListaProdutosActivity para listar os produtos
         btnGerenciarProdutos.setOnClickListener(v -> {
             Intent intent = new Intent(AdminHomeActivity.this, AdminListaProdutosActivity.class);
+            startActivity(intent);
+        });
+        btnAdicionarProdutos.setOnClickListener(v -> {
+            Intent intent = new Intent(AdminHomeActivity.this, AdminCardapioActivity.class);
             startActivity(intent);
         });
 
