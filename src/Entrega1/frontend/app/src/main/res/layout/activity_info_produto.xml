@@ -83,12 +83,13 @@
                         android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="-0.01"/>
 
-                    <!-- Container Categoria e Estoque -->
+                    <!-- Container Categoria -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="4dp">
+                        android:layout_marginTop="4dp"
+                        android:gravity="center_vertical">
 
                         <TextView
                             android:id="@+id/categoriaProduto"
@@ -105,7 +106,17 @@
                             android:paddingTop="4dp"
                             android:paddingBottom="4dp"/>
 
-
+                        <!-- Indicador de Estoque -->
+                        <TextView
+                            android:id="@+id/estoqueProduto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="• 15 disponíveis"
+                            android:textColor="#4CAF50"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:layout_marginStart="8dp"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 
@@ -127,7 +138,7 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#EFEFEF"/>
+                        android:background="#E0E0E0"/>
 
                     <!-- Descrição -->
                     <TextView
@@ -156,7 +167,7 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#EFEFEF"/>
+                        android:background="#E0E0E0"/>
 
                     <!-- Quantidade -->
                     <TextView
@@ -174,21 +185,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:background="@drawable/quantity_selector_background"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp">
+                        android:gravity="center_vertical">
 
                         <ImageButton
                             android:id="@+id/btnDiminuir"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_remove_circle"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="Diminuir quantidade"
-                            app:tint="#9C5827"/>
+                            app:tint="@color/brown"
+                            android:scaleType="fitCenter"/>
 
                         <TextView
                             android:id="@+id/txtQuantidade"
@@ -197,19 +204,20 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:text="1"
-                            android:textColor="#235135"
-                            android:textSize="24sp"
+                            android:textColor="@color/accent_teal"
+                            android:textSize="28sp"
                             android:fontFamily="@font/poppins_bold"
                             android:gravity="center"/>
 
                         <ImageButton
                             android:id="@+id/btnAumentar"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_add_circle"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="Aumentar quantidade"
-                            app:tint="#9C5827"/>
+                            app:tint="@color/brown"
+                            android:scaleType="fitCenter"/>
 
                     </LinearLayout>
 
@@ -273,15 +281,15 @@
             android:layout_weight="1.2"
             android:layout_marginStart="16dp"
             android:text="ADICIONAR"
-            android:textColor="#F5F5DB"
-            android:textSize="14sp"
+            android:textColor="@color/text_beige"
+            android:textSize="15sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
             app:icon="@drawable/ic_shopping_cart"
             app:iconGravity="textStart"
-            app:iconTint="#F5F5DB"
-            app:backgroundTint="#3D7A4C"
-            app:cornerRadius="12dp"
+            app:iconTint="@color/text_beige"
+            app:backgroundTint="@color/dark_green"
+            app:cornerRadius="16dp"
             app:elevation="4dp"/>
 
     </LinearLayout>

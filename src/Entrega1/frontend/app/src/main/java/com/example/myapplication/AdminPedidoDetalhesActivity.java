@@ -11,7 +11,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.text.NumberFormat;
@@ -127,7 +126,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         tvStudentName.setText(pedido.getStudentName() != null ? pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
         tvOrderDate.setText("Data: " + dateFormat.format(pedido.getCreatedAt()));
 
-        // Status com emoji e cor USANDO COLORS.XML
+        // Status com emoji e cor
         String statusText = PedidoUtils.getStatusIcon(pedido.getStatus()) + " " + PedidoUtils.getStatusText(pedido.getStatus());
         tvOrderStatus.setText(statusText);
         tvOrderStatus.setTextColor(PedidoUtils.getStatusColor(this, pedido.getStatus()));
@@ -142,33 +141,36 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         }
         recyclerViewItems.setAdapter(itemAdapter);
 
-        // Configurar botões baseado no status
+        // Configurar botões baseado no status (apenas 3 status: PENDING, COMPLETED, CANCELLED)
         updateButtonsVisibility(pedido.getStatus());
     }
 
     private void updateButtonsVisibility(String status) {
-        String statusUpper = status.toUpperCase();
-        switch (statusUpper) {
-            case "PENDENTE":
-            case "PREPARANDO":
-            case "PRONTO":
-            case "CONFIRMADO":
+        String statusNormalizado = PedidoUtils.normalizarStatus(status);
+
+        switch (statusNormalizado) {
+            case "PENDING":
+                // Pedido pendente: pode confirmar retirada ou cancelar
                 btnConfirmarRetirada.setVisibility(View.VISIBLE);
                 btnCancelarPedido.setVisibility(View.VISIBLE);
                 btnConfirmarRetirada.setEnabled(true);
                 btnCancelarPedido.setEnabled(true);
                 break;
-            case "RETIRADO":
-            case "ENTREGUE":
+
+            case "COMPLETED":
+            case "CANCELLED":
+                // Pedido já finalizado: esconde botões
                 btnConfirmarRetirada.setVisibility(View.GONE);
                 btnCancelarPedido.setVisibility(View.GONE);
                 break;
-            case "CANCELADO":
+
+            default:
                 btnConfirmarRetirada.setVisibility(View.GONE);
                 btnCancelarPedido.setVisibility(View.GONE);
                 break;
         }
-        Log.d(TAG, "Botões atualizados para status: " + status);
+
+        Log.d(TAG, "Botões atualizados para status: " + statusNormalizado);
     }
 
     private void confirmarRetirada() {
@@ -194,7 +196,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
+                            "✓ Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
                     currentPedido = pedido;
                     displayPedidoDetails(pedido);
                     loadPedidoDetails();
@@ -217,8 +219,8 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     private void cancelarPedido() {
         new AlertDialog.Builder(this)
                 .setTitle("Cancelar Pedido")
-                .setMessage("Tem certeza que deseja cancelar este pedido?")
-                .setPositiveButton("Sim", (dialog, which) -> {
+                .setMessage("Tem certeza que deseja cancelar este pedido?\n\nEsta ação não pode ser desfeita.")
+                .setPositiveButton("Sim, cancelar", (dialog, which) -> {
                     realizarCancelamento();
                 })
                 .setNegativeButton("Não", null)
@@ -237,7 +239,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     hideLoading();
                     Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
+                            "✓ Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
                     currentPedido = pedido;
                     displayPedidoDetails(pedido);
                     loadPedidoDetails();

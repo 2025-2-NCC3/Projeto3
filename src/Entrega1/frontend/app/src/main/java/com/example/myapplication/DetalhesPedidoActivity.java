@@ -104,7 +104,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         // Data e hora
         tvDataPedido.setText(dateFormat.format(pedido.getCreatedAt()));
 
-        // Usando StatusConfig
+        // Status (apenas 3 opções: PENDING, COMPLETED, CANCELLED)
         PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(this, pedido.getStatus());
         tvStatus.setText(statusConfig.texto);
         tvStatus.setTextColor(statusConfig.corTexto);
@@ -121,11 +121,12 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         // Itens do pedido
         adapter.atualizarItens(pedido.getItems());
 
-        // Controlar visibilidade do botão cancelar
+        // Controlar visibilidade do botão cancelar (apenas PENDING pode cancelar)
         configurarBotaoCancelar(pedido);
     }
 
     private void configurarBotaoCancelar(Pedido pedido) {
+        // Usar método do PedidoUtils que verifica se status é PENDING
         if (PedidoUtils.podeCancelarPedido(pedido)) {
             btnCancelarPedido.setEnabled(true);
             btnCancelarPedido.setAlpha(1.0f);
@@ -133,7 +134,20 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
         } else {
             btnCancelarPedido.setEnabled(false);
             btnCancelarPedido.setAlpha(0.5f);
-            btnCancelarPedido.setText("PEDIDO " + PedidoUtils.getStatusText(pedido.getStatus()));
+
+            // Mensagem contextual baseado no status
+            String statusNormalizado = PedidoUtils.normalizarStatus(pedido.getStatus());
+            switch (statusNormalizado) {
+                case "COMPLETED":
+                    btnCancelarPedido.setText("PEDIDO CONCLUÍDO");
+                    break;
+                case "CANCELLED":
+                    btnCancelarPedido.setText("PEDIDO CANCELADO");
+                    break;
+                default:
+                    btnCancelarPedido.setText("NÃO PODE CANCELAR");
+                    break;
+            }
         }
     }
 
@@ -144,7 +158,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
 
         new AlertDialog.Builder(this)
                 .setTitle("Cancelar Pedido")
-                .setMessage("Tem certeza que deseja cancelar este pedido?\n\nCódigo: " + codigo)
+                .setMessage("Tem certeza que deseja cancelar este pedido?\n\nCódigo: " + codigo + "\n\nEsta ação não pode ser desfeita.")
                 .setPositiveButton("Sim, Cancelar", (dialog, which) -> cancelarPedido())
                 .setNegativeButton("Não", null)
                 .show();
@@ -163,7 +177,7 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
                     public void onSuccess(Pedido pedido) {
                         runOnUiThread(() -> {
                             Toast.makeText(DetalhesPedidoActivity.this,
-                                    "✅ Pedido cancelado com sucesso", Toast.LENGTH_SHORT).show();
+                                    "✓ Pedido cancelado com sucesso", Toast.LENGTH_SHORT).show();
                             pedidoAtual = pedido;
                             exibirDadosPedido(pedido);
                         });
@@ -173,11 +187,10 @@ public class DetalhesPedidoActivity extends AppCompatActivity {
                     public void onError(String erro) {
                         runOnUiThread(() -> {
                             Toast.makeText(DetalhesPedidoActivity.this,
-                                    "❌ Erro ao cancelar: " + erro, Toast.LENGTH_SHORT).show();
+                                    "✕ Erro ao cancelar: " + erro, Toast.LENGTH_SHORT).show();
 
                             // Reabilitar botão em caso de erro
-                            btnCancelarPedido.setEnabled(true);
-                            btnCancelarPedido.setText("CANCELAR PEDIDO");
+                            configurarBotaoCancelar(pedidoAtual);
                         });
                     }
                 });

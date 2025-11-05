@@ -88,8 +88,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="#F5F5F5"
                 app:strokeWidth="0dp">
 
@@ -99,14 +99,30 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Título do Card -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="📋 Dados do Cliente"
-                        android:textColor="#235135"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:layout_marginBottom="12dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📋"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Dados do Cliente"
+                            android:textColor="#235135"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -152,8 +168,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="#F5F5F5"
                 app:strokeWidth="0dp">
 
@@ -163,14 +179,30 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Título do Card -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🛒 Resumo do Carrinho"
-                        android:textColor="#235135"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:layout_marginBottom="12dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🛒"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Resumo do Carrinho"
+                            android:textColor="#235135"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                    </LinearLayout>
 
                     <!-- Quantidade de Itens -->
                     <LinearLayout
@@ -238,7 +270,7 @@
                             android:layout_height="wrap_content"
                             android:text="R$ 0,00"
                             android:textColor="#235135"
-                            android:textSize="22sp"
+                            android:textSize="24sp"
                             android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
@@ -252,8 +284,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
                 app:cardBackgroundColor="#F5F5F5"
                 app:strokeWidth="0dp">
 
@@ -263,14 +295,30 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <!-- Título do Card -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="💬 Observações (Opcional)"
-                        android:textColor="#235135"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="💬"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Observações (Opcional)"
+                            android:textColor="#235135"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                    </LinearLayout>
 
                     <EditText
                         android:id="@+id/etObservacoes"
@@ -298,9 +346,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#E8F5E9">
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#A8C3A0">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -314,7 +362,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginEnd="12dp"
-                        android:indeterminateTint="#235135"/>
+                        android:indeterminateTint="#F5F5DB"/>
 
                     <TextView
                         android:id="@+id/tvStatus"
@@ -322,7 +370,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Criando pedido..."
-                        android:textColor="#235135"
+                        android:textColor="#F5F5DB"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_medium" />
 
@@ -346,15 +394,26 @@
                 android:layout_marginBottom="16dp" />
 
             <!-- Informações Adicionais -->
-            <TextView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ℹ️ Após confirmar o pedido, você receberá um código para acompanhamento."
-                android:textColor="#666666"
-                android:textSize="12sp"
-                android:fontFamily="@font/poppins_regular"
-                android:gravity="center"
-                android:padding="8dp" />
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#F8F8F8"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ℹ️ Após confirmar o pedido, você receberá um código para acompanhamento."
+                    android:textColor="#666666"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:gravity="center"
+                    android:padding="12dp" />
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

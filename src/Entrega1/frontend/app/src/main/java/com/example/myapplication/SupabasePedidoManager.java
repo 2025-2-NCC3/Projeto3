@@ -208,11 +208,12 @@ public class SupabasePedidoManager {
         }
 
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id_usuario=eq." + studentId + "&order=id.desc")
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id_usuario=eq." + studentId + "&select=*,users(nome)&order=id.desc")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .build();
+
 
         Call call = supabaseClient.client.newCall(request);
         call.enqueue(new Callback() {
@@ -350,6 +351,14 @@ public class SupabasePedidoManager {
         pedido.setStudentId(String.valueOf(response.idUsuario));
         pedido.setStatus(response.status);
 
+        // ✅ NOVO: Definir o nome do estudante do JOIN
+        if (response.users != null && response.users.nome != null) {
+            pedido.setStudentName(response.users.nome);
+        } else {
+            pedido.setStudentName("Cliente não identificado");
+        }
+
+
         return pedido;
     }
 
@@ -402,6 +411,13 @@ public class SupabasePedidoManager {
         public String createdAt;
 
         public String code;
+
+        // ✅ NOVO: Para receber dados do JOIN com tabela usuarios
+        public Users users;
+
+        public static class Users {
+            public String nome;
+        }
     }
 
     private static class StatusUpdateRequest {
@@ -429,8 +445,9 @@ public class SupabasePedidoManager {
             return null;
         }
 
+        // ✅ ATUALIZADO: Adicionar select com JOIN na tabela usuarios
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId)
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId + "&select=*,users(nome)")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -450,6 +467,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta getPedidoById: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -483,11 +501,12 @@ public class SupabasePedidoManager {
         }
 
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?order=created_at.desc")
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?select=*,users(nome)&order=created_at.desc")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
                 .build();
+
 
         Call call = supabaseClient.client.newCall(request);
         call.enqueue(new Callback() {
@@ -544,7 +563,7 @@ public class SupabasePedidoManager {
         }
 
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?status=eq." + status + "&order=created_at.desc")
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?status=eq." + status + "&select=*,users(nome)&order=created_at.desc")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -592,8 +611,9 @@ public class SupabasePedidoManager {
     }
 
     private void getPedidoItems(String pedidoId, String accessToken, Pedido pedido, PedidoCallback callback) {
+        // ✅ ATUALIZADO: Query com JOIN para pegar o nome do produto
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + pedidoId)
+                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + pedidoId + "&select=*,produtos(nome)")
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -604,6 +624,7 @@ public class SupabasePedidoManager {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar itens do pedido", e);
                     callback.onError("Erro ao buscar itens do pedido");
                 }
             }
@@ -613,6 +634,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta itens do pedido: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -621,13 +643,20 @@ public class SupabasePedidoManager {
 
                         if (itemsResponse != null) {
                             for (PedidoItemSupabaseResponse itemResponse : itemsResponse) {
+                                // Pega o nome do produto do JOIN
+                                String nomeProduto = itemResponse.produtos != null && itemResponse.produtos.nome != null
+                                        ? itemResponse.produtos.nome
+                                        : "Produto sem nome";
+
                                 PedidoItem item = new PedidoItem(
                                         String.valueOf(itemResponse.idProduto),
-                                        itemResponse.nomeProduto,
+                                        nomeProduto,
                                         itemResponse.quantidade,
                                         itemResponse.precoProduto
                                 );
                                 pedido.addItem(item);
+
+                                Log.d(TAG, "Item adicionado: " + nomeProduto + " - Qtd: " + itemResponse.quantidade);
                             }
                         }
 
@@ -637,7 +666,8 @@ public class SupabasePedidoManager {
                         callback.onError("Erro ao processar itens do pedido");
                     }
                 } else {
-                    callback.onSuccess(pedido);
+                    Log.e(TAG, "Erro na resposta: " + response.code());
+                    callback.onSuccess(pedido); // Retorna pedido sem itens
                 }
             }
         });
@@ -649,14 +679,23 @@ public class SupabasePedidoManager {
 
     private static class PedidoItemSupabaseResponse {
         public int id;
+
         @SerializedName("id_pedido")
         public int idPedido;
+
         @SerializedName("id_produto")
         public int idProduto;
-        @SerializedName("nome_produto")
-        public String nomeProduto;
+
         public int quantidade;
+
         @SerializedName("preco_produto")
         public double precoProduto;
+
+        public ProdutoNome produtos;
+
+        // Classe interna para o nome do produto
+        public static class ProdutoNome {
+            public String nome;
+        }
     }
 }

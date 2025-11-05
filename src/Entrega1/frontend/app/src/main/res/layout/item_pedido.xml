@@ -9,8 +9,8 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="10dp"
-    app:cardElevation="4dp"
     app:cardBackgroundColor="#F5F5F5"
+    app:cardElevation="4dp"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
