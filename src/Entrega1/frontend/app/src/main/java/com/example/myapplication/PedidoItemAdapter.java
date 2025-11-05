@@ -33,6 +33,11 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         PedidoItem item = itens.get(position);
         holder.bind(item);
+
+        // Esconde o divider do último item
+        if (holder.divider != null) {
+            holder.divider.setVisibility(position == getItemCount() - 1 ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override
@@ -56,6 +61,7 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
         private TextView txtPrecoUnitario;
         private TextView txtSubtotalItem;
         private TextView txtQuantidade;
+        private View divider;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,7 +70,9 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
             txtPrecoUnitario = itemView.findViewById(R.id.txtPrecoUnitario);
             txtSubtotalItem = itemView.findViewById(R.id.txtSubtotalItem);
             txtQuantidade = itemView.findViewById(R.id.txtQuantidade);
+            divider = itemView.findViewById(R.id.divider);
         }
+
 
         public void bind(PedidoItem item) {
             // Nome do produto - com fallback
@@ -77,15 +85,15 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
 
             // Quantidade no formato "X x"
             int quantidade = item.getQuantity();
-            txtQuantidade.setText(String.format(Locale.getDefault(), "%d x", quantidade));
+            txtQuantidade.setText(String.format(new Locale("pt", "BR"), "%d x", quantidade));
 
-            // Preço unitário
+            // Preço unitário - usando formatação brasileira
             double preco = item.getPrice();
-            txtPrecoUnitario.setText(String.format(Locale.getDefault(), "R$ %.2f", preco));
+            txtPrecoUnitario.setText(PedidoUtils.formatarPreco(preco));
 
-            // Subtotal (quantidade * preço)
+            // Subtotal (quantidade * preço) - usando formatação brasileira
             double subtotal = item.getSubtotal();
-            txtSubtotalItem.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
+            txtSubtotalItem.setText(PedidoUtils.formatarPreco(subtotal));
 
             // Log para debug
             android.util.Log.d("OrderItemAdapter", "Binding item: " + nomeProduto +

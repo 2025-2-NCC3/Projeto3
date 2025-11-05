@@ -251,9 +251,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#F5F5F5"
-                    app:strokeWidth="0dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="#FAFAFA"
+                    app:strokeColor="#E0E0E0"
+                    app:strokeWidth="1dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewItems"
