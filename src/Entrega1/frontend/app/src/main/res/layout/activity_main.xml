@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#235135"
+    android:background="@color/dark_green"
     tools:context=".MainActivity">
 
     <!-- Logo/Imagem Central -->
@@ -44,7 +44,7 @@
             android:layout_height="45dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="12dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/white"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground">
@@ -61,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="FAZER LOGIN"
-                    android:textColor="#235135"
+                    android:textColor="@color/dark_green"
                     android:textSize="11sp"
                     android:fontFamily="@font/poppins_bold"
                     android:gravity="center"/>
@@ -107,7 +107,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CRIAR CONTA"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/white"
                         android:textSize="11sp"
                         android:fontFamily="@font/poppins_bold"
                         android:gravity="center"/>

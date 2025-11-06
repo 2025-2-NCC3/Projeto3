@@ -58,8 +58,8 @@ public class PedidoUtils {
 
             case "COMPLETED":
                 return new StatusConfig(
-                        ContextCompat.getColor(context, R.color.status_entregue),
-                        ContextCompat.getColor(context, R.color.status_entregue_bg),
+                        ContextCompat.getColor(context, R.color.status_pronto), // ✅ CORRIGIDO
+                        ContextCompat.getColor(context, R.color.status_pronto_bg), // ✅ CORRIGIDO
                         "CONCLUÍDO",
                         "✓",
                         "Pedido concluído"

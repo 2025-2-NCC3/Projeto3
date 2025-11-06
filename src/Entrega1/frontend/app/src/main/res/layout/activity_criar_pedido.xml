@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".CriarPedidoActivity">
 
     <!-- Header com Imagem e Overlay -->
     <FrameLayout
         android:id="@+id/headerContainer"
         android:layout_width="0dp"
-        android:layout_height="196dp"
+        android:layout_height="180dp"
         android:background="@drawable/rounded_bottom_shape"
         android:clipChildren="true"
         android:clipToOutline="true"
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título -->
@@ -58,9 +58,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="130dp"
+            android:layout_marginTop="110dp"
             android:text="Finalizar Pedido"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="26sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"/>
@@ -72,6 +72,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/headerContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,23 +83,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="8dp">
 
             <!-- Card de Dados do Cliente -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#F5F5F5"
-                app:strokeWidth="0dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <!-- Título do Card -->
                     <LinearLayout
@@ -105,59 +110,77 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📋"
-                            android:textSize="20sp"
-                            android:layout_marginEnd="8dp"/>
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="24dp"
+                            android:background="@color/brown"
+                            android:layout_marginEnd="12dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Dados do Cliente"
-                            android:textColor="#235135"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/poppins_bold"/>
+                            android:textColor="@color/dark_green"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"/>
 
                     </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nome:"
-                        android:textColor="#666666"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_regular" />
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
 
-                    <TextView
-                        android:id="@+id/tvNomeCliente"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cliente Cantina"
-                        android:textColor="#333333"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginBottom="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nome:"
+                            android:textColor="@color/text_hint"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:layout_marginEnd="8dp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ID:"
-                        android:textColor="#666666"
-                        android:textSize="12sp"
-                        android:fontFamily="@font/poppins_regular" />
+                        <TextView
+                            android:id="@+id/tvNomeCliente"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cliente Cantina"
+                            android:textColor="@color/text_dark"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/poppins_semibold"/>
 
-                    <TextView
-                        android:id="@+id/tvIdCliente"
-                        android:layout_width="wrap_content"
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2023001"
-                        android:textColor="#333333"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/poppins_medium" />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ID:"
+                            android:textColor="@color/text_hint"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tvIdCliente"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="2023001"
+                            android:textColor="@color/text_medium"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -167,17 +190,18 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#F5F5F5"
-                app:strokeWidth="0dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <!-- Título do Card -->
                     <LinearLayout
@@ -185,22 +209,22 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🛒"
-                            android:textSize="20sp"
-                            android:layout_marginEnd="8dp"/>
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="24dp"
+                            android:background="@color/brown"
+                            android:layout_marginEnd="12dp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Resumo do Carrinho"
-                            android:textColor="#235135"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/poppins_bold"/>
+                            android:textColor="@color/dark_green"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"/>
 
                     </LinearLayout>
 
@@ -209,24 +233,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="12dp">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Quantidade de itens:"
-                            android:textColor="#666666"
+                            android:text="Itens no carrinho"
+                            android:textColor="@color/text_medium"
                             android:textSize="14sp"
-                            android:fontFamily="@font/poppins_regular" />
+                            android:fontFamily="@font/poppins_medium" />
 
                         <TextView
                             android:id="@+id/tvQuantidadeItens"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textColor="#333333"
-                            android:textSize="14sp"
+                            android:textColor="@color/text_dark"
+                            android:textSize="15sp"
                             android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
@@ -237,31 +261,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="• Café x2\n• Coxinha x3"
-                        android:textColor="#666666"
-                        android:textSize="13sp"
+                        android:textColor="@color/text_medium"
+                        android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="12dp" />
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="16dp" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#DDDDDD"
-                        android:layout_marginVertical="8dp" />
+                        android:background="@color/card_stroke"
+                        android:layout_marginVertical="4dp" />
 
-                    <!-- Valor Total -->
+                    <!-- Valor Total DESTACADO -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="8dp"
+                        android:background="@drawable/rounded_bg_light_green">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Valor Total:"
-                            android:textColor="#333333"
-                            android:textSize="18sp"
+                            android:text="Total a pagar"
+                            android:textColor="@color/dark_green"
+                            android:textSize="16sp"
                             android:fontFamily="@font/poppins_bold" />
 
                         <TextView
@@ -269,9 +296,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="R$ 0,00"
-                            android:textColor="#235135"
-                            android:textSize="24sp"
-                            android:fontFamily="@font/poppins_bold" />
+                            android:textColor="@color/dark_green"
+                            android:textSize="26sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"/>
 
                     </LinearLayout>
 
@@ -283,17 +311,18 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#F5F5F5"
-                app:strokeWidth="0dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <!-- Título do Card -->
                     <LinearLayout
@@ -301,22 +330,31 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="12dp">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="24dp"
+                            android:background="@color/brown"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Observações"
+                            android:textColor="@color/dark_green"
+                            android:textSize="18sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="💬"
-                            android:textSize="20sp"
-                            android:layout_marginEnd="8dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Observações (Opcional)"
-                            android:textColor="#235135"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/poppins_bold"/>
+                            android:text="Opcional"
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"/>
 
                     </LinearLayout>
 
@@ -325,12 +363,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:hint="Ex: Sem cebola, sem maionese..."
-                        android:textColorHint="#999999"
-                        android:textColor="#333333"
+                        android:textColorHint="@color/icon_gray"
+                        android:textColor="@color/text_dark"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"
                         android:gravity="top|start"
-                        android:padding="12dp"
+                        android:padding="14dp"
                         android:background="@drawable/edittext_background"
                         android:inputType="textMultiLine"
                         android:maxLines="4" />
@@ -344,25 +382,25 @@
                 android:id="@+id/cardStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:visibility="gone"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#A8C3A0">
+                app:cardCornerRadius="12dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@color/button_green">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="16dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
                     <ProgressBar
                         android:id="@+id/progressBar"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="12dp"
-                        android:indeterminateTint="#F5F5DB"/>
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="14dp"
+                        android:indeterminateTint="@color/text_beige"/>
 
                     <TextView
                         android:id="@+id/tvStatus"
@@ -370,9 +408,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Criando pedido..."
-                        android:textColor="#F5F5DB"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/poppins_medium" />
+                        android:textColor="@color/text_beige"
+                        android:textSize="15sp"
+                        android:fontFamily="@font/poppins_semibold" />
 
                 </LinearLayout>
 
@@ -382,38 +420,44 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCriarPedido"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="58dp"
                 android:text="CONFIRMAR PEDIDO"
-                android:textColor="#F5F5DB"
-                android:textSize="14sp"
+                android:textColor="@color/text_beige"
+                android:textSize="15sp"
                 android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="-0.01"
-                app:backgroundTint="#3D7A4C"
-                app:cornerRadius="10dp"
+                android:letterSpacing="0.03"
+                app:backgroundTint="@color/button_green"
+                app:cornerRadius="12dp"
                 app:elevation="4dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="12dp" />
 
             <!-- Informações Adicionais -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#F8F8F8"
-                app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="14dp"
+                android:background="@drawable/rounded_bg_light_green">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ℹ️ Após confirmar o pedido, você receberá um código para acompanhamento."
-                    android:textColor="#666666"
+                    android:text="ℹ️"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Após confirmar, você receberá um código para acompanhamento do pedido."
+                    android:textColor="@color/text_medium"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_regular"
-                    android:gravity="center"
-                    android:padding="12dp" />
+                    android:lineSpacingExtra="2dp"/>
 
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
         </LinearLayout>
 

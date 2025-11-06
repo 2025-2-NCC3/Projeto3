@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".CarrinhoActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título "Meu Carrinho" -->
@@ -60,7 +60,7 @@
             android:layout_marginStart="28dp"
             android:layout_marginTop="130dp"
             android:text="Meu Carrinho"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="26sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"/>
@@ -75,7 +75,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:text="Seus Itens (0)"
-        android:textColor="#235135"
+        android:textColor="@color/dark_green"
         android:textSize="14sp"
         android:fontFamily="@font/poppins_medium"
         android:letterSpacing="-0.01"
@@ -123,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Seu carrinho está vazio"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/empty_state"
             android:textSize="16sp"
             android:fontFamily="@font/poppins_medium"/>
 
@@ -149,7 +149,7 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp"
             app:strokeWidth="0dp"
-            app:cardBackgroundColor="#9C5827">
+            app:cardBackgroundColor="@color/brown">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -163,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="SUB TOTAL"
-                    android:textColor="#F5F5DB"
+                    android:textColor="@color/text_beige"
                     android:textSize="11sp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"/>
@@ -173,7 +173,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="R$ 0,00"
-                    android:textColor="#F5F5DB"
+                    android:textColor="@color/text_beige"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"/>
 
@@ -188,11 +188,11 @@
             android:layout_height="48dp"
             android:layout_marginTop="12dp"
             android:text="FINALIZAR PEDIDO"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="11sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
-            app:backgroundTint="#3D7A4C"
+            app:backgroundTint="@color/button_green"
             app:cornerRadius="10dp"
             app:elevation="4dp"/>
 
@@ -204,11 +204,11 @@
             android:layout_height="48dp"
             android:layout_marginTop="12dp"
             android:text="LIMPAR CARRINHO"
-            android:textColor="#AFAFAF"
+            android:textColor="@color/text_hint"
             android:textSize="11sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
-            app:strokeColor="#AFAFAF"
+            app:strokeColor="@color/text_hint"
             app:strokeWidth="2dp"
             app:cornerRadius="10dp"/>
 

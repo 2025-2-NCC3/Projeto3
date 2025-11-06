@@ -2,36 +2,39 @@ package com.example.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class NavbarHelper {
     private static final String TAG = "NavbarHelper";
 
+    // Cores
+    private static final int COLOR_SELECTED = Color.parseColor("#557B56");
+    private static final int COLOR_UNSELECTED = Color.parseColor("#F5F5DB");
+
     public static void setupNavbar(Activity activity, String currentScreen) {
-        View navbar = activity.findViewById(R.id.includeNavbar);
-        if (navbar == null) {
-            Log.e(TAG, "Navbar não encontrada!");
+        // Encontrar os FrameLayouts clicáveis
+        FrameLayout navCardapio = activity.findViewById(R.id.navCardapio);
+        FrameLayout navHistorico = activity.findViewById(R.id.navHistorico);
+        FrameLayout navCarrinho = activity.findViewById(R.id.navCarrinho);
+        FrameLayout navPerfil = activity.findViewById(R.id.navPerfil);
+
+        if (navCardapio == null || navHistorico == null ||
+                navCarrinho == null || navPerfil == null) {
+            Log.e(TAG, "Itens da navbar não encontrados!");
             return;
         }
 
-        Button btnNavCardapio = navbar.findViewById(R.id.btnNavCardapio);
-        Button btnNavHistorico = navbar.findViewById(R.id.btnNavHistorico);
-        Button btnNavCarrinho = navbar.findViewById(R.id.btnNavCarrinho);
-        Button btnNavPerfil = navbar.findViewById(R.id.btnNavPerfil);
+        // Resetar todos e destacar o atual
+        resetAllNavItems(activity);
+        highlightCurrentNavItem(activity, currentScreen);
 
-        if (btnNavCardapio == null || btnNavHistorico == null ||
-                btnNavCarrinho == null || btnNavPerfil == null) {
-            Log.e(TAG, "Botões da navbar não encontrados!");
-            return;
-        }
-
-        resetButtons(btnNavCardapio, btnNavHistorico, btnNavCarrinho, btnNavPerfil);
-        highlightCurrentButton(currentScreen, btnNavCardapio, btnNavHistorico, btnNavCarrinho, btnNavPerfil);
-
-        btnNavCardapio.setOnClickListener(v -> {
+        // Configurar listeners
+        navCardapio.setOnClickListener(v -> {
             if (!currentScreen.equals("cardapio")) {
                 Intent intent = new Intent(activity, CardapioAlunosActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -39,13 +42,13 @@ public class NavbarHelper {
             }
         });
 
-        btnNavHistorico.setOnClickListener(v -> {
+        navHistorico.setOnClickListener(v -> {
             if (!currentScreen.equals("historico")) {
                 Toast.makeText(activity, "Tela de Histórico em desenvolvimento", Toast.LENGTH_SHORT).show();
             }
         });
 
-        btnNavCarrinho.setOnClickListener(v -> {
+        navCarrinho.setOnClickListener(v -> {
             if (!currentScreen.equals("carrinho")) {
                 Intent intent = new Intent(activity, CarrinhoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -53,7 +56,7 @@ public class NavbarHelper {
             }
         });
 
-        btnNavPerfil.setOnClickListener(v -> {
+        navPerfil.setOnClickListener(v -> {
             if (!currentScreen.equals("perfil")) {
                 Intent intent = new Intent(activity, PerfilActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -62,27 +65,42 @@ public class NavbarHelper {
         });
     }
 
-    private static void resetButtons(Button... buttons) {
-        for (Button btn : buttons) {
-            if (btn != null) btn.setAlpha(0.6f);
+    private static void resetAllNavItems(Activity activity) {
+        setNavItemStyle(activity, R.id.iconCardapio, R.id.indicatorCardapio, false);
+        setNavItemStyle(activity, R.id.iconHistorico, R.id.indicatorHistorico, false);
+        setNavItemStyle(activity, R.id.iconCarrinho, R.id.indicatorCarrinho, false);
+        setNavItemStyle(activity, R.id.iconPerfil, R.id.indicatorPerfil, false);
+    }
+
+    private static void highlightCurrentNavItem(Activity activity, String currentScreen) {
+        switch (currentScreen) {
+            case "cardapio":
+                setNavItemStyle(activity, R.id.iconCardapio, R.id.indicatorCardapio, true);
+                break;
+            case "historico":
+                setNavItemStyle(activity, R.id.iconHistorico, R.id.indicatorHistorico, true);
+                break;
+            case "carrinho":
+                setNavItemStyle(activity, R.id.iconCarrinho, R.id.indicatorCarrinho, true);
+                break;
+            case "perfil":
+                setNavItemStyle(activity, R.id.iconPerfil, R.id.indicatorPerfil, true);
+                break;
         }
     }
 
-    private static void highlightCurrentButton(String currentScreen, Button btnCardapio,
-                                               Button btnHistorico, Button btnCarrinho, Button btnPerfil) {
-        switch (currentScreen) {
-            case "cardapio":
-                if (btnCardapio != null) btnCardapio.setAlpha(1.0f);
-                break;
-            case "historico":
-                if (btnHistorico != null) btnHistorico.setAlpha(1.0f);
-                break;
-            case "carrinho":
-                if (btnCarrinho != null) btnCarrinho.setAlpha(1.0f);
-                break;
-            case "perfil":
-                if (btnPerfil != null) btnPerfil.setAlpha(1.0f);
-                break;
+    private static void setNavItemStyle(Activity activity, int iconId, int indicatorId, boolean isSelected) {
+        ImageView icon = activity.findViewById(iconId);
+        View indicator = activity.findViewById(indicatorId);
+
+        if (icon != null && indicator != null) {
+            int color = isSelected ? COLOR_SELECTED : COLOR_UNSELECTED;
+
+            // Definir cor do ícone
+            icon.setColorFilter(color);
+
+            // Mostrar/esconder indicador
+            indicator.setVisibility(isSelected ? View.VISIBLE : View.GONE);
         }
     }
 }
