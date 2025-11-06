@@ -11,6 +11,9 @@ public class Produto implements Serializable {
     private int estoque;
     private int categoria;
 
+    @com.google.gson.annotations.SerializedName("ativo")
+    private boolean ativo = true; // NOVO CAMPO
+
     // Construtor vazio - IMPORTANTE
     public Produto() {
     }
@@ -24,6 +27,19 @@ public class Produto implements Serializable {
         this.caminhoImagem = caminhoImagem;
         this.estoque = estoque;
         this.categoria = categoria;
+        this.ativo = true;
+    }
+
+    // Construtor com campo ativo
+    public Produto(String id, String nome, double preco, String descricao, String caminhoImagem, int estoque, int categoria, boolean ativo) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+        this.descricao = descricao;
+        this.caminhoImagem = caminhoImagem;
+        this.estoque = estoque;
+        this.categoria = categoria;
+        this.ativo = ativo;
     }
 
     // Construtor antigo para compatibilidade
@@ -35,6 +51,7 @@ public class Produto implements Serializable {
         this.preco = preco;
         this.estoque = estoque;
         this.categoria = categoria;
+        this.ativo = true;
     }
 
     // Construtor sem ID (útil para inserir novos produtos)
@@ -45,6 +62,7 @@ public class Produto implements Serializable {
         this.preco = preco;
         this.estoque = estoque;
         this.categoria = categoria;
+        this.ativo = true;
     }
 
     // Getters e Setters
@@ -72,7 +90,6 @@ public class Produto implements Serializable {
         return descricao;
     }
 
-    // Método adicional para compatibilidade com código antigo
     public String getDetalhes() {
         return descricao;
     }
@@ -81,7 +98,6 @@ public class Produto implements Serializable {
         this.descricao = descricao;
     }
 
-    // Método adicional para compatibilidade
     public void setDetalhes(String detalhes) {
         this.descricao = detalhes;
     }
@@ -118,6 +134,15 @@ public class Produto implements Serializable {
         this.categoria = categoria;
     }
 
+    // NOVOS MÉTODOS PARA O CAMPO ATIVO
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
     // Funções úteis
     public void reduceStock(int quantidade) {
         if (estoque >= quantidade) {
@@ -135,8 +160,10 @@ public class Produto implements Serializable {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", preco=" + preco +
+                ", ativo=" + ativo +
                 '}';
     }
+
     public int getIdPrimitivo() {
         if (id != null && !id.isEmpty()) {
             try {

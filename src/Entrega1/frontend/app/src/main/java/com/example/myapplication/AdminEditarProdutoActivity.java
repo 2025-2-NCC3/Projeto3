@@ -183,7 +183,7 @@ public class AdminEditarProdutoActivity extends AppCompatActivity {
                 Toast.makeText(this, "Fazendo upload da imagem...", Toast.LENGTH_SHORT).show();
 
                 // CORREÇÃO: Nome correto do bucket é "IMAGEM"
-                supabaseClient.uploadImageToBucket(novaImagemUri, "IMAGEM", new SupabaseClient.SupabaseCallback<String>() {
+                supabaseClient.uploadImageToBucket(novaImagemUri, "Imagem", new SupabaseClient.SupabaseCallback<String>() {
                     @Override
                     public void onSuccess(String imageUrl) {
                         Log.d(TAG, "✓ Upload concluído. URL: " + imageUrl);

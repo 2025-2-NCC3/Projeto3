@@ -340,7 +340,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
     private void carregarProdutosDoSupabase() {
         Toast.makeText(this, "Carregando cardápio...", Toast.LENGTH_SHORT).show();
 
-        supabaseClient.getAllProducts(new SupabaseClient.SupabaseCallback<List<Produto>>() {
+        supabaseClient.getActiveProducts(new SupabaseClient.SupabaseCallback<List<Produto>>() {
             @Override
             public void onSuccess(List<Produto> produtosDoBank) {
                 runOnUiThread(() -> {
