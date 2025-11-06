@@ -782,9 +782,8 @@ public class SupabaseClient {
             return null;
         }
 
-        // CORREÇÃO: Usar "caminhoimagem" (como está no banco)
         String json = String.format(Locale.US,
-                "{\"nome\":\"%s\",\"preco\":%.2f,\"descricao\":\"%s\",\"caminho_imagem\":\"%s\",\"estoque\":%d,\"categoria\":%d}",
+                "{\"nome\":\"%s\",\"preco\":%.2f,\"descricao\":\"%s\",\"caminhoImagem\":\"%s\",\"estoque\":%d,\"categoria\":%d}",
                 produto.getNome().replace("\"", "\\\""),
                 produto.getPreco(),
                 produto.getDescricao() != null ? produto.getDescricao().replace("\"", "\\\"") : "",
@@ -867,10 +866,10 @@ public class SupabaseClient {
             jsonBuilder.append(",\"descricao\":\"").append(produto.getDescricao().replace("\"", "\\\"")).append("\"");
         }
 
-        // CORREÇÃO: Usar "caminhoimagem" (sem underscore) como está no banco
+        // ✅ CORREÇÃO: Usar "caminhoImagem" (camelCase) como está no banco
         String imagemPath = produto.getCaminhoImagem();
         if (imagemPath != null && !imagemPath.trim().isEmpty() && !imagemPath.equals("EMPTY")) {
-            jsonBuilder.append(",\"caminho_imagem\":\"").append(imagemPath.replace("\"", "\\\"")).append("\"");
+            jsonBuilder.append(",\"caminhoImagem\":\"").append(imagemPath.replace("\"", "\\\"")).append("\"");
         }
 
         jsonBuilder.append("}");
@@ -1518,6 +1517,152 @@ public class SupabaseClient {
                     '}';
         }
     }
+
+    public Call getActiveProducts(SupabaseCallback<List<Produto>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?ativo=eq.true&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(produtos);
+                    } catch (Exception e) {
+                        callback.onError("Erro ao processar dados dos produtos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar produtos (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Toggle: Ativar/Desativar produto
+    public Call toggleProductVisibility(int produtoId, boolean novoStatus, SupabaseCallback<Boolean> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        String json = "{\"ativo\":" + novoStatus + "}";
+
+        Log.d(TAG, "Toggle visibilidade - ID: " + produtoId + ", Novo status: " + novoStatus);
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?id=eq." + produtoId)
+                .patch(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + getAuthToken())
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao alterar visibilidade", e);
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                Log.d(TAG, "Resposta toggle - Código: " + response.code());
+
+                if (response.isSuccessful() || response.code() == 204) {
+                    Log.d(TAG, "✓ Visibilidade alterada com sucesso!");
+                    callback.onSuccess(true);
+                } else {
+                    String responseBody = response.body() != null ? response.body().string() : "";
+                    Log.e(TAG, "Erro ao alterar visibilidade: " + responseBody);
+                    callback.onError("Erro ao alterar visibilidade (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+    // Buscar produtos ativos por categoria (para cardápio do cliente)
+    public Call getActiveProductsByCategory(int categoria, SupabaseCallback<List<Produto>> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/rest/v1/produtos?categoria=eq." + categoria + "&ativo=eq.true&select=*")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    callback.onError("Erro de conexão: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) return;
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+
+                if (response.isSuccessful()) {
+                    try {
+                        Type listType = new TypeToken<List<Produto>>(){}.getType();
+                        List<Produto> produtos = gson.fromJson(responseBody, listType);
+                        callback.onSuccess(produtos);
+                    } catch (Exception e) {
+                        callback.onError("Erro ao processar dados dos produtos");
+                    }
+                } else {
+                    callback.onError("Erro ao buscar produtos por categoria (Código: " + response.code() + ")");
+                }
+            }
+        });
+
+        return call;
+    }
+
+
+
 
     public interface SupabaseCallback<T> {
         void onSuccess(T response);

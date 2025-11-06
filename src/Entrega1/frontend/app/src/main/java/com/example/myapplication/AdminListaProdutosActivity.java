@@ -1,7 +1,7 @@
-// com/example/myapplication/AdminListaProdutosActivity.java
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -95,6 +96,7 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
         loadingText.setGravity(android.view.Gravity.CENTER);
         boxListaProdutos.addView(loadingText);
 
+        // IMPORTANTE: getAllProducts() mostra TODOS (ativos e ocultos)
         supabaseClient.getAllProducts(new SupabaseClient.SupabaseCallback<List<Produto>>() {
             @Override
             public void onSuccess(List<Produto> produtos) {
@@ -158,7 +160,9 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
         TextView precoProduto = cardView.findViewById(R.id.precoProduto);
         TextView estoqueProduto = cardView.findViewById(R.id.estoqueProduto);
         TextView categoriaProduto = cardView.findViewById(R.id.categoriaProduto);
+        TextView statusProduto = cardView.findViewById(R.id.statusProduto);
         Button btnEditar = cardView.findViewById(R.id.btnEditar);
+        Button btnToggleVisibilidade = cardView.findViewById(R.id.btnToggleVisibilidade);
         CardView card = cardView.findViewById(R.id.cardProduto);
 
         // Preencher dados
@@ -166,6 +170,9 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
         precoProduto.setText(String.format(Locale.getDefault(), "R$ %.2f", produto.getPreco()));
         estoqueProduto.setText("Estoque: " + produto.getEstoque());
         categoriaProduto.setText(getCategoriaTexto(produto.getCategoria()));
+
+        // Configurar status visual
+        configurarStatusVisual(produto, statusProduto, btnToggleVisibilidade, card);
 
         // Carregar imagem
         String caminhoImagem = produto.getCaminhoImagem();
@@ -182,9 +189,98 @@ public class AdminListaProdutosActivity extends AppCompatActivity {
         // Listeners
         btnEditar.setOnClickListener(v -> abrirEdicaoProduto(produto));
 
+        btnToggleVisibilidade.setOnClickListener(v -> {
+            toggleVisibilidadeProduto(produto);
+        });
+
         card.setOnClickListener(v -> abrirEdicaoProduto(produto));
 
         return cardView;
+    }
+
+    private void configurarStatusVisual(Produto produto, TextView statusProduto,
+                                        Button btnToggle, CardView card) {
+        if (produto.isAtivo()) {
+            // Produto VISÍVEL
+            statusProduto.setText("🟢 VISÍVEL");
+            statusProduto.setTextColor(0xFF4CAF50); // Verde
+            btnToggle.setText("Ocultar");
+            btnToggle.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(0xFFFF9800)); // Laranja
+            card.setAlpha(1.0f);
+
+            // Atualizar background do badge
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setShape(GradientDrawable.RECTANGLE);
+            drawable.setCornerRadius(24f);
+            drawable.setColor(0xFFE8F5E9); // Verde claro
+            drawable.setStroke(2, 0xFF4CAF50); // Borda verde
+            statusProduto.setBackground(drawable);
+        } else {
+            // Produto OCULTO
+            statusProduto.setText("🔴 OCULTO");
+            statusProduto.setTextColor(0xFFF44336); // Vermelho
+            btnToggle.setText("Exibir");
+            btnToggle.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(0xFF4CAF50)); // Verde
+            card.setAlpha(0.6f); // Card meio transparente
+
+            // Atualizar background do badge
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setShape(GradientDrawable.RECTANGLE);
+            drawable.setCornerRadius(24f);
+            drawable.setColor(0xFFFFEBEE); // Vermelho claro
+            drawable.setStroke(2, 0xFFF44336); // Borda vermelha
+            statusProduto.setBackground(drawable);
+        }
+    }
+
+    private void toggleVisibilidadeProduto(Produto produto) {
+        boolean novoStatus = !produto.isAtivo();
+        String acao = novoStatus ? "exibir" : "ocultar";
+
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar ação")
+                .setMessage("Deseja " + acao + " o produto \"" + produto.getNome() + "\" do cardápio?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    executarToggleVisibilidade(produto, novoStatus);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void executarToggleVisibilidade(Produto produto, boolean novoStatus) {
+        int id = produto.getIdPrimitivo();
+
+        supabaseClient.toggleProductVisibility(id, novoStatus,
+                new SupabaseClient.SupabaseCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean sucesso) {
+                        runOnUiThread(() -> {
+                            String mensagem = novoStatus ?
+                                    "Produto agora está visível no cardápio!" :
+                                    "Produto ocultado do cardápio!";
+
+                            Toast.makeText(AdminListaProdutosActivity.this,
+                                    mensagem,
+                                    Toast.LENGTH_SHORT).show();
+
+                            // Atualizar lista
+                            produto.setAtivo(novoStatus);
+                            carregarProdutos();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(AdminListaProdutosActivity.this,
+                                    "Erro ao alterar visibilidade: " + error,
+                                    Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Erro toggle: " + error);
+                        });
+                    }
+                });
     }
 
     private void abrirEdicaoProduto(Produto produto) {

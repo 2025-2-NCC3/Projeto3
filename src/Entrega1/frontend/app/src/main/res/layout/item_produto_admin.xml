@@ -84,17 +84,54 @@
 
             </LinearLayout>
 
+            <!-- Badge de Status (OCULTO/VISÍVEL) -->
+            <TextView
+                android:id="@+id/statusProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🟢 VISÍVEL"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:layout_marginTop="4dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:background="@drawable/badge_background" />
+
         </LinearLayout>
 
-        <!-- Botão Editar -->
-        <Button
-            android:id="@+id/btnEditar"
+        <!-- Botões de Ação -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Editar"
-            android:textSize="12sp"
-            android:backgroundTint="@color/dark_green"
-            android:layout_gravity="center_vertical" />
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnEditar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Editar"
+                android:textSize="11sp"
+                android:backgroundTint="@color/dark_green"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+            <Button
+                android:id="@+id/btnToggleVisibilidade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ocultar"
+                android:textSize="11sp"
+                android:backgroundTint="#FF9800"
+                android:layout_marginTop="4dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
