@@ -44,8 +44,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Iced Latte"
-                android:textColor="#F5F5DB"
-                android:textSize="16dp"
+                android:textColor="@color/text_beige"
+                android:textSize="16sp"
                 android:fontFamily="@font/poppins_regular"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -63,8 +63,8 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:text="R$ 150,00"
-                    android:textColor="#F5F5DB"
-                    android:textSize="18dp"
+                    android:textColor="@color/text_beige"
+                    android:textSize="18sp"
                     android:fontFamily="@font/poppins_bold"
                     android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_add_circle"
-                    app:tint="#F5F5DB"
+                    app:tint="@color/text_beige"
                     android:contentDescription="Adicionar ao carrinho"
                     android:clickable="true"
                     android:focusable="true" />

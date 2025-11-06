@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#235135"
+    android:background="@color/dark_green"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bem-vindo de volta!"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
                 android:gravity="center"/>
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:text="Faça login na sua conta"
                 android:fontFamily="@font/poppins_regular"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:layout_marginTop="4dp"/>
@@ -72,7 +72,7 @@
             android:layout_marginTop="24dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="12dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/welcomeLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -96,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:text="Email"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <EditText
@@ -105,8 +105,8 @@
                         android:layout_height="37dp"
                         android:layout_marginTop="2dp"
                         android:hint="seu@email.com"
-                        android:textColorHint="#A0AFAFAF"
-                        android:textColor="#000000"
+                        android:textColorHint="@color/icon_gray"
+                        android:textColor="@color/black"
                         android:textSize="12sp"
                         android:fontFamily="@font/poppins_regular"
                         android:inputType="textEmailAddress"
@@ -129,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:text="Senha"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <RelativeLayout
@@ -142,8 +142,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="Sua senha"
-                            android:textColorHint="#A0AFAFAF"
-                            android:textColor="#000000"
+                            android:textColorHint="@color/icon_gray"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             android:fontFamily="@font/poppins_regular"
                             android:inputType="textPassword"
@@ -170,26 +170,25 @@
 
                 </LinearLayout>
 
-                <!-- Esqueceu a senha -->
 
 
                 <!-- Container do Botão e Loading -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp">
+                    android:layout_marginTop="14dp">
 
                     <!-- Botão Entrar -->
                     <Button
                         android:id="@+id/buttonLogin"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:text="Entrar"
-                        android:textColor="#F5F5DB"
+                        android:textColor="@color/text_beige"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_bold"
                         android:background="@drawable/button_login_background"
-                        android:paddingVertical="12dp"/>
+                        />
 
                     <!-- ProgressBar -->
                     <ProgressBar
@@ -198,7 +197,7 @@
                         android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:visibility="gone"
-                        android:indeterminateTint="#F5F5DB"/>
+                        android:indeterminateTint="@color/text_beige"/>
 
                 </FrameLayout>
 

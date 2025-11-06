@@ -9,7 +9,7 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="#F5F5F5"
+    app:cardBackgroundColor="@color/status_default_bg"
     app:cardElevation="4dp"
     app:strokeWidth="0dp">
 
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ORD-0021"
-            android:textColor="#9C5827"
+            android:textColor="@color/brown"
             android:textSize="16sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="18dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#C97B5A"
+            app:cardBackgroundColor="@color/status_badge"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -46,28 +46,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="8dp"
                 android:minWidth="100dp">
 
                 <TextView
                     android:id="@+id/tvStatusIcon"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="⏱"
-                    android:textSize="14sp"
+                    android:textSize="11sp"
+                    android:includeFontPadding="false"
                     android:gravity="center"
-                    android:layout_marginEnd="6dp"/>
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"/>
 
                 <TextView
                     android:id="@+id/tvStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PENDENTE"
-                    android:textColor="#F5F5DB"
+                    android:textColor="@color/text_beige"
                     android:textSize="10sp"
                     android:fontFamily="@font/poppins_bold"
+                    android:includeFontPadding="false"
+                    android:layout_gravity="center_vertical"
                     android:letterSpacing="-0.01"/>
 
             </LinearLayout>
@@ -81,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="23/10/2025 às 14:20"
-            android:textColor="#666666"
+            android:textColor="@color/text_medium"
             android:textSize="12sp"
             android:fontFamily="@font/poppins_regular"
             android:letterSpacing="-0.01"
@@ -95,7 +99,7 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
-            android:background="#E0E0E0"
+            android:background="@color/divider_gray"
             app:layout_constraintTop_toBottomOf="@id/tvDataPedido"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -116,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Total:"
-                android:textColor="#333333"
+                android:textColor="@color/text_dark"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"/>
 
@@ -125,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="R$ 470,00"
-                android:textColor="#235135"
+                android:textColor="@color/dark_green"
                 android:textSize="18sp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"/>

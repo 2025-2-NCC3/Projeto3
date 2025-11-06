@@ -81,7 +81,7 @@ public class MeusPedidosActivity extends AppCompatActivity {
         swipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.dark_green),
                 getResources().getColor(R.color.status_pendente),
-                getResources().getColor(R.color.status_entregue)
+                getResources().getColor(R.color.status_confirmado)
         );
 
         swipeRefresh.setOnRefreshListener(() -> carregarPedidos());

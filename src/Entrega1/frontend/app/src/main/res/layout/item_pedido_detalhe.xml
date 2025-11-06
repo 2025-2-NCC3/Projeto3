@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Iced Mocha"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"
@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=" • "
-                    android:textColor="#BDBDBD"
+                    android:textColor="@color/icon_gray"
                     android:textSize="12sp"/>
 
                 <TextView
@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="R$ 8,50"
-                    android:textColor="#757575"
+                    android:textColor="@color/status_default"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_medium"/>
 
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="R$ 17,00"
-            android:textColor="#235135"
+            android:textColor="@color/dark_green"
             android:textSize="15sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
@@ -105,7 +105,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
+        android:background="@color/divider_gray"
         android:layout_marginStart="68dp"/>
 
 </LinearLayout>
