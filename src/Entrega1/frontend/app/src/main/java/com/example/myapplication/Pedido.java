@@ -53,4 +53,7 @@ public class Pedido {
             total += item.getQuantity() * item.getPrice();
         }
     }
+    public void setTotal(double total) {
+        this.total = total;
+    }
 }
