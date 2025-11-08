@@ -1,108 +1,172 @@
-# FECAP - Fundação de Comércio Álvares Penteado
+# 🏛️ FECAP - Fundação de Comércio Álvares Penteado
 
 <p align="center">
-<a href= "https://www.fecap.br/"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZPrRa89Kma0ZZogxm0pi-tCn_TLKeHGVxywp-LXAFGR3B1DPouAJYHgKZGV0XTEf4AE&usqp=CAU" alt="FECAP - Fundação de Comércio Álvares Penteado" border="0"></a>
+  <a href="https://www.fecap.br/">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZPrRa89Kma0ZZogxm0pi-tCn_TLKeHGVxywp-LXAFGR3B1DPouAJYHgKZGV0XTEf4AE&usqp=CAU" 
+         alt="FECAP - Fundação de Comércio Álvares Penteado" width="200"/>
+  </a>
 </p>
 
-# Nome do Projeto
+---
 
-## Nome do Grupo
+# 🍲 Comedoria da Tia
 
-## Integrantes: <a href="https://github.com/Smug303">Bruno Eduardo</a>, <a href="https://github.com/eric-bittu">Eric Bittu</a>, <a href="https://github.com/vivikari">Vivian Umaki</a>, <a href="https://github.com/Yanko-dev">Yanko Lee</a>
+Um aplicativo **mobile em Java (Android)** desenvolvido para otimizar o processo de **pedidos e pagamentos na cantina da FECAP**, permitindo que os alunos acessem o cardápio atualizado, façam seus pedidos antecipadamente e evitem filas.
 
-## Professores Orientadores: <a href="https://www.linkedin.com/in/katia-bossi/?originalSubdomain=br">Kátia Bossi</a>, Marco Aurélio, <a href="https://github.com/roddai">Rodrigo da Rosa</a>, <a href="https://www.linkedin.com/in/victorbarq/">Victor Bruno Alexander Rosetti de Quiroz</a>
+---
 
-## Descrição
+## 👥 Grupo: Yanketes (Desenvolvedores da Comedoria da Tia)
 
-<p align="center">
-<img src="https://pix4free.org/assets/library/2021-01-20/originals/game.jpg" alt="NOME DO JOGO" border="0">
-  Game by <a href="http://www.nyphotographic.com/">Nick Youngson</a> <a rel="license" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> <a href="http://pix4free.org/">Pix4free</a>
-</p>
+### 👩‍💻 Integrantes:
+- <a href="https://github.com/Smug303">Bruno Eduardo</a>
+- <a href="https://github.com/eric-bittu">Eric Bittu</a>
+- <a href="https://github.com/vivikari">Vivian Umaki</a>
+- <a href="https://github.com/Yanko-dev">Yanko Lee</a>
 
-<br><br>
-!! Alterar Descrição !!
-<br><br>
+---
 
-## 🛠 Estrutura de pastas
+## 🧑‍🏫 Professores Orientadores:
+- <a href="https://www.linkedin.com/in/katia-bossi/?originalSubdomain=br">Kátia Bossi</a>
+- Marco Aurélio Lima Barbosa
+- <a href="https://github.com/roddai">Rodrigo da Rosa</a>
+- <a href="https://www.linkedin.com/in/victorbarq/">Victor Bruno Alexander Rosetti de Quiroz</a>
 
--Raiz<br>
-|<br>
-|-->documentos<br>
-  &emsp;|-->antigos<br>
-  &emsp;|Documentação.docx<br>
-|-->executáveis<br>
-  &emsp;|-->windows<br>
-  &emsp;|-->android<br>
-  &emsp;|-->HTML<br>
-|-->imagens<br>
-|-->src<br>
-  &emsp;|-->Backend<br>
-  &emsp;|-->Frontend<br>
-|readme.md<br>
+---
 
-A pasta raiz contem dois arquivos que devem ser alterados:
+## 🎯 1. Apresentação do Projeto
+A **Comedoria da Tia** é a cantina da **FECAP**, responsável por oferecer refeições, lanches e bebidas aos estudantes.  
+Atualmente, o grande volume de alunos durante os intervalos gera **filas extensas** e **reduz o tempo disponível para alimentação**.
 
-<b>README.MD</b>: Arquivo que serve como guia e explicação geral sobre seu projeto. O mesmo que você está lendo agora.
+Para resolver esse problema, o projeto propõe o desenvolvimento de um **aplicativo mobile**, onde os alunos podem:
+- Visualizar o **cardápio atualizado**;
+- **Realizar pedidos antecipadamente**;
+- **Efetuar pagamentos diretamente** pelo aplicativo;
+- E apenas **retirar os produtos prontos** no balcão.
 
-Há também 4 pastas que seguem da seguinte forma:
+🔗 **Protótipo Figma:** [Clique aqui](https://www.figma.com/design/42LDeA0zJmhq2FkGQArkOI/App-Cantina-da-Tia?node-id=0-1&p=f&t=31TGZIHMWUBwtBGs-0)
 
-<b>documentos</b>: Toda a documentação estará nesta pasta.
+---
 
-<b>executáveis</b>: Binários e executáveis do projeto devem estar nesta pasta.
+## 📂 2. Estrutura de Pastas
 
-<b>imagens</b>: Imagens do sistema
+```bash
+📦 Projeto_ComedoriaDaTia
+┣ 📂 Documentos
+┃ ┣ 📂 Entrega1
+┃ ┣ 📂 Entrega2
+┃ ┣ ┣📂 Projeto Interdisciplinar Aplicativos Moveis
+┃ ┣ ┣ ┣📄 tia-cantina.apk
+┃ ┣ 📄 Banner_FECAP_CCOMP3_Yanketes.pdf
+┣ 📂 src
+┃ ┣ 📂 Entrega1
+┃ ┃ ┣ 📂 backend
+┃ ┃ ┣ 📂 frontend
+┃ ┣ 📂 Entrega2
+┃ ┃ ┣ 📂 backend
+┃ ┃ ┣ 📂 frontend
+┣ 📄 README.md
+┣ 📄 local.properties
+🎯 3. Objetivos
+🎓 Objetivo Geral
+Desenvolver um aplicativo mobile que permita aos alunos da FECAP realizar pedidos e pagamentos antecipados na cantina Comedoria da Tia, aprimorando a experiência de consumo e a gestão interna.
 
-<b>src</b>: Pasta que contém o código fonte.
+🎯 Objetivos Específicos
+Reduzir filas durante os intervalos;
 
-## 🛠 Instalação
+Permitir o gerenciamento dinâmico do cardápio;
 
-<b>Android:</b>
+Facilitar a visualização e retirada de pedidos;
 
-Faça o Download do JOGO.apk no seu celular.
-Execute o APK e siga as instruções de seu telefone.
+Armazenar dados de usuários e pedidos de forma segura;
 
-```sh
-Coloque código do prompt de comnando se for necessário
-```
+Proporcionar uma interface simples, intuitiva e agradável.
 
-<b>Windows:</b>
+⚙️ 4. Requisitos Funcionais
+👨‍🎓 Acesso do Aluno
+Cadastro e login de usuário;
 
-Não há instalação! Apenas executável!
-Encontre o JOGO.exe na pasta executáveis e execute-o como qualquer outro programa.
+Visualização do cardápio completo;
 
-```sh
-Coloque código do prompt de comnando se for necessário
-```
+Realização de pedidos e seleção de itens;
 
-<b>HTML:</b>
+Pagamento via aplicativo;
 
-Não há instalação!
-Encontre o index.html na pasta executáveis e execute-o como uma página WEB (através de algum browser).
+Histórico de pedidos realizados.
 
-## 💻 Configuração para Desenvolvimento
+👩‍🍳 Acesso da Cantina
+Login administrativo;
 
-Descreva como instalar todas as dependências para desenvolvimento e como rodar um test-suite automatizado de algum tipo. Se necessário, faça isso para múltiplas plataformas.
+Cadastro, edição e exclusão de produtos;
 
-Para abrir este projeto você necessita das seguintes ferramentas:
+Visualização de pedidos em tempo real;
 
--<a href="https://godotengine.org/download">GODOT</a>
+Marcação de pedidos como “entregues”.
 
-```sh
-make install
-npm test
-Coloque código do prompt de comnando se for necessário
-```
+🔒 5. Requisitos Não Funcionais
+Compatibilidade com Android (SDK 24+);
 
-## 📋 Licença/License
-Utilize o link <https://chooser-beta.creativecommons.org/> para fazer uma licença CC BY 4.0.
+Banco de dados hospedado no Supabase;
 
-## 🎓 Referências
+Interface intuitiva, responsiva e agradável (UI/UX);
 
-Aqui estão as referências usadas no projeto.
+Arquitetura modular em Java (Android Studio);
 
-1. <https://github.com/iuricode/readme-template>
-2. <https://github.com/gabrieldejesus/readme-model>
-3. <https://chooser-beta.creativecommons.org/>
-4. <https://freesound.org/>
-5. <https://www.toptal.com/developers/gitignore>
-6. Músicas por: <a href="https://freesound.org/people/DaveJf/sounds/616544/"> DaveJf </a> e <a href="https://freesound.org/people/DRFX/sounds/338986/"> DRFX </a> ambas com Licença CC 0.
+Comunicação segura com o banco de dados remoto (REST API + HTTPS).
+
+🧰 6. Tecnologias Utilizadas
+Categoria	Ferramenta
+Linguagem	Java
+IDE	Android Studio
+Banco de Dados	Supabase (PostgreSQL + REST API)
+Design	Figma
+Controle de Versão	Git e GitHub
+
+🧩 7. Possíveis Extensões Futuras
+Notificações push para retirada pronta;
+
+Sistema de pontos e fidelidade;
+
+Dashboard web administrativo;
+
+Favoritos e agendamento de pedidos;
+
+Sugestões, avaliações e comentários de produtos.
+
+💻 8. Instalação (Android)
+Baixe o arquivo tia-cantina.apk;
+
+Transfira para o seu celular;
+
+Execute o instalador e permita instalações externas, se necessário;
+
+Abra o app e faça login com sua conta de aluno.
+
+🧪 9. Configuração para Desenvolvimento
+Passos para rodar localmente:
+bash
+Copiar código
+# Clonar o repositório
+git clone https://github.com/2025-2-NCC3/Projeto3.git
+
+# Abrir o projeto no Android Studio
+# Configurar o arquivo build.gradle com as credenciais do Supabase
+Requisitos:
+Android Studio (Koala 🐨 ou superior)
+
+Java 11+
+
+Gradle 8+
+
+Emulador Android ou dispositivo físico
+
+📄 10. Licença
+Licenciado sob Creative Commons CC BY 4.0
+Você pode compartilhar e adaptar, desde que dê os devidos créditos aos autores originais.
+
+🔗 Saiba mais sobre a licença
+
+
+🏫 Instituição
+FECAP – Fundação de Comércio Álvares Penteado
+Curso: Ciência da Computação – 3º Semestre (Turma Yanketes)
+
