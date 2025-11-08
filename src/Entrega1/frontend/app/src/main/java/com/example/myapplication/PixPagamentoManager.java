@@ -25,15 +25,16 @@ public class PixPagamentoManager {
     private Context context;
     private OkHttpClient client;
     private Gson gson;
+    private SessionManager sessionManager;
 
     // ⚠️ IMPORTANTE: Substitua pela sua chave do Mercado Pago
-    // Obtenha em: https://www.mercadopago.com.br/developers/panel/credentials
     private static final String MERCADO_PAGO_ACCESS_TOKEN = "TEST-8207515989216625-110619-ae4fca109e7e92522ba0d1ec50976e2f-2043562450";
     private static final String MERCADO_PAGO_BASE_URL = "https://api.mercadopago.com/v1";
 
     private PixPagamentoManager(Context context) {
         this.context = context.getApplicationContext();
         this.gson = new Gson();
+        this.sessionManager = SessionManager.getInstance(context);
 
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -55,15 +56,31 @@ public class PixPagamentoManager {
     public void criarPagamentoPix(Pedido pedido, PagamentoCallback callback) {
         new Thread(() -> {
             try {
+                // 🔧 CORREÇÃO: Pegar email do usuário logado
+                String emailPagador = sessionManager.getUserEmail();
+
+                // Validação do email
+                if (emailPagador == null || emailPagador.isEmpty()) {
+                    callback.onError("Erro: Usuário não está autenticado");
+                    return;
+                }
+
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(emailPagador).matches()) {
+                    callback.onError("Erro: Email do usuário inválido");
+                    return;
+                }
+
+                Log.d(TAG, "Email do pagador: " + emailPagador);
+
                 // Criar payload para Mercado Pago
                 JSONObject payload = new JSONObject();
                 payload.put("transaction_amount", pedido.getTotal());
                 payload.put("description", "Pedido #" + pedido.getCode());
                 payload.put("payment_method_id", "pix");
 
-                // Informações do pagador
+                // Informações do pagador - AGORA COM EMAIL REAL
                 JSONObject payer = new JSONObject();
-                payer.put("email", pedido.getStudentName() + "@email.com"); // Ajuste conforme necessário
+                payer.put("email", emailPagador);
                 payload.put("payer", payer);
 
                 // ID único para idempotência
@@ -148,7 +165,6 @@ public class PixPagamentoManager {
                     pagamento.setId(paymentId);
                     pagamento.setTransactionId(paymentId);
 
-                    // Mapear status do Mercado Pago para nosso status
                     switch (status) {
                         case "approved":
                             pagamento.setStatus("APPROVED");
