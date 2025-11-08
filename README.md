@@ -67,7 +67,7 @@ Para resolver esse problema, o projeto propõe o desenvolvimento de um **aplicat
 ┣ 📄 README.md
 ┣ 📄 local.properties
 ```
-
+---
 ## 🎯 3. Objetivos
 
 ### 🎓 Objetivo Geral
