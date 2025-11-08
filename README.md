@@ -159,12 +159,15 @@ Gradle 8+
 
 Emulador Android ou dispositivo físico
 
+---
+
 ## 📄 10. Licença
 Licenciado sob Creative Commons CC BY 4.0
 Você pode compartilhar e adaptar, desde que dê os devidos créditos aos autores originais.
 
 🔗 Saiba mais sobre a licença
 
+---
 
 ## 🏫 Instituição
 FECAP – Fundação de Comércio Álvares Penteado
