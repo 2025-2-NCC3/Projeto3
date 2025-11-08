@@ -68,14 +68,14 @@ Para resolver esse problema, o projeto propõe o desenvolvimento de um **aplicat
 ┣ 📄 local.properties
 ```
 
-# 🎯 3. Objetivos
+## 🎯 3. Objetivos
 
-## 🎓 Objetivo Geral
+### 🎓 Objetivo Geral
 Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pedidos e pagamentos antecipados na cantina **Comedoria da Tia**, aprimorando a experiência de consumo e a gestão interna.
 
 ---
 
-## 🎯 Objetivos Específicos
+### 🎯 Objetivos Específicos
 - Reduzir filas durante os intervalos;
 - Permitir o gerenciamento dinâmico do cardápio;
 - Facilitar a visualização e retirada de pedidos;
@@ -84,16 +84,16 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# ⚙️ 4. Requisitos Funcionais
+## ⚙️ 4. Requisitos Funcionais
 
-## 👨‍🎓 Acesso do Aluno
+### 👨‍🎓 Acesso do Aluno
 - Cadastro e login de usuário;
 - Visualização do cardápio completo;
 - Realização de pedidos e seleção de itens;
 - Pagamento via aplicativo;
 - Histórico de pedidos realizados.
 
-## 👩‍🍳 Acesso da Cantina
+### 👩‍🍳 Acesso da Cantina
 - Login administrativo;
 - Cadastro, edição e exclusão de produtos;
 - Visualização de pedidos em tempo real;
@@ -101,7 +101,7 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# 🔒 5. Requisitos Não Funcionais
+## 🔒 5. Requisitos Não Funcionais
 - Compatibilidade com **Android (SDK 24+)**;
 - Banco de dados hospedado no **Supabase**;
 - Interface intuitiva, responsiva e agradável (**UI/UX**);
@@ -110,7 +110,7 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# 🧰 6. Tecnologias Utilizadas
+## 🧰 6. Tecnologias Utilizadas
 
 | Categoria | Ferramenta |
 |------------|-------------|
@@ -122,7 +122,7 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# 🧩 7. Possíveis Extensões Futuras
+## 🧩 7. Possíveis Extensões Futuras
 - Notificações push para retirada pronta;
 - Sistema de pontos e fidelidade;
 - Dashboard web administrativo;
@@ -131,7 +131,7 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# 💻 8. Instalação (Android)
+## 💻 8. Instalação (Android)
 1. Baixe o arquivo **tia-cantina.apk**;
 2. Transfira para o seu celular;
 3. Execute o instalador e permita instalações externas, se necessário;
@@ -139,7 +139,7 @@ Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pe
 
 ---
 
-# 🧪 9. Configuração para Desenvolvimento
+## 🧪 9. Configuração para Desenvolvimento
 
 ### Passos para rodar localmente:
 
@@ -150,7 +150,7 @@ git clone https://github.com/2025-2-NCC3/Projeto3.git
 # Abrir o projeto no Android Studio
 # Configurar o arquivo build.gradle com as credenciais do Supabase
 ```
-# Requisitos:
+## Requisitos:
 Android Studio (Koala 🐨 ou superior)
 
 Java 11+
@@ -159,14 +159,14 @@ Gradle 8+
 
 Emulador Android ou dispositivo físico
 
-# 📄 10. Licença
+## 📄 10. Licença
 Licenciado sob Creative Commons CC BY 4.0
 Você pode compartilhar e adaptar, desde que dê os devidos créditos aos autores originais.
 
 🔗 Saiba mais sobre a licença
 
 
-# 🏫 Instituição
+## 🏫 Instituição
 FECAP – Fundação de Comércio Álvares Penteado
 Curso: Ciência da Computação – 3º Semestre (Turma Yanketes)
 
