@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".MeusPedidosActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título "Meus Pedidos" -->
@@ -60,7 +60,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="100dp"
             android:text="Meus Pedidos"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="24sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"/>
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Você ainda não fez\nnenhum pedido"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/empty_state"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_medium"
             android:textAlignment="center"
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Explore o cardápio e faça seu primeiro pedido!"
-            android:textColor="#BDBDBD"
+            android:textColor="@color/icon_gray"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
             android:textAlignment="center"

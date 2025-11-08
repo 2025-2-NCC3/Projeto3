@@ -77,11 +77,11 @@ public class MeusPedidosActivity extends AppCompatActivity {
     private void configurarListeners() {
         btnVoltar.setOnClickListener(v -> finish());
 
-        // Configurar cores do SwipeRefreshLayout
+        // Configurar cores do SwipeRefreshLayout (usando apenas cores existentes)
         swipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.dark_green),
-                getResources().getColor(R.color.status_preparando),
-                getResources().getColor(R.color.status_pronto)
+                getResources().getColor(R.color.status_pendente),
+                getResources().getColor(R.color.status_confirmado)
         );
 
         swipeRefresh.setOnRefreshListener(() -> carregarPedidos());
@@ -150,19 +150,26 @@ public class MeusPedidosActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             Pedido pedido = pedidos.get(position);
 
-            // Obter configuração do status
+            // Código do pedido
+            holder.tvCodigoPedido.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
+
+            // Data
+            holder.tvDataPedido.setText(PedidoUtils.formatarData(pedido.getCreatedAt()));
+
+            // Valor total
+            holder.tvValorTotal.setText(PedidoUtils.formatarPreco(pedido.getTotal()));
+
+            // Obter configuração do status (apenas 3 status: PENDING, COMPLETED, CANCELLED)
             PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(
                     holder.itemView.getContext(),
                     pedido.getStatus()
             );
 
-            holder.tvStatus.setText(statusConfig.texto);           // Texto: "PREPARANDO"
-            holder.tvStatus.setTextColor(statusConfig.corTexto);   // COR VIBRANTE!
-
-            holder.tvStatusIcon.setText(statusConfig.icone);       // Ícone: "👨‍🍳"
-            holder.tvStatusIcon.setTextColor(statusConfig.corTexto); // COR VIBRANTE!
-
-            holder.cardStatus.setCardBackgroundColor(statusConfig.corFundo); // COR PASTEL!
+            holder.tvStatus.setText(statusConfig.texto);
+            holder.tvStatus.setTextColor(statusConfig.corTexto);
+            holder.tvStatusIcon.setText(statusConfig.icone);
+            holder.tvStatusIcon.setTextColor(statusConfig.corTexto);
+            holder.cardStatus.setCardBackgroundColor(statusConfig.corFundo);
 
             // Click listener para abrir detalhes
             holder.itemView.setOnClickListener(v -> abrirDetalhesPedido(pedido));
@@ -203,5 +210,4 @@ public class MeusPedidosActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(() -> {
             carregarPedidos();
         }, 300); // 300ms de delay
-    }
-}
+    }}

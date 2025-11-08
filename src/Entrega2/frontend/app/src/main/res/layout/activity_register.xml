@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#235135"
+    android:background="@color/dark_green"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Criar Conta"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
                 android:gravity="center"/>
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Junte-se à nossa cantina"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:gravity="center"
@@ -72,7 +72,7 @@
             android:layout_marginTop="20dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="12dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/welcomeLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -96,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:text="Nome Completo"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <EditText
@@ -105,8 +105,8 @@
                         android:layout_height="37dp"
                         android:layout_marginTop="2dp"
                         android:hint="Seu nome"
-                        android:textColorHint="#A0AFAFAF"
-                        android:textColor="#000000"
+                        android:textColorHint="@color/icon_gray"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="12sp"
                         android:inputType="textPersonName"
@@ -129,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:text="Email"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <EditText
@@ -139,8 +139,8 @@
                         android:layout_marginTop="2dp"
                         android:hint="seu@email.com"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColorHint="#A0AFAFAF"
-                        android:textColor="#000000"
+                        android:textColorHint="@color/icon_gray"
+                        android:textColor="@color/black"
                         android:textSize="12sp"
                         android:inputType="textEmailAddress"
                         android:imeOptions="actionNext"
@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:text="Senha"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <RelativeLayout
@@ -175,8 +175,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="Crie uma senha forte"
-                            android:textColorHint="#A0AFAFAF"
-                            android:textColor="#000000"
+                            android:textColorHint="@color/icon_gray"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             android:fontFamily="@font/poppins_regular"
                             android:inputType="textPassword"
@@ -214,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:text="Confirmar Senha"
                         android:fontFamily="@font/poppins_regular"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"/>
 
                     <RelativeLayout
@@ -227,8 +227,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="Sua senha"
-                            android:textColorHint="#A0AFAFAF"
-                            android:textColor="#000000"
+                            android:textColorHint="@color/icon_gray"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             android:fontFamily="@font/poppins_regular"
                             android:inputType="textPassword"
@@ -268,7 +268,7 @@
                         android:layout_height="wrap_content"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
-                        android:buttonTint="#235135"/>
+                        android:buttonTint="@color/dark_green"/>
 
                     <TextView
                         android:id="@+id/textTerms"
@@ -278,7 +278,7 @@
                         android:fontFamily="@font/poppins_regular"
                         android:layout_marginStart="8dp"
                         android:text="Concordo com os Termos de Uso e Política de Privacidade"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="13sp"
                         android:lineSpacingMultiplier="1.2"/>
 
@@ -295,7 +295,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:text="Cadastrar"
-                        android:textColor="#F5F5DB"
+                        android:textColor="@color/text_beige"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_bold"
                         android:textAllCaps="false"
@@ -307,7 +307,7 @@
                         android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:visibility="gone"
-                        android:indeterminateTint="#F5F5DB"/>
+                        android:indeterminateTint="@color/text_beige"/>
 
                 </FrameLayout>
 
@@ -319,7 +319,7 @@
                     android:layout_marginTop="9dp"
                     android:text="Já tem uma conta? Faça Login"
                     android:gravity="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="13sp"
                     android:clickable="true"

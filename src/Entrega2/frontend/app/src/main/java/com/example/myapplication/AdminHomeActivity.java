@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +20,6 @@ public class AdminHomeActivity extends AppCompatActivity {
     private AdminManager adminManager;
 
     private TextView tituloPagina;
-    private EditText searchInput;
     private ImageButton btnLogout;
     private MaterialCardView cardGerenciarPedidos;
     private MaterialCardView cardEditarCardapio;
@@ -69,7 +67,6 @@ public class AdminHomeActivity extends AppCompatActivity {
 
     private void initializeViews() {
         tituloPagina = findViewById(R.id.tituloPagina);
-        searchInput = findViewById(R.id.searchInput);
         btnLogout = findViewById(R.id.btnLogout);
         cardGerenciarPedidos = findViewById(R.id.cardGerenciarPedidos);
         cardEditarCardapio = findViewById(R.id.cardEditarCardapio);
@@ -127,15 +124,6 @@ public class AdminHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Barra de pesquisa
-        searchInput.setOnEditorActionListener((v, actionId, event) -> {
-            String query = searchInput.getText().toString().trim();
-            if (!query.isEmpty()) {
-                Toast.makeText(this, "Busca: " + query, Toast.LENGTH_SHORT).show();
-                // TODO: Implementar lógica de busca
-            }
-            return false;
-        });
     }
 
     private void showLogoutDialog() {

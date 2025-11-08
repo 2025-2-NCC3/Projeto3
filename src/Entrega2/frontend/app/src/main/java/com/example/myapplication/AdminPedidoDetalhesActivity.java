@@ -11,7 +11,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.text.NumberFormat;
@@ -72,7 +71,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         layoutContent = findViewById(R.id.layoutContent);
         swipeRefreshDetalhes = findViewById(R.id.swipeRefreshDetalhes);
 
-        btnConfirmarRetirada.setOnClickListener(v -> confirmarRetirada());
+        btnConfirmarRetirada.setOnClickListener(v -> confirmarAcao());
         btnCancelarPedido.setOnClickListener(v -> cancelarPedido());
         swipeRefreshDetalhes.setOnRefreshListener(this::loadPedidoDetails);
 
@@ -127,13 +126,13 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         tvStudentName.setText(pedido.getStudentName() != null ? pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
         tvOrderDate.setText("Data: " + dateFormat.format(pedido.getCreatedAt()));
 
-        // Status com emoji e cor USANDO COLORS.XML
+        // Status com emoji e cor usando PedidoUtils
         String statusText = PedidoUtils.getStatusIcon(pedido.getStatus()) + " " + PedidoUtils.getStatusText(pedido.getStatus());
         tvOrderStatus.setText(statusText);
         tvOrderStatus.setTextColor(PedidoUtils.getStatusColor(this, pedido.getStatus()));
 
-        tvOrderCode.setText("Código de Retirada: " + (pedido.getCode() != null ? pedido.getCode() : "N/A"));
-        tvOrderTotal.setText("Total: " + currencyFormat.format(pedido.getTotal()));
+        tvOrderCode.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
+        tvOrderTotal.setText(currencyFormat.format(pedido.getTotal()));
 
         // Configurar adapter dos itens
         PedidoItemAdapter itemAdapter = new PedidoItemAdapter(this);
@@ -147,28 +146,102 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
     }
 
     private void updateButtonsVisibility(String status) {
-        String statusUpper = status.toUpperCase();
-        switch (statusUpper) {
-            case "PENDENTE":
-            case "PREPARANDO":
-            case "PRONTO":
-            case "CONFIRMADO":
+        // Normalizar status para garantir consistência
+        String statusNormalizado = PedidoUtils.normalizarStatus(status);
+
+        Log.d(TAG, "Status normalizado: " + statusNormalizado);
+
+        switch (statusNormalizado) {
+            case "PENDING":
+                // PENDING: Mostrar botão "CONFIRMAR" e "CANCELAR"
                 btnConfirmarRetirada.setVisibility(View.VISIBLE);
-                btnCancelarPedido.setVisibility(View.VISIBLE);
+                btnConfirmarRetirada.setText("CONFIRMAR PEDIDO");
                 btnConfirmarRetirada.setEnabled(true);
+                btnCancelarPedido.setVisibility(View.VISIBLE);
                 btnCancelarPedido.setEnabled(true);
                 break;
-            case "RETIRADO":
-            case "ENTREGUE":
+
+            case "CONFIRMED":
+                // CONFIRMED: Mostrar botão "CONCLUIR RETIRADA" e "CANCELAR"
+                btnConfirmarRetirada.setVisibility(View.VISIBLE);
+                btnConfirmarRetirada.setText("CONCLUIR RETIRADA");
+                btnConfirmarRetirada.setEnabled(true);
+                btnCancelarPedido.setVisibility(View.VISIBLE);
+                btnCancelarPedido.setEnabled(true);
+                break;
+
+            case "COMPLETED":
+            case "CANCELLED":
+                // COMPLETED/CANCELLED: Esconder todos os botões
                 btnConfirmarRetirada.setVisibility(View.GONE);
                 btnCancelarPedido.setVisibility(View.GONE);
                 break;
-            case "CANCELADO":
+
+            default:
+                // Status desconhecido: esconder botões por segurança
                 btnConfirmarRetirada.setVisibility(View.GONE);
                 btnCancelarPedido.setVisibility(View.GONE);
                 break;
         }
-        Log.d(TAG, "Botões atualizados para status: " + status);
+
+        Log.d(TAG, "Botões atualizados para status: " + statusNormalizado);
+    }
+
+    private void confirmarAcao() {
+        if (currentPedido == null) return;
+
+        String statusNormalizado = PedidoUtils.normalizarStatus(currentPedido.getStatus());
+
+        if (statusNormalizado.equals("PENDING")) {
+            // Confirmar pedido (PENDING -> CONFIRMED)
+            confirmarPedido();
+        } else if (statusNormalizado.equals("CONFIRMED")) {
+            // Concluir retirada (CONFIRMED -> COMPLETED)
+            confirmarRetirada();
+        }
+    }
+
+    private void confirmarPedido() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar Pedido")
+                .setMessage("Deseja confirmar este pedido?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    realizarConfirmacaoPedido();
+                })
+                .setNegativeButton("Não", null)
+                .show();
+    }
+
+    private void realizarConfirmacaoPedido() {
+        showLoading();
+        btnConfirmarRetirada.setEnabled(false);
+
+        String token = sessionManager.getAccessToken();
+        pedidoManager.updatePedidoStatus(currentPedido.getId(), "CONFIRMED", token,
+                new SupabasePedidoManager.PedidoCallback() {
+                    @Override
+                    public void onSuccess(Pedido pedido) {
+                        Log.d(TAG, "Pedido confirmado");
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "✓ Pedido confirmado com sucesso!", Toast.LENGTH_SHORT).show();
+                            currentPedido = pedido;
+                            displayPedidoDetails(pedido);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG, "Erro ao confirmar: " + error);
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            btnConfirmarRetirada.setEnabled(true);
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "Erro ao confirmar pedido: " + error, Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
     }
 
     private void confirmarRetirada() {
@@ -187,38 +260,38 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnConfirmarRetirada.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        pedidoManager.confirmPedidoPickup(currentPedido.getId(), token, new SupabasePedidoManager.PedidoCallback() {
-            @Override
-            public void onSuccess(Pedido pedido) {
-                Log.d(TAG, "Retirada confirmada");
-                runOnUiThread(() -> {
-                    hideLoading();
-                    Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
-                    currentPedido = pedido;
-                    displayPedidoDetails(pedido);
-                    loadPedidoDetails();
-                });
-            }
+        pedidoManager.updatePedidoStatus(currentPedido.getId(), "COMPLETED", token,
+                new SupabasePedidoManager.PedidoCallback() {
+                    @Override
+                    public void onSuccess(Pedido pedido) {
+                        Log.d(TAG, "Retirada confirmada");
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "✓✓ Retirada confirmada com sucesso!", Toast.LENGTH_SHORT).show();
+                            currentPedido = pedido;
+                            displayPedidoDetails(pedido);
+                        });
+                    }
 
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Erro ao confirmar: " + error);
-                runOnUiThread(() -> {
-                    hideLoading();
-                    btnConfirmarRetirada.setEnabled(true);
-                    Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Erro ao confirmar retirada: " + error, Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG, "Erro ao confirmar retirada: " + error);
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            btnConfirmarRetirada.setEnabled(true);
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "Erro ao confirmar retirada: " + error, Toast.LENGTH_SHORT).show();
+                        });
+                    }
                 });
-            }
-        });
     }
 
     private void cancelarPedido() {
         new AlertDialog.Builder(this)
                 .setTitle("Cancelar Pedido")
-                .setMessage("Tem certeza que deseja cancelar este pedido?")
-                .setPositiveButton("Sim", (dialog, which) -> {
+                .setMessage("Tem certeza que deseja cancelar este pedido?\n\nEsta ação não pode ser desfeita.")
+                .setPositiveButton("Sim, cancelar", (dialog, which) -> {
                     realizarCancelamento();
                 })
                 .setNegativeButton("Não", null)
@@ -230,31 +303,31 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         btnCancelarPedido.setEnabled(false);
 
         String token = sessionManager.getAccessToken();
-        pedidoManager.cancelPedido(currentPedido.getId(), token, new SupabasePedidoManager.PedidoCallback() {
-            @Override
-            public void onSuccess(Pedido pedido) {
-                Log.d(TAG, "Pedido cancelado");
-                runOnUiThread(() -> {
-                    hideLoading();
-                    Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
-                    currentPedido = pedido;
-                    displayPedidoDetails(pedido);
-                    loadPedidoDetails();
-                });
-            }
+        pedidoManager.updatePedidoStatus(currentPedido.getId(), "CANCELLED", token,
+                new SupabasePedidoManager.PedidoCallback() {
+                    @Override
+                    public void onSuccess(Pedido pedido) {
+                        Log.d(TAG, "Pedido cancelado");
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "✕ Pedido cancelado!", Toast.LENGTH_SHORT).show();
+                            currentPedido = pedido;
+                            displayPedidoDetails(pedido);
+                        });
+                    }
 
-            @Override
-            public void onError(String error) {
-                Log.e(TAG, "Erro ao cancelar: " + error);
-                runOnUiThread(() -> {
-                    hideLoading();
-                    btnCancelarPedido.setEnabled(true);
-                    Toast.makeText(AdminPedidoDetalhesActivity.this,
-                            "Erro ao cancelar pedido: " + error, Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG, "Erro ao cancelar: " + error);
+                        runOnUiThread(() -> {
+                            hideLoading();
+                            btnCancelarPedido.setEnabled(true);
+                            Toast.makeText(AdminPedidoDetalhesActivity.this,
+                                    "Erro ao cancelar pedido: " + error, Toast.LENGTH_SHORT).show();
+                        });
+                    }
                 });
-            }
-        });
     }
 
     private void showLoading() {

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".CardapioAlunosActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -48,48 +48,10 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
-        <!-- Container dos botões do topo direito -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
 
-            <!-- Botão Meus Pedidos -->
-            <Button
-                android:id="@+id/btnMeusPedidos"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="📋"
-                android:textSize="20sp"
-                android:fontFamily="@font/poppins_medium"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:minWidth="0dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:textColor="#F5F5DB"
-                android:layout_marginEnd="8dp"/>
-
-            <!-- Botão Carrinho -->
-            <Button
-                android:id="@+id/btnCarrinho"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="🛒"
-                android:textSize="20sp"
-                android:fontFamily="@font/poppins_medium"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:minWidth="0dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:textColor="#F5F5DB"/>
-
-        </LinearLayout>
 
         <!-- Título "Cardápio" -->
         <TextView
@@ -99,7 +61,7 @@
             android:layout_marginStart="28dp"
             android:layout_marginTop="100dp"
             android:text="Cardápio"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="26sp"
             android:fontFamily="@font/poppins_bold"/>
 
@@ -108,14 +70,15 @@
             android:id="@+id/searchCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
             android:layout_marginTop="155dp"
             android:layout_gravity="top"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="#F5F5F5"
-            app:strokeWidth="1dp">
+            app:cardBackgroundColor="@color/off_white"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/brown">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -136,10 +99,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Search"
+                    android:hint="Buscar..."
                     android:fontFamily="@font/poppins_regular"
-                    android:textColorHint="#BDBDBD"
-                    android:textColor="#000000"
+                    android:textColorHint="@color/icon_gray"
+                    android:textColor="@color/black"
                     android:textSize="14sp"
                     android:background="@android:color/transparent"
                     android:paddingStart="8dp"
@@ -148,10 +111,19 @@
                     android:imeOptions="actionSearch"
                     android:importantForAutofill="no"/>
 
+                <ImageButton
+                    android:id="@+id/btnLimparBusca"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_close"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Limpar busca"
+                    android:visibility="gone"
+                    app:tint="@color/empty_state"/>
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
     </FrameLayout>
 
     <!-- Filtros de Categoria -->
@@ -183,7 +155,7 @@
                 android:layout_height="40dp"
                 android:text="Todos"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -193,7 +165,7 @@
                 android:paddingEnd="20dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                app:backgroundTint="#9C5827"
+                app:backgroundTint="@color/brown"
                 app:cornerRadius="10dp"
                 android:elevation="0dp"
                 android:layout_marginEnd="10dp"/>
@@ -205,7 +177,7 @@
                 android:layout_height="40dp"
                 android:text="Lanches"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -215,7 +187,7 @@
                 android:paddingEnd="20dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="10dp"/>
@@ -227,7 +199,7 @@
                 android:layout_height="40dp"
                 android:text="Bebidas"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -237,7 +209,7 @@
                 android:paddingEnd="20dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="10dp"/>
@@ -249,7 +221,7 @@
                 android:layout_height="40dp"
                 android:text="Doces"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -259,7 +231,7 @@
                 android:paddingEnd="20dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="10dp"/>
@@ -271,7 +243,7 @@
                 android:layout_height="40dp"
                 android:text="Marmitas"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -281,7 +253,7 @@
                 android:paddingEnd="20dp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"/>
 
@@ -297,28 +269,36 @@
         android:layout_marginStart="26dp"
         android:layout_marginEnd="26dp"
         android:layout_marginTop="12dp"
-        android:background="#EFEFEF"
+        android:background="@color/divider_light"
         app:layout_constraintTop_toBottomOf="@id/categoriasScroll"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Lista de Produtos em Grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProdutos"
+    <!-- SwipeRefreshLayout envolvendo o RecyclerView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        tools:listitem="@layout/produto"
         app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintBottom_toTopOf="@id/includeNavbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Lista de Produtos em Grid -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProdutos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/produto"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Navbar fixada na parte inferior -->
     <include

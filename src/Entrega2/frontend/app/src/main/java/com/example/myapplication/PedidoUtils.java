@@ -30,7 +30,7 @@ public class PedidoUtils {
     /**
      * Método principal para obter todas as configurações de um status
      * @param context Contexto da aplicação
-     * @param status Status do pedido (PENDING, PREPARING, etc)
+     * @param status Status do pedido (PENDING, CONFIRMED, COMPLETED, CANCELLED)
      * @return StatusConfig com todas as configurações
      */
     public static StatusConfig getStatusConfig(Context context, String status) {
@@ -65,30 +65,12 @@ public class PedidoUtils {
                         "Pedido confirmado"
                 );
 
-            case "PREPARING":
-                return new StatusConfig(
-                        ContextCompat.getColor(context, R.color.status_preparando),
-                        ContextCompat.getColor(context, R.color.status_preparando_bg),
-                        "PREPARANDO",
-                        "👨‍🍳",
-                        "Sendo preparado"
-                );
-
-            case "READY":
-                return new StatusConfig(
-                        ContextCompat.getColor(context, R.color.status_pronto),
-                        ContextCompat.getColor(context, R.color.status_pronto_bg),
-                        "PRONTO",
-                        "🔔",
-                        "Pronto para retirada"
-                );
-
             case "COMPLETED":
                 return new StatusConfig(
-                        ContextCompat.getColor(context, R.color.status_entregue),
-                        ContextCompat.getColor(context, R.color.status_entregue_bg),
+                        ContextCompat.getColor(context, R.color.status_concluido),
+                        ContextCompat.getColor(context, R.color.status_concluido_bg),
                         "CONCLUÍDO",
-                        "✓",
+                        "✓✓",
                         "Pedido concluído"
                 );
 
@@ -125,7 +107,6 @@ public class PedidoUtils {
     }
 
     public static String getStatusText(String status) {
-        // Contexto não necessário, usar valores padrão
         if (status == null) return "DESCONHECIDO";
 
         String statusNormalizado = normalizarStatus(status);
@@ -133,8 +114,6 @@ public class PedidoUtils {
         switch (statusNormalizado) {
             case "PENDING": return "PENDENTE";
             case "CONFIRMED": return "CONFIRMADO";
-            case "PREPARING": return "PREPARANDO";
-            case "READY": return "PRONTO";
             case "COMPLETED": return "CONCLUÍDO";
             case "CANCELLED": return "CANCELADO";
             default: return status.toUpperCase();
@@ -149,9 +128,7 @@ public class PedidoUtils {
         switch (statusNormalizado) {
             case "PENDING": return "⏱";
             case "CONFIRMED": return "✓";
-            case "PREPARING": return "👨‍🍳";
-            case "READY": return "🔔";
-            case "COMPLETED": return "✓";
+            case "COMPLETED": return "✓✓";
             case "CANCELLED": return "✕";
             default: return "❓";
         }
@@ -165,8 +142,6 @@ public class PedidoUtils {
         switch (statusNormalizado) {
             case "PENDING": return "Aguardando confirmação";
             case "CONFIRMED": return "Pedido confirmado";
-            case "PREPARING": return "Sendo preparado";
-            case "READY": return "Pronto para retirada";
             case "COMPLETED": return "Pedido concluído";
             case "CANCELLED": return "Pedido cancelado";
             default: return "Status desconhecido";
@@ -244,13 +219,16 @@ public class PedidoUtils {
         return !statusNormalizado.equals("COMPLETED") && !statusNormalizado.equals("CANCELLED");
     }
 
-    public static boolean podeConfirmarRetirada(String status) {
+    public static boolean podeConfirmarPedido(String status) {
         if (status == null) return false;
         String statusNormalizado = normalizarStatus(status);
-        return statusNormalizado.equals("PENDING") ||
-                statusNormalizado.equals("CONFIRMED") ||
-                statusNormalizado.equals("PREPARING") ||
-                statusNormalizado.equals("READY");
+        return statusNormalizado.equals("PENDING");
+    }
+
+    public static boolean podeConcluirPedido(String status) {
+        if (status == null) return false;
+        String statusNormalizado = normalizarStatus(status);
+        return statusNormalizado.equals("CONFIRMED");
     }
 
     public static boolean podeSerAvaliado(String status) {
@@ -280,6 +258,7 @@ public class PedidoUtils {
 
     /**
      * Converte qualquer variação de status para o padrão inglês
+     * 4 status: PENDING, CONFIRMED, COMPLETED, CANCELLED
      */
     public static String normalizarStatus(String status) {
         if (status == null) return "PENDING";
@@ -288,22 +267,33 @@ public class PedidoUtils {
 
         switch (statusUpper) {
             case "PENDENTE":
+            case "PENDING":
                 return "PENDING";
+
             case "CONFIRMADO":
+            case "CONFIRMED":
                 return "CONFIRMED";
-            case "PREPARANDO":
-                return "PREPARING";
-            case "PRONTO":
-                return "READY";
+
             case "CONCLUÍDO":
             case "CONCLUIDO":
+            case "COMPLETED":
             case "ENTREGUE":
             case "RETIRADO":
                 return "COMPLETED";
+
             case "CANCELADO":
+            case "CANCELLED":
                 return "CANCELLED";
+
+            // Status antigos que não usamos mais viram CONFIRMED
+            case "PREPARANDO":
+            case "PREPARING":
+            case "PRONTO":
+            case "READY":
+                return "CONFIRMED";
+
             default:
-                return statusUpper;
+                return "PENDING";
         }
     }
 
@@ -417,12 +407,10 @@ public class PedidoUtils {
         String statusNormalizado = normalizarStatus(status);
 
         switch (statusNormalizado) {
-            case "READY": return 1;
-            case "PREPARING": return 2;
-            case "CONFIRMED": return 3;
-            case "PENDING": return 4;
-            case "COMPLETED": return 5;
-            case "CANCELLED": return 6;
+            case "PENDING": return 1;
+            case "CONFIRMED": return 2;
+            case "COMPLETED": return 3;
+            case "CANCELLED": return 4;
             default: return 99;
         }
     }
@@ -438,8 +426,6 @@ public class PedidoUtils {
 
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_CONFIRMED = "CONFIRMED";
-    public static final String STATUS_PREPARING = "PREPARING";
-    public static final String STATUS_READY = "READY";
     public static final String STATUS_COMPLETED = "COMPLETED";
     public static final String STATUS_CANCELLED = "CANCELLED";
 }

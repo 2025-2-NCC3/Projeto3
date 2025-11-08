@@ -24,8 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.button.MaterialButton;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -144,8 +142,8 @@ public class AdminPedidosActivity extends AppCompatActivity {
         swipeRefresh.setOnRefreshListener(() -> carregarPedidos());
         swipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.dark_green),
-                getResources().getColor(R.color.status_preparando),
-                getResources().getColor(R.color.status_pronto)
+                getResources().getColor(R.color.status_confirmado),
+                getResources().getColor(R.color.status_concluido)
         );
     }
 
@@ -265,8 +263,8 @@ public class AdminPedidosActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogFiltroStatus() {
-        String[] opcoes = {"Todos", "Pendente", "Confirmado", "Preparando", "Pronto", "Concluído", "Cancelado"};
-        String[] valores = {"TODOS", "PENDING", "CONFIRMED", "PREPARING", "READY", "COMPLETED", "CANCELLED"};
+        String[] opcoes = {"Todos", "Pendente", "Confirmado", "Concluído", "Cancelado"};
+        String[] valores = {"TODOS", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"};
 
         int itemSelecionado = 0;
         for (int i = 0; i < valores.length; i++) {
@@ -388,72 +386,6 @@ public class AdminPedidosActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void confirmarPedido(Pedido pedido, int position) {
-        new AlertDialog.Builder(this)
-                .setTitle("Confirmar Pedido")
-                .setMessage("Deseja confirmar o pedido " + pedido.getCode() + "?")
-                .setPositiveButton("Sim", (dialog, which) -> {
-                    Toast.makeText(this, "Confirmando pedido...", Toast.LENGTH_SHORT).show();
-
-                    pedidoManager.updatePedidoStatus(pedido.getId(), "CONFIRMED", accessToken,
-                            new SupabasePedidoManager.PedidoCallback() {
-                                @Override
-                                public void onSuccess(Pedido updatedPedido) {
-                                    runOnUiThread(() -> {
-                                        Toast.makeText(AdminPedidosActivity.this,
-                                                "✓ Pedido confirmado com sucesso!",
-                                                Toast.LENGTH_SHORT).show();
-                                        carregarPedidos();
-                                    });
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    runOnUiThread(() -> {
-                                        Toast.makeText(AdminPedidosActivity.this,
-                                                "Erro ao confirmar: " + error,
-                                                Toast.LENGTH_LONG).show();
-                                    });
-                                }
-                            });
-                })
-                .setNegativeButton("Não", null)
-                .show();
-    }
-
-    private void cancelarPedido(Pedido pedido, int position) {
-        new AlertDialog.Builder(this)
-                .setTitle("Cancelar Pedido")
-                .setMessage("Deseja cancelar o pedido " + pedido.getCode() + "?\n\nEsta ação não pode ser desfeita.")
-                .setPositiveButton("Sim, cancelar", (dialog, which) -> {
-                    Toast.makeText(this, "Cancelando pedido...", Toast.LENGTH_SHORT).show();
-
-                    pedidoManager.updatePedidoStatus(pedido.getId(), "CANCELLED", accessToken,
-                            new SupabasePedidoManager.PedidoCallback() {
-                                @Override
-                                public void onSuccess(Pedido updatedPedido) {
-                                    runOnUiThread(() -> {
-                                        Toast.makeText(AdminPedidosActivity.this,
-                                                "✓ Pedido cancelado!",
-                                                Toast.LENGTH_SHORT).show();
-                                        carregarPedidos();
-                                    });
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    runOnUiThread(() -> {
-                                        Toast.makeText(AdminPedidosActivity.this,
-                                                "Erro ao cancelar: " + error,
-                                                Toast.LENGTH_LONG).show();
-                                    });
-                                }
-                            });
-                })
-                .setNegativeButton("Não", null)
-                .show();
-    }
-
     // ============================================
     // ADAPTER
     // ============================================
@@ -481,15 +413,13 @@ public class AdminPedidosActivity extends AppCompatActivity {
 
                 // Proteger contra valores null
                 holder.tvCodigoPedido.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
-                holder.tvNomeAluno.setText(pedido.getStudentName() != null ?
-                        pedido.getStudentName() : "Aluno #" + (pedido.getStudentId() != null ? pedido.getStudentId() : "N/A"));
 
                 holder.tvDataPedido.setText(pedido.getCreatedAt() != null ?
                         PedidoUtils.formatarData(pedido.getCreatedAt()) : "Data não disponível");
 
                 holder.tvValorTotal.setText(PedidoUtils.formatarPreco(pedido.getTotal()));
 
-                // Usando StatusConfig
+                // Configurar status
                 String status = pedido.getStatus() != null ? pedido.getStatus() : "PENDING";
                 PedidoUtils.StatusConfig statusConfig = PedidoUtils.getStatusConfig(
                         holder.itemView.getContext(),
@@ -502,26 +432,12 @@ public class AdminPedidosActivity extends AppCompatActivity {
                 holder.tvStatusIcon.setText(statusConfig.icone);
                 holder.tvStatusIcon.setTextColor(statusConfig.corTexto);
 
-                // Mostrar/esconder botões usando normalização
-                String statusNormalizado = PedidoUtils.normalizarStatus(status);
-                if (statusNormalizado.equals("PENDING")) {
-                    holder.botoesAcao.setVisibility(View.VISIBLE);
-                } else {
-                    holder.botoesAcao.setVisibility(View.GONE);
-                }
-
                 // Click no card abre AdminPedidoDetalhesActivity
                 holder.itemView.setOnClickListener(v -> {
                     Intent intent = new Intent(AdminPedidosActivity.this, AdminPedidoDetalhesActivity.class);
                     intent.putExtra("ORDER_ID", pedido.getId());
                     startActivity(intent);
                 });
-
-                // Botão Confirmar
-                holder.btnConfirmar.setOnClickListener(v -> confirmarPedido(pedido, position));
-
-                // Botão Cancelar
-                holder.btnCancelar.setOnClickListener(v -> cancelarPedido(pedido, position));
 
             } catch (Exception e) {
                 Log.e(TAG, "Erro ao fazer bind do pedido na posição " + position + ": " + e.getMessage(), e);
@@ -534,23 +450,17 @@ public class AdminPedidosActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvCodigoPedido, tvNomeAluno, tvDataPedido, tvValorTotal, tvStatus, tvStatusIcon;
+            TextView tvCodigoPedido, tvDataPedido, tvValorTotal, tvStatus, tvStatusIcon;
             CardView cardStatus;
-            LinearLayout botoesAcao;
-            MaterialButton btnConfirmar, btnCancelar;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 tvCodigoPedido = itemView.findViewById(R.id.tvCodigoPedido);
-                tvNomeAluno = itemView.findViewById(R.id.tvNomeAluno);
                 tvDataPedido = itemView.findViewById(R.id.tvDataPedido);
                 tvValorTotal = itemView.findViewById(R.id.tvValorTotal);
                 tvStatus = itemView.findViewById(R.id.tvStatus);
                 tvStatusIcon = itemView.findViewById(R.id.tvStatusIcon);
                 cardStatus = itemView.findViewById(R.id.cardStatus);
-                botoesAcao = itemView.findViewById(R.id.botoesAcao);
-                btnConfirmar = itemView.findViewById(R.id.btnConfirmar);
-                btnCancelar = itemView.findViewById(R.id.btnCancelar);
             }
         }
     }

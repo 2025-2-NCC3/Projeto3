@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".AdminPedidosActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título -->
@@ -60,7 +60,7 @@
             android:layout_marginStart="28dp"
             android:layout_marginTop="90dp"
             android:text="Gerenciar Pedidos"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="24sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"/>
@@ -76,9 +76,9 @@
             android:layout_gravity="top"
             app:cardCornerRadius="10dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="#F5F5F5"
+            app:cardBackgroundColor="@color/off_white"
             app:strokeWidth="1dp"
-            app:strokeColor="#9C5827">
+            app:strokeColor="@color/brown">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -101,8 +101,8 @@
                     android:layout_weight="1"
                     android:hint="Buscar pedido..."
                     android:fontFamily="@font/poppins_regular"
-                    android:textColorHint="#BDBDBD"
-                    android:textColor="#000000"
+                    android:textColorHint="@color/icon_gray"
+                    android:textColor="@color/black"
                     android:textSize="14sp"
                     android:background="@android:color/transparent"
                     android:paddingStart="8dp"
@@ -119,7 +119,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Limpar busca"
                     android:visibility="gone"
-                    app:tint="#757575"/>
+                    app:tint="@color/empty_state"/>
 
             </LinearLayout>
 
@@ -156,14 +156,14 @@
                 android:layout_height="40dp"
                 android:text="🎯 Todos"
                 android:fontFamily="@font/poppins_semibold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="13sp"
                 android:textAllCaps="false"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="8dp"/>
@@ -176,14 +176,14 @@
                 android:layout_height="40dp"
                 android:text="📅 Data"
                 android:fontFamily="@font/poppins_semibold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="13sp"
                 android:textAllCaps="false"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="8dp"/>
@@ -196,14 +196,14 @@
                 android:layout_height="40dp"
                 android:text="📊 Ordenar"
                 android:fontFamily="@font/poppins_semibold"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="13sp"
                 android:textAllCaps="false"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:strokeColor="#9C5827"
+                app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"/>
 
@@ -219,7 +219,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="12dp"
-        android:background="#EFEFEF"
+        android:background="@color/divider_light"
         app:layout_constraintTop_toBottomOf="@id/filtrosScroll"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -286,7 +286,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Nenhum pedido encontrado"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/empty_state"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_semibold"
             android:textAlignment="center"
@@ -297,7 +297,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Tente ajustar os filtros ou busca"
-            android:textColor="#BDBDBD"
+            android:textColor="@color/icon_gray"
             android:textSize="14sp"
             android:fontFamily="@font/poppins_regular"
             android:textAlignment="center"
