@@ -69,6 +69,7 @@ Raiz do Projeto
 │
 ├── README.md
 └── local.properties
+```
 📁 backend/ → Código responsável pela integração com o Supabase (API, autenticação e banco de dados).
 📁 frontend/ → Layouts XML, Activities e interface do usuário.
 📁 documentos/ → Relatórios e materiais de entrega do projeto.
