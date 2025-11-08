@@ -4,16 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="#F5F5F5">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:cardMaxElevation="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <!-- Informações do Produto (PRIMEIRO) -->
         <LinearLayout
@@ -28,7 +32,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+                app:cardElevation="2dp">
 
                 <ImageView
                     android:id="@+id/imagemProduto"
@@ -52,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Iced Mocha"
-                    android:textColor="#9C5827"
+                    android:textColor="@color/brown"
                     android:textSize="13sp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"/>
@@ -62,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Small • 8oz"
-                    android:textColor="#000000"
+                    android:textColor="@color/status_default"
                     android:textSize="10sp"
                     android:fontFamily="@font/poppins_light"
                     android:letterSpacing="-0.01"
@@ -73,7 +77,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="R$ 170,00"
-                    android:textColor="#000000"
+                    android:textColor="@color/text_dark"
                     android:textSize="10sp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"
@@ -84,12 +88,13 @@
             <!-- Botão Remover -->
             <ImageButton
                 android:id="@+id/btnRemover"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_delete"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Remover item"
-                app:tint="#BDBDBD"/>
+                app:tint="@color/icon_gray"
+                android:padding="4dp"/>
 
         </LinearLayout>
 
@@ -97,7 +102,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#339C5827"
+            android:background="@color/divider_gray"
             android:layout_marginBottom="12dp"/>
 
         <!-- Container inferior: Controles e Preço -->
@@ -115,40 +120,40 @@
                 android:gravity="center_vertical"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
 
                 <ImageButton
                     android:id="@+id/btnDiminuir"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_remove"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_remove_circle"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Diminuir quantidade"
-                    app:tint="#9C5827"
+                    app:tint="@color/brown"
                     android:scaleType="centerInside"
                     android:padding="2dp"/>
 
                 <TextView
                     android:id="@+id/txtQuantidade"
-                    android:layout_width="30dp"
+                    android:layout_width="32dp"
                     android:layout_height="wrap_content"
                     android:text="1"
                     android:textAlignment="center"
-                    android:textColor="#2ABEA8"
-                    android:textSize="13sp"
+                    android:textColor="@color/accent_teal"
+                    android:textSize="14sp"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"/>
 
                 <ImageButton
                     android:id="@+id/btnAumentar"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_add"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_add_circle"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Aumentar quantidade"
-                    app:tint="#9C5827"
+                    app:tint="@color/brown"
                     android:scaleType="centerInside"
                     android:padding="2dp"/>
 
@@ -165,9 +170,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="R$ 170,00"
-                android:textColor="#235135"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_semibold"/>
+                android:textColor="@color/dark_green"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"/>
 
         </LinearLayout>
 

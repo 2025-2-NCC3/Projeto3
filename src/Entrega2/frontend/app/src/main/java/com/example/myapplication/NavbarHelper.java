@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class NavbarHelper {
@@ -17,21 +18,41 @@ public class NavbarHelper {
             return;
         }
 
-        Button btnNavCardapio = navbar.findViewById(R.id.btnNavCardapio);
-        Button btnNavHistorico = navbar.findViewById(R.id.btnNavHistorico);
-        Button btnNavCarrinho = navbar.findViewById(R.id.btnNavCarrinho);
-        Button btnNavPerfil = navbar.findViewById(R.id.btnNavPerfil);
+        // Buscar os FrameLayouts
+        FrameLayout navCardapio = navbar.findViewById(R.id.navCardapio);
+        FrameLayout navHistorico = navbar.findViewById(R.id.navHistorico);
+        FrameLayout navCarrinho = navbar.findViewById(R.id.navCarrinho);
+        FrameLayout navPerfil = navbar.findViewById(R.id.navPerfil);
 
-        if (btnNavCardapio == null || btnNavHistorico == null ||
-                btnNavCarrinho == null || btnNavPerfil == null) {
-            Log.e(TAG, "Botões da navbar não encontrados!");
+        // Buscar os indicadores
+        View indicatorCardapio = navbar.findViewById(R.id.indicatorCardapio);
+        View indicatorHistorico = navbar.findViewById(R.id.indicatorHistorico);
+        View indicatorCarrinho = navbar.findViewById(R.id.indicatorCarrinho);
+        View indicatorPerfil = navbar.findViewById(R.id.indicatorPerfil);
+
+        // Buscar os ícones
+        ImageView iconCardapio = navbar.findViewById(R.id.iconCardapio);
+        ImageView iconHistorico = navbar.findViewById(R.id.iconHistorico);
+        ImageView iconCarrinho = navbar.findViewById(R.id.iconCarrinho);
+        ImageView iconPerfil = navbar.findViewById(R.id.iconPerfil);
+
+        if (navCardapio == null || navHistorico == null ||
+                navCarrinho == null || navPerfil == null) {
+            Log.e(TAG, "Elementos da navbar não encontrados!");
             return;
         }
 
-        resetButtons(btnNavCardapio, btnNavHistorico, btnNavCarrinho, btnNavPerfil);
-        highlightCurrentButton(currentScreen, btnNavCardapio, btnNavHistorico, btnNavCarrinho, btnNavPerfil);
+        // Resetar todos os indicadores e ícones
+        resetNavbar(indicatorCardapio, indicatorHistorico, indicatorCarrinho, indicatorPerfil,
+                iconCardapio, iconHistorico, iconCarrinho, iconPerfil);
 
-        btnNavCardapio.setOnClickListener(v -> {
+        // Destacar o item atual
+        highlightCurrentScreen(currentScreen,
+                indicatorCardapio, indicatorHistorico, indicatorCarrinho, indicatorPerfil,
+                iconCardapio, iconHistorico, iconCarrinho, iconPerfil);
+
+        // Configurar cliques
+        navCardapio.setOnClickListener(v -> {
             if (!currentScreen.equals("cardapio")) {
                 Intent intent = new Intent(activity, CardapioAlunosActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -39,13 +60,15 @@ public class NavbarHelper {
             }
         });
 
-        btnNavHistorico.setOnClickListener(v -> {
+        navHistorico.setOnClickListener(v -> {
             if (!currentScreen.equals("historico")) {
-                Toast.makeText(activity, "Tela de Histórico em desenvolvimento", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(activity, MeusPedidosActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                activity.startActivity(intent);
             }
         });
 
-        btnNavCarrinho.setOnClickListener(v -> {
+        navCarrinho.setOnClickListener(v -> {
             if (!currentScreen.equals("carrinho")) {
                 Intent intent = new Intent(activity, CarrinhoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -53,7 +76,7 @@ public class NavbarHelper {
             }
         });
 
-        btnNavPerfil.setOnClickListener(v -> {
+        navPerfil.setOnClickListener(v -> {
             if (!currentScreen.equals("perfil")) {
                 Intent intent = new Intent(activity, PerfilActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -62,26 +85,44 @@ public class NavbarHelper {
         });
     }
 
-    private static void resetButtons(Button... buttons) {
-        for (Button btn : buttons) {
-            if (btn != null) btn.setAlpha(0.6f);
+    private static void resetNavbar(View... views) {
+        for (View view : views) {
+            if (view != null) {
+                if (view.getId() == R.id.indicatorCardapio ||
+                        view.getId() == R.id.indicatorHistorico ||
+                        view.getId() == R.id.indicatorCarrinho ||
+                        view.getId() == R.id.indicatorPerfil) {
+                    // Esconder indicadores
+                    view.setVisibility(View.GONE);
+                } else {
+                    // Diminuir opacidade dos ícones
+                    view.setAlpha(0.5f);
+                }
+            }
         }
     }
 
-    private static void highlightCurrentButton(String currentScreen, Button btnCardapio,
-                                               Button btnHistorico, Button btnCarrinho, Button btnPerfil) {
+    private static void highlightCurrentScreen(String currentScreen,
+                                               View indicatorCardapio, View indicatorHistorico,
+                                               View indicatorCarrinho, View indicatorPerfil,
+                                               ImageView iconCardapio, ImageView iconHistorico,
+                                               ImageView iconCarrinho, ImageView iconPerfil) {
         switch (currentScreen) {
             case "cardapio":
-                if (btnCardapio != null) btnCardapio.setAlpha(1.0f);
+                if (indicatorCardapio != null) indicatorCardapio.setVisibility(View.VISIBLE);
+                if (iconCardapio != null) iconCardapio.setAlpha(1.0f);
                 break;
             case "historico":
-                if (btnHistorico != null) btnHistorico.setAlpha(1.0f);
+                if (indicatorHistorico != null) indicatorHistorico.setVisibility(View.VISIBLE);
+                if (iconHistorico != null) iconHistorico.setAlpha(1.0f);
                 break;
             case "carrinho":
-                if (btnCarrinho != null) btnCarrinho.setAlpha(1.0f);
+                if (indicatorCarrinho != null) indicatorCarrinho.setVisibility(View.VISIBLE);
+                if (iconCarrinho != null) iconCarrinho.setAlpha(1.0f);
                 break;
             case "perfil":
-                if (btnPerfil != null) btnPerfil.setAlpha(1.0f);
+                if (indicatorPerfil != null) indicatorPerfil.setVisibility(View.VISIBLE);
+                if (iconPerfil != null) iconPerfil.setAlpha(1.0f);
                 break;
         }
     }

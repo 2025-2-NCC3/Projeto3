@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".DetalhesPedidoActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título -->
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Detalhes do Pedido"
-                android:textColor="#F5F5DB"
+                android:textColor="@color/text_beige"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"/>
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="#ORD-0021"
-                android:textColor="#F5F5DB"
+                android:textColor="@color/text_beige"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"/>
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Nº do Pedido"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -127,7 +127,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="#ORD-0021"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_semibold"/>
 
@@ -145,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Data e Hora"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -154,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="23/10/2025 - 14:20"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -172,7 +172,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Status"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -181,7 +181,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="PENDENTE"
-                        android:textColor="#C97B5A"
+                        android:textColor="@color/status_badge"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_semibold"/>
 
@@ -199,7 +199,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Cliente"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -208,7 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Jane Doe"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -221,7 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Itens do Pedido"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_medium"
                 android:letterSpacing="-0.01"
@@ -233,9 +233,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#F5F5F5"
-                app:strokeWidth="0dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/background_light"
+                app:strokeColor="@color/divider_gray"
+                app:strokeWidth="1dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_itens_pedido"
@@ -253,7 +254,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#A8C3A0">
+                app:cardBackgroundColor="@color/light_green">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -266,7 +267,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="MÉTODOS DE PAGAMENTO"
-                        android:textColor="#F5F5DB"
+                        android:textColor="@color/text_beige"
                         android:textSize="11sp"
                         android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="-0.01"/>
@@ -276,7 +277,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="PIX"
-                        android:textColor="#F5F5DB"
+                        android:textColor="@color/text_beige"
                         android:textSize="13sp"
                         android:fontFamily="@font/poppins_bold"
                         android:layout_marginTop="4dp"/>
@@ -285,7 +286,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="STATUS DE PAGAMENTO"
-                        android:textColor="#F5F5DB"
+                        android:textColor="@color/text_beige"
                         android:textSize="11sp"
                         android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="-0.01"
@@ -296,7 +297,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="PAGO"
-                        android:textColor="#3D7A4C"
+                        android:textColor="@color/button_green"
                         android:textSize="13sp"
                         android:fontFamily="@font/poppins_bold"
                         android:layout_marginTop="4dp"/>
@@ -324,7 +325,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Desconto"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -333,7 +334,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="-R$ 0,00"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -351,7 +352,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Total"
-                        android:textColor="#6E6B65"
+                        android:textColor="@color/text_medium"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_medium"/>
 
@@ -360,7 +361,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="R$ 320,00"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"/>
 
@@ -382,11 +383,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:text="CANCELAR PEDIDO"
-                    android:textColor="#8B4A3D"
+                    android:textColor="@color/cancel_red"
                     android:textSize="11sp"
                     android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="-0.01"
-                    app:strokeColor="#8B4A3D"
+                    app:strokeColor="@color/cancel_red"
                     app:strokeWidth="2dp"
                     app:cornerRadius="10dp"/>
 

@@ -4,93 +4,108 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingVertical="8dp">
+    android:orientation="vertical">
 
-    <!-- Imagem do Produto -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp">
-
-        <ImageView
-            android:id="@+id/imagemProduto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:contentDescription="Imagem do produto"/>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Detalhes do Produto -->
+    <!-- Conteúdo do Item -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="12dp">
 
-        <TextView
-            android:id="@+id/txtNomeProduto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Iced Mocha"
-            android:textColor="#9C5827"
-            android:textSize="13sp"
-            android:fontFamily="@font/poppins_bold"
-            android:letterSpacing="-0.01"/>
+        <!-- Imagem do Produto -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp">
 
-        <TextView
-            android:id="@+id/txtPrecoUnitario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="R$ 170,00"
-            android:textColor="#000000"
-            android:textSize="10sp"
-            android:fontFamily="@font/poppins_bold"
-            android:letterSpacing="-0.01"
-            android:layout_marginTop="2dp"/>
+            <ImageView
+                android:id="@+id/imagemProduto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagem do produto"/>
 
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Detalhes do Produto -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
 
             <TextView
+                android:id="@+id/txtNomeProduto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Subtotal: "
-                android:textColor="#666666"
-                android:textSize="10sp"
-                android:fontFamily="@font/poppins_regular"/>
+                android:text="Iced Mocha"
+                android:textColor="@color/brown"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"
+                android:maxLines="2"
+                android:ellipsize="end"/>
 
-            <TextView
-                android:id="@+id/txtSubtotalItem"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="R$ 170,00"
-                android:textColor="#235135"
-                android:textSize="10sp"
-                android:fontFamily="@font/poppins_bold"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/txtQuantidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2x"
+                    android:textColor="@color/accent_teal"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textColor="@color/icon_gray"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/txtPrecoUnitario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R$ 8,50"
+                    android:textColor="@color/status_default"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_medium"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <!-- Subtotal -->
+        <TextView
+            android:id="@+id/txtSubtotalItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 17,00"
+            android:textColor="@color/dark_green"
+            android:textSize="15sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            android:layout_marginStart="12dp"/>
+
     </LinearLayout>
 
-    <!-- Quantidade -->
-    <TextView
-        android:id="@+id/txtQuantidade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/poppins_bold"
-        android:letterSpacing="-0.01"
-        android:text="1 x"
-        android:textColor="#235135"
-        android:textSize="13sp" />
+    <!-- Divider -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_gray"
+        android:layout_marginStart="68dp"/>
 
 </LinearLayout>

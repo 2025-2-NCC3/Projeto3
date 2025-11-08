@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".AdminCardapioActivity">
 
     <!-- Header com Imagem e Overlay -->
@@ -49,7 +49,7 @@
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Voltar"
-            app:tint="#F5F5DB"
+            app:tint="@color/text_beige"
             android:padding="12dp"/>
 
         <!-- Título -->
@@ -61,7 +61,7 @@
             android:layout_marginBottom="17dp"
             android:layout_gravity="bottom|start"
             android:text="Adicionar Produto"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="24sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"/>
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Informações Básicas"
-                android:textColor="#9C5827"
+                android:textColor="@color/brown"
                 android:textSize="16sp"
                 android:fontFamily="@font/poppins_semibold"
                 android:letterSpacing="-0.01"
@@ -104,15 +104,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:text="SELECIONAR IMAGEM"
-                android:textColor="#F5F5DB"
+                android:textColor="@color/text_beige"
                 android:textSize="11sp"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"
                 app:icon="@drawable/ic_image"
                 app:iconGravity="textStart"
-                app:iconTint="#F5F5DB"
+                app:iconTint="@color/text_beige"
                 app:iconSize="18dp"
-                app:backgroundTint="#3D7A4C"
+                app:backgroundTint="@color/button_green"
                 app:cornerRadius="10dp"
                 app:elevation="4dp"
                 android:layout_marginBottom="16dp"/>
@@ -127,7 +127,7 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="4dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#E0E0E0">
+                app:strokeColor="@color/divider_gray">
 
                 <ImageView
                     android:id="@+id/imagemPreview"
@@ -143,7 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nome do Produto"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="2dp"/>
@@ -155,8 +155,8 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#A5A5A5"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeColor="@color/gray"
+                app:cardBackgroundColor="@color/white">
 
                 <EditText
                     android:id="@+id/EditTextNomeProduto"
@@ -165,8 +165,8 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:hint="Ex: Hamburger artesanal"
-                    android:textColorHint="#A0AFAFAF"
-                    android:textColor="#000000"
+                    android:textColorHint="@color/icon_gray"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_regular"
                     android:background="@android:color/transparent"
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Descrição"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="2dp"/>
@@ -194,8 +194,8 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#A5A5A5"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeColor="@color/gray"
+                app:cardBackgroundColor="@color/white">
 
                 <EditText
                     android:id="@+id/EditTextDetalhesProduto"
@@ -206,8 +206,8 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:hint="Descreva o Produto"
-                    android:textColorHint="#A0AFAFAF"
-                    android:textColor="#000000"
+                    android:textColorHint="@color/icon_gray"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_regular"
                     android:background="@android:color/transparent"
@@ -224,7 +224,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nome da Imagem"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="2dp"/>
@@ -236,8 +236,8 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#A5A5A5"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeColor="@color/gray"
+                app:cardBackgroundColor="@color/white">
 
                 <EditText
                     android:id="@+id/EditTextImagemProduto"
@@ -246,8 +246,8 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:hint="Ex: pizza_margherita"
-                    android:textColorHint="#A0AFAFAF"
-                    android:textColor="#000000"
+                    android:textColorHint="@color/icon_gray"
+                    android:textColor="@color/black"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_regular"
                     android:background="@android:color/transparent"
@@ -276,7 +276,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Preço (R$)"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"
                         android:layout_marginBottom="2dp"/>
@@ -287,8 +287,8 @@
                         app:cardCornerRadius="10dp"
                         app:cardElevation="0dp"
                         app:strokeWidth="1dp"
-                        app:strokeColor="#A5A5A5"
-                        app:cardBackgroundColor="#FFFFFF">
+                        app:strokeColor="@color/gray"
+                        app:cardBackgroundColor="@color/white">
 
                         <EditText
                             android:id="@+id/EditTextValorProduto"
@@ -297,8 +297,8 @@
                             android:paddingStart="10dp"
                             android:paddingEnd="10dp"
                             android:hint="0,00"
-                            android:textColorHint="#A0AFAFAF"
-                            android:textColor="#000000"
+                            android:textColorHint="@color/icon_gray"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             android:fontFamily="@font/poppins_regular"
                             android:background="@android:color/transparent"
@@ -322,7 +322,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Estoque Disponível"
-                        android:textColor="#000000"
+                        android:textColor="@color/black"
                         android:textSize="14sp"
                         android:fontFamily="@font/poppins_regular"
                         android:layout_marginBottom="2dp"/>
@@ -333,8 +333,8 @@
                         app:cardCornerRadius="10dp"
                         app:cardElevation="0dp"
                         app:strokeWidth="1dp"
-                        app:strokeColor="#A5A5A5"
-                        app:cardBackgroundColor="#FFFFFF">
+                        app:strokeColor="@color/gray"
+                        app:cardBackgroundColor="@color/white">
 
                         <EditText
                             android:id="@+id/EditTextEstoque"
@@ -343,8 +343,8 @@
                             android:paddingStart="10dp"
                             android:paddingEnd="10dp"
                             android:hint="0"
-                            android:textColorHint="#A0AFAFAF"
-                            android:textColor="#000000"
+                            android:textColorHint="@color/icon_gray"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             android:fontFamily="@font/poppins_regular"
                             android:background="@android:color/transparent"
@@ -363,7 +363,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Categoria"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="2dp"/>
@@ -375,8 +375,8 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#A5A5A5"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeColor="@color/gray"
+                app:cardBackgroundColor="@color/white">
 
                 <Spinner
                     android:id="@+id/SpinnerCategoria"
@@ -415,11 +415,11 @@
             android:layout_weight="1"
             android:layout_marginEnd="6dp"
             android:text="CANCELAR"
-            android:textColor="#8B4A3D"
+            android:textColor="@color/cancel_red"
             android:textSize="11sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
-            app:strokeColor="#8B4A3D"
+            app:strokeColor="@color/cancel_red"
             app:strokeWidth="2dp"
             app:cornerRadius="10dp"/>
 
@@ -431,15 +431,15 @@
             android:layout_weight="1.5"
             android:layout_marginStart="6dp"
             android:text="SALVAR PRODUTO"
-            android:textColor="#F5F5DB"
+            android:textColor="@color/text_beige"
             android:textSize="11sp"
             android:fontFamily="@font/poppins_bold"
             android:letterSpacing="-0.01"
             app:icon="@drawable/ic_save"
             app:iconGravity="textStart"
-            app:iconTint="#F5F5DB"
+            app:iconTint="@color/text_beige"
             app:iconSize="15dp"
-            app:backgroundTint="#235135"
+            app:backgroundTint="@color/dark_green"
             app:cornerRadius="10dp"
             app:elevation="4dp"/>
 

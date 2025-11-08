@@ -23,11 +23,11 @@ import java.util.List;
 public class CardapioAlunosActivity extends AppCompatActivity {
     private static final String TAG = "CardapioAlunosActivity";
 
-    private ImageButton botaoVoltar;
+    private ImageButton botaoVoltar, btnLimparBusca;
     private EditText searchInput;
     private MaterialButton btnTodos, btnLanches, btnBebidas, btnDoces, btnMarmitas;
-    private Button btnCarrinho, btnMeusPedidos;
     private RecyclerView recyclerViewProdutos;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
 
     private SupabaseClient supabaseClient;
     private List<Produto> produtos;
@@ -60,6 +60,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Configurar RecyclerView
             configurarRecyclerView();
 
+            // Configurar SwipeRefresh
+            configurarSwipeRefresh(); // ADICIONAR AQUI
+
             // Configurar listeners
             configurarBotoes();
             configurarBusca();
@@ -67,12 +70,8 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             // Carregar produtos do banco de dados
             carregarProdutosDoSupabase();
 
-        // Carregar produtos do banco de dados
-        carregarProdutosDoSupabase();
-        // Carregar a navbar ebaa
-        NavbarHelper.setupNavbar(this, "cardapio");
-            // Atualizar badge do carrinho
-            atualizarBadgeCarrinho();
+            // Carregar a navbar
+            NavbarHelper.setupNavbar(this, "cardapio");
 
         } catch (Exception e) {
             Log.e(TAG, "Erro no onCreate: " + e.getMessage(), e);
@@ -80,7 +79,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             finish();
         }
     }
-
     private void inicializarComponentes() {
         botaoVoltar = findViewById(R.id.botaoVoltar);
         searchInput = findViewById(R.id.searchInput);
@@ -89,9 +87,9 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         btnBebidas = findViewById(R.id.btnBebidas);
         btnDoces = findViewById(R.id.btnDoces);
         btnMarmitas = findViewById(R.id.btnMarmitas);
-        btnCarrinho = findViewById(R.id.btnCarrinho);
-        btnMeusPedidos = findViewById(R.id.btnMeusPedidos);
+        btnLimparBusca = findViewById(R.id.btnLimparBusca);
         recyclerViewProdutos = findViewById(R.id.recyclerViewProdutos);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     }
 
     private void configurarRecyclerView() {
@@ -129,36 +127,23 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         }
     }
 
-    private void adicionarAoCarrinho(Produto produto) {
+    private void configurarSwipeRefresh() {
         try {
-            if (produto == null) {
-                Toast.makeText(this, "❌ Produto inválido", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            // Configurar cores do SwipeRefresh
+            swipeRefreshLayout.setColorSchemeResources(
+                    R.color.dark_green,
+                    R.color.brown,
+                    R.color.dark_green
+            );
 
-            if (produto.getEstoque() > 0) {
-                // Verificar se já tem no limite do estoque
-                int quantidadeNoCarrinho = carrinhoHelper.getQuantidadeProduto(produto.getId());
-                if (quantidadeNoCarrinho >= produto.getEstoque()) {
-                    Toast.makeText(this,
-                            "❌ Estoque máximo atingido (" + produto.getEstoque() + " un.)",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            // Configurar listener
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                Log.d(TAG, "SwipeRefresh - Recarregando produtos");
+                carregarProdutosDoSupabase();
+            });
 
-                carrinhoHelper.adicionarItem(produto);
-
-                int novaQuantidade = carrinhoHelper.getQuantidadeProduto(produto.getId());
-                Toast.makeText(this,
-                        "✅ " + produto.getNome() + " adicionado (" + novaQuantidade + ")",
-                        Toast.LENGTH_SHORT).show();
-                atualizarBadgeCarrinho();
-            } else {
-                Toast.makeText(this, "❌ Produto indisponível", Toast.LENGTH_SHORT).show();
-            }
         } catch (Exception e) {
-            Log.e(TAG, "Erro ao adicionar ao carrinho: " + e.getMessage(), e);
-            Toast.makeText(this, "Erro ao adicionar produto", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Erro ao configurar SwipeRefresh: " + e.getMessage(), e);
         }
     }
 
@@ -179,27 +164,6 @@ public class CardapioAlunosActivity extends AppCompatActivity {
             }
         });
 
-        // Botão Carrinho
-        btnCarrinho.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(CardapioAlunosActivity.this, CarrinhoActivity.class);
-                startActivity(intent);
-            } catch (Exception e) {
-                Log.e(TAG, "Erro ao abrir carrinho: " + e.getMessage(), e);
-                Toast.makeText(this, "Erro ao abrir carrinho", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Botão Meus Pedidos
-        btnMeusPedidos.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(CardapioAlunosActivity.this, MeusPedidosActivity.class);
-                startActivity(intent);
-            } catch (Exception e) {
-                Log.e(TAG, "Erro ao abrir pedidos: " + e.getMessage(), e);
-                Toast.makeText(this, "Erro ao abrir pedidos", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // Botão Todos
         btnTodos.setOnClickListener(v -> {
@@ -262,6 +226,13 @@ public class CardapioAlunosActivity extends AppCompatActivity {
                     try {
                         buscaAtual = s.toString();
                         aplicarFiltros();
+
+                        // Mostrar/ocultar botão de limpar busca
+                        if (btnLimparBusca != null) {
+                            btnLimparBusca.setVisibility(
+                                    buscaAtual.isEmpty() ? View.GONE : View.VISIBLE
+                            );
+                        }
                     } catch (Exception e) {
                         Log.e(TAG, "Erro ao buscar: " + e.getMessage(), e);
                     }
@@ -270,6 +241,20 @@ public class CardapioAlunosActivity extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {}
             });
+
+            // Configurar clique no botão de limpar
+            if (btnLimparBusca != null) {
+                btnLimparBusca.setOnClickListener(v -> {
+                    try {
+                        searchInput.setText("");
+                        searchInput.clearFocus();
+                        // O TextWatcher já vai aplicar os filtros e ocultar o botão
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao limpar busca: " + e.getMessage(), e);
+                    }
+                });
+            }
+
         } catch (Exception e) {
             Log.e(TAG, "Erro ao configurar busca: " + e.getMessage(), e);
         }
@@ -322,24 +307,8 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         }
     }
 
-    private void atualizarBadgeCarrinho() {
-        try {
-            int quantidadeItens = carrinhoHelper.getQuantidadeTotal();
-
-            if (quantidadeItens > 0) {
-                btnCarrinho.setText("🛒 " + quantidadeItens);
-            } else {
-                btnCarrinho.setText("🛒");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Erro ao atualizar badge: " + e.getMessage(), e);
-            btnCarrinho.setText("🛒");
-        }
-    }
 
     private void carregarProdutosDoSupabase() {
-
-
         supabaseClient.getAllProducts(new SupabaseClient.SupabaseCallback<List<Produto>>() {
             @Override
             public void onSuccess(List<Produto> produtosDoBank) {
@@ -352,11 +321,20 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
                         aplicarFiltros();
 
+                        // Parar o refresh
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
 
                     } catch (Exception e) {
                         Log.e(TAG, "Erro ao processar produtos: " + e.getMessage(), e);
                         Toast.makeText(CardapioAlunosActivity.this,
                                 "Erro ao carregar produtos", Toast.LENGTH_SHORT).show();
+
+                        // Parar o refresh em caso de erro
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                     }
                 });
             }
@@ -368,6 +346,11 @@ public class CardapioAlunosActivity extends AppCompatActivity {
                     Toast.makeText(CardapioAlunosActivity.this,
                             "Erro ao carregar cardápio: " + error,
                             Toast.LENGTH_LONG).show();
+
+                    // Parar o refresh em caso de erro
+                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
                 });
             }
         });
@@ -420,7 +403,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "onResume - Recarregando cardápio");
             carregarProdutosDoSupabase();
-            atualizarBadgeCarrinho(); // Atualizar badge ao voltar
+
         } catch (Exception e) {
             Log.e(TAG, "Erro no onResume: " + e.getMessage(), e);
         }
