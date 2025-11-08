@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ============================================ -->
-    <!-- CORES BASE -->
-    <!-- ============================================ -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<<<<<<< HEAD
     <color name="gray">#7C7C7C</color>
 
     <!-- ============================================ -->
@@ -90,4 +88,9 @@
     <color name="overlay_dark">#80000000</color>
     <color name="overlay_light">#40FFFFFF</color>
     <color name="ripple_effect">#20000000</color>
+=======
+    <color name="verdefecap">#235135</color>
+    <color name="beige">#ece3da</color>
+    <color name="bright_green">#1FE423</color>
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 </resources>

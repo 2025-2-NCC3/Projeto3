@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -35,26 +34,6 @@
         </activity>
         <activity android:name=".AdminCardapioActivity">
         </activity>
-        <activity android:name=".PerfilActivity">
-        </activity>
-         <activity android:name=".AdminHomeActivity"/>
-        <activity android:name=".CarrinhoActivity"/>
-        <activity android:name=".DetalhesPedidoActivity"/>
-        <activity android:name=".CriarPedidoActivity"/>
-        <activity android:name=".MeusPedidosActivity"/>
-        <activity android:name=".AdminEditarProdutoActivity"/>
-        <activity android:name=".AdminListaProdutosActivity"/>
-        <activity android:name=".AdminPedidosActivity">
-        </activity>
-        <activity android:name=".AdminPedidoDetalhesActivity">
-        </activity>
-        <activity
-            android:name=".PagamentoPixActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-
-
-
     </application>
 
 </manifest>

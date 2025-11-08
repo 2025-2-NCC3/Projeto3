@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="8dp">
+
+    <!-- Imagem do Produto -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/imagemProduto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="Imagem do produto"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Detalhes do Produto -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp">
+
+        <TextView
+            android:id="@+id/txtNomeProduto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Iced Mocha"
+            android:textColor="#9C5827"
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"/>
+
+        <TextView
+            android:id="@+id/txtPrecoUnitario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 170,00"
+            android:textColor="#000000"
+            android:textSize="10sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            android:layout_marginTop="2dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subtotal: "
+                android:textColor="#666666"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_regular"/>
+
+            <TextView
+                android:id="@+id/txtSubtotalItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 170,00"
+                android:textColor="#235135"
+                android:textSize="10sp"
+                android:fontFamily="@font/poppins_bold"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Quantidade -->
+    <TextView
+        android:id="@+id/txtQuantidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/poppins_bold"
+        android:letterSpacing="-0.01"
+        android:text="1 x"
+        android:textColor="#235135"
+        android:textSize="13sp" />
+
+</LinearLayout>

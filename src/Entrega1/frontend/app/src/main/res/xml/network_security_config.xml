@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false">
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">supabase.co</domain>
+        <domain includeSubdomains="true">vhmvsbhbjugfbhluhetx.supabase.co</domain>
+    </domain-config>
+
+    <!-- Para desenvolvimento - REMOVER EM PRODUÇÃO -->
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
-            <certificates src="system" />
-            <certificates src="user" />
+            <certificates src="system"/>
         </trust-anchors>
     </base-config>
-
-    <!-- Para desenvolvimento, você pode adicionar um domínio específico -->
-    <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">supabase.co</domain>
-        <trust-anchors>
-            <certificates src="system" />
-        </trust-anchors>
-    </domain-config>
 </network-security-config>

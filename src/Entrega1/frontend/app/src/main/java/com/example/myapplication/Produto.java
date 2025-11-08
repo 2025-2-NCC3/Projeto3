@@ -1,9 +1,8 @@
 package com.example.myapplication;
-
 import java.io.Serializable;
 
 public class Produto implements Serializable {
-    private String id;
+    private int id;
     private String nome;
     private String descricao;
     private String caminhoImagem;
@@ -11,13 +10,19 @@ public class Produto implements Serializable {
     private int estoque;
     private int categoria;
 
+<<<<<<< HEAD
     @com.google.gson.annotations.SerializedName("ativo")
     private boolean ativo = true; // NOVO CAMPO
 
     // Construtor vazio - IMPORTANTE
+=======
+    // Construtor vazio - IMPORTANTE PARA RESOLVER O ERRO
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     public Produto() {
+        // Construtor vazio para criar produto e depois setar os valores
     }
 
+<<<<<<< HEAD
     // Construtor completo (ordem: id, nome, preco, descricao, caminhoImagem, estoque, categoria)
     public Produto(String id, String nome, double preco, String descricao, String caminhoImagem, int estoque, int categoria) {
         this.id = id;
@@ -44,6 +49,10 @@ public class Produto implements Serializable {
 
     // Construtor antigo para compatibilidade
     public Produto(String id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria) {
+=======
+    // Construtor completo (sem imagemId)
+    public Produto(int id, String nome, String descricao, String caminhoImagem, double preco, int estoque, int categoria){
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -66,16 +75,12 @@ public class Produto implements Serializable {
     }
 
     // Getters e Setters
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public void setId(int id) {
-        this.id = String.valueOf(id);
+        this.id = id;
     }
 
     public String getNome() {
@@ -90,18 +95,24 @@ public class Produto implements Serializable {
         return descricao;
     }
 
+<<<<<<< HEAD
     public String getDetalhes() {
         return descricao;
     }
 
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
+<<<<<<< HEAD
     public void setDetalhes(String detalhes) {
         this.descricao = detalhes;
     }
 
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     public String getCaminhoImagem() {
         return caminhoImagem;
     }
@@ -163,6 +174,7 @@ public class Produto implements Serializable {
                 ", ativo=" + ativo +
                 '}';
     }
+<<<<<<< HEAD
 
     public int getIdPrimitivo() {
         if (id != null && !id.isEmpty()) {
@@ -174,4 +186,6 @@ public class Produto implements Serializable {
         }
         return 0;
     }
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 }

@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".AdminCardapioActivity">
+
+    <!-- Header com Imagem e Overlay -->
+    <FrameLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="151dp"
+        android:background="@drawable/rounded_bottom_shape"
+        android:clipChildren="true"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Fundo verde -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_green"/>
+
+        <!-- Logo transparente -->
+        <ImageView
+            android:id="@+id/headerImage"
+            android:layout_width="228dp"
+            android:layout_height="247dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:alpha="0.2"
+            android:contentDescription="Header"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_tia" />
+
+        <!-- Botão Voltar -->
+        <ImageButton
+            android:id="@+id/btnVoltar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Voltar"
+            app:tint="#F5F5DB"
+            android:padding="12dp"/>
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="17dp"
+            android:layout_gravity="bottom|start"
+            android:text="Adicionar Produto"
+            android:textColor="#F5F5DB"
+            android:textSize="24sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"/>
+
+    </FrameLayout>
+
+    <!-- ScrollView com todo o conteúdo -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintBottom_toTopOf="@id/botoesContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="16dp">
+
+            <!-- Título da Seção -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Informações Básicas"
+                android:textColor="#9C5827"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_semibold"
+                android:letterSpacing="-0.01"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Botão Selecionar Imagem -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSelecionarImagem"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="SELECIONAR IMAGEM"
+                android:textColor="#F5F5DB"
+                android:textSize="11sp"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="-0.01"
+                app:icon="@drawable/ic_image"
+                app:iconGravity="textStart"
+                app:iconTint="#F5F5DB"
+                app:iconSize="18dp"
+                app:backgroundTint="#3D7A4C"
+                app:cornerRadius="10dp"
+                app:elevation="4dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Preview da Imagem (inicialmente invisível) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardImagemPreview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0">
+
+                <ImageView
+                    android:id="@+id/imagemPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Preview da imagem"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Nome do Produto -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do Produto"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="2dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#A5A5A5"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <EditText
+                    android:id="@+id/EditTextNomeProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:hint="Ex: Hamburger artesanal"
+                    android:textColorHint="#A0AFAFAF"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:background="@android:color/transparent"
+                    android:inputType="textCapWords"
+                    android:maxLength="100"
+                    android:maxLines="1"
+                    android:importantForAutofill="no"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Descrição -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descrição"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="2dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#A5A5A5"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <EditText
+                    android:id="@+id/EditTextDetalhesProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:hint="Descreva o Produto"
+                    android:textColorHint="#A0AFAFAF"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:background="@android:color/transparent"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLines="3"
+                    android:maxLength="500"
+                    android:importantForAutofill="no"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Nome do Arquivo de Imagem -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome da Imagem"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="2dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#A5A5A5"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <EditText
+                    android:id="@+id/EditTextImagemProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:hint="Ex: pizza_margherita"
+                    android:textColorHint="#A0AFAFAF"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:background="@android:color/transparent"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:importantForAutofill="no"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Linha: Preço e Categoria -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <!-- Preço -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço (R$)"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:layout_marginBottom="2dp"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#A5A5A5"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <EditText
+                            android:id="@+id/EditTextValorProduto"
+                            android:layout_width="match_parent"
+                            android:layout_height="37dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:hint="0,00"
+                            android:textColorHint="#A0AFAFAF"
+                            android:textColor="#000000"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@android:color/transparent"
+                            android:inputType="numberDecimal"
+                            android:maxLines="1"
+                            android:importantForAutofill="no"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <!-- Estoque -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estoque Disponível"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:layout_marginBottom="2dp"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#A5A5A5"
+                        app:cardBackgroundColor="#FFFFFF">
+
+                        <EditText
+                            android:id="@+id/EditTextEstoque"
+                            android:layout_width="match_parent"
+                            android:layout_height="37dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:hint="0"
+                            android:textColorHint="#A0AFAFAF"
+                            android:textColor="#000000"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@android:color/transparent"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:importantForAutofill="no"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Categoria -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Categoria"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="2dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#A5A5A5"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <Spinner
+                    android:id="@+id/SpinnerCategoria"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:background="@android:color/transparent"
+                    android:spinnerMode="dropdown"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Botões Fixos no Rodapé -->
+    <LinearLayout
+        android:id="@+id/botoesContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Botão Cancelar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelar"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:text="CANCELAR"
+            android:textColor="#8B4A3D"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:strokeColor="#8B4A3D"
+            app:strokeWidth="2dp"
+            app:cornerRadius="10dp"/>
+
+        <!-- Botão Salvar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSalvarProduto"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1.5"
+            android:layout_marginStart="6dp"
+            android:text="SALVAR PRODUTO"
+            android:textColor="#F5F5DB"
+            android:textSize="11sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"
+            app:icon="@drawable/ic_save"
+            app:iconGravity="textStart"
+            app:iconTint="#F5F5DB"
+            app:iconSize="15dp"
+            app:backgroundTint="#235135"
+            app:cornerRadius="10dp"
+            app:elevation="4dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

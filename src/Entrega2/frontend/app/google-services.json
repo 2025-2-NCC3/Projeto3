@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933623824701",
+    "project_id": "comedoria-da-tia-d089d",
+    "storage_bucket": "comedoria-da-tia-d089d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933623824701:android:084df4d4b81df2b7e94554",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp9lMdOkbb1KQVa6XBB51fNAZfzKRr810"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

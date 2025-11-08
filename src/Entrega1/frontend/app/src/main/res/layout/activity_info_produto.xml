@@ -1,30 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     android:background="@color/white"
     tools:context=".InfoProdutoActivity">
+=======
+    android:padding="24dp"
+    tools:context=".MainActivity"
+    >
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
-    <!-- Imagem do Produto com Gradiente -->
-    <FrameLayout
-        android:id="@+id/imagemContainer"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:background="@drawable/rounded_bottom_shape"
-        android:clipChildren="true"
-        android:clipToOutline="true">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideEsquerda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05"
+        />
+
+    <Button
+        android:id="@+id/botaoVoltar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voltar"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo"
+        />
+
+    <LinearLayout
+        android:id="@+id/boxProduto"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@+id/botaoVoltar"
+        >
 
         <ImageView
             android:id="@+id/imagemProduto"
+            android:layout_height="300dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/coxinha_exemplo"
-            android:contentDescription="Imagem do produto"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="Foto do delicioso produto"
+            tools:srcCompat="@drawable/coxinha_exemplo"
+            />
 
+<<<<<<< HEAD
         <!-- Gradiente sobre a imagem -->
         <View
             android:layout_width="match_parent"
@@ -54,24 +98,44 @@
         android:fillViewport="true">
 
         <LinearLayout
+=======
+        <ScrollView
+            android:id="@+id/scrollInfo"
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+            app:layout_constraintEnd_toStartOf="@id/guideDireita"
+            app:layout_constraintTop_toBottomOf="@+id/imagemProduto"
+            >
 
-            <!-- Card Principal -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
+                android:id="@+id/boxInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+<<<<<<< HEAD
                 app:cardCornerRadius="20dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="@color/white">
+=======
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+                app:layout_constraintEnd_toStartOf="@id/guideDireita"
+                app:layout_constraintTop_toTopOf="@+id/botaoVoltar"
+                >
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/nomeProduto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
+                    android:text="Nome do Produto"
+                    android:textSize="36dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/boxInfo"
+                    />
 
+<<<<<<< HEAD
                     <!-- Nome do Produto -->
                     <TextView
                         android:id="@+id/nomeProduto"
@@ -281,7 +345,42 @@
             app:backgroundTint="@color/dark_green"
             app:cornerRadius="16dp"
             app:elevation="4dp"/>
+=======
+                <TextView
+                    android:id="@+id/precoProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="R$0,00"
+                    android:textSize="30dp"
+                    android:textColor="@color/bright_green"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nomeProduto"
+                    />
 
+                <TextView
+                    android:id="@+id/descricaoProduto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descrição do produto"
+                    android:textSize="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/precoProduto"
+                    />
+
+            </LinearLayout>
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
+
+        </ScrollView>
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <Button
+        android:id="@+id/botaoComprar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#0B9100"
+        android:text="Comprar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
