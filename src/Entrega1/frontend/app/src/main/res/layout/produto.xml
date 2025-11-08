@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/boxProduto"
-    android:layout_width="153dp"
-    android:layout_height="143dp"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="12dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/boxProduto"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+android:layout_marginTop="10dp"
+android:orientation="horizontal"
+>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<ImageView
+    android:id="@+id/imagemProduto"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:contentDescription="Foto do produto"
+    android:src="@drawable/coxinha_exemplo"
+    />
 
-        <!-- Imagem do Produto -->
-        <ImageView
-            android:id="@+id/imagemProduto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/coxinha_exemplo"
-            android:contentDescription="Imagem do produto" />
+<LinearLayout
+    android:id="@+id/infoProduto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
 
-        <!-- Gradiente sobre a imagem -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/product_gradient" />
+    <TextView
+        android:id="@+id/tituloProduto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:text="exemploNome"
+        android:textSize="28sp"
+        />
 
+<<<<<<< HEAD
         <!-- Informações do Produto -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,3 +95,16 @@
     </FrameLayout>
 
 </androidx.cardview.widget.CardView>
+=======
+    <TextView
+        android:id="@+id/precoProduto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:text="exemplo"
+        android:textSize="28sp"
+        />
+</LinearLayout>
+</LinearLayout>
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)

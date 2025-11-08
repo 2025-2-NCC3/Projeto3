@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".AdminHomeActivity">
+
+    <!-- Header com Imagem e Overlay -->
+    <FrameLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="225dp"
+        android:background="@drawable/rounded_bottom_shape"
+        android:clipChildren="true"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Fundo verde -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_green"/>
+
+        <!-- Logo transparente -->
+        <ImageView
+            android:id="@+id/headerImage"
+            android:layout_width="228dp"
+            android:layout_height="247dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:alpha="0.2"
+            android:contentDescription="Header"
+            android:scaleType="centerInside"
+            android:src="@drawable/logo_tia" />
+
+        <!-- Botão Logout -->
+        <ImageButton
+            android:id="@+id/btnLogout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Voltar"
+            app:tint="#F5F5DB"
+            android:padding="12dp"/>
+
+        <!-- Título "Bem-vinda, Tia!" -->
+        <TextView
+            android:id="@+id/tituloPagina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="100dp"
+            android:text="Bem-vinda, Tia!"
+            android:textColor="#F5F5DB"
+            android:textSize="24sp"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="-0.01"/>
+
+        <!-- Barra de Pesquisa dentro do Header -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="155dp"
+            android:layout_gravity="top"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#F5F5F5"
+            app:strokeColor="#9C5827"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:minHeight="39dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_search"
+                    android:contentDescription="Buscar"/>
+
+                <EditText
+                    android:id="@+id/searchInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Search"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColorHint="#BDBDBD"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:importantForAutofill="no"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+    <!-- Título Painel de Controle -->
+    <TextView
+        android:id="@+id/txtPainelControle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:text="Painel de Controle"
+        android:textColor="#9C5827"
+        android:textSize="16sp"
+        android:fontFamily="@font/poppins_semibold"
+        android:letterSpacing="-0.01"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- ScrollView com Grid de Cards -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/txtPainelControle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:paddingBottom="24dp">
+
+            <!-- Linha 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Card 1: Gerenciar Pedidos -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardGerenciarPedidos"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_pedidos"
+                            android:contentDescription="Gerenciar Pedidos"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Gerenciar\nPedidos"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="2"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 2: Editar Cardápio -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEditarCardapio"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:src="@drawable/ic_edit"
+                            android:contentDescription="Editar Cardápio"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Editar\nCardápio"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="2"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Linha 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Card 3: Estoque -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardEstoque"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_estoque"
+                            android:contentDescription="Estoque"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Estoque"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="2"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 4: Relatórios -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRelatorios"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_relatorios"
+                            android:contentDescription="Relatórios"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Relatórios"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="1"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Linha 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <!-- Card 5: Gerenciar Usuários -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardGerenciarUsuarios"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_users"
+                            android:contentDescription="Gerenciar Usuários"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Gerenciar\nUsuários"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="2"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 6: Ver Cardápio -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardVerCardapio"
+                    android:layout_width="0dp"
+                    android:layout_height="143dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="#235135">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center|bottom"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_cardapio"
+                            android:contentDescription="Ver Cardápio"
+                            app:tint="#F5F5DB"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Ver\nCardápio"
+                            android:textAlignment="center"
+                            android:textColor="#F5F5DB"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="-0.01"
+                            android:maxLines="2"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

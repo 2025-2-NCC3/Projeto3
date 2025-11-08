@@ -3,44 +3,51 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     android:background="@color/white"
+=======
+    android:padding="24dp"
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     tools:context=".CardapioAlunosActivity">
 
-    <!-- Header com Imagem e Overlay -->
-    <FrameLayout
-        android:id="@+id/headerContainer"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideEsquerda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="10dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideDireita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="10dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTopo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <!-- Cabeçalho com botões -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
         android:layout_width="0dp"
-        android:layout_height="225dp"
-        android:background="@drawable/rounded_bottom_shape"
-        android:clipChildren="true"
-        android:clipToOutline="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@+id/guideTopo">
 
-        <!-- Fundo verde -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/dark_green"/>
-
-        <ImageView
-            android:id="@+id/headerImage"
-            android:layout_width="228dp"
-            android:layout_height="247dp"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="-20dp"
-            android:alpha="0.2"
-            android:contentDescription="Header do cardápio"
-            android:scaleType="centerInside"
-            android:src="@drawable/logo_tia" />
-
-        <!-- Botão Voltar -->
-        <ImageButton
+        <Button
             android:id="@+id/botaoVoltar"
+<<<<<<< HEAD
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
@@ -53,13 +60,14 @@
 
         <!-- Container dos botões do topo direito -->
         <LinearLayout
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
+            android:text="Voltar"
+            android:layout_marginEnd="16dp" />
 
+<<<<<<< HEAD
             <!-- Botão Meus Pedidos -->
             <Button
                 android:id="@+id/btnMeusPedidos"
@@ -92,10 +100,23 @@
         </LinearLayout>
 
         <!-- Título "Cardápio" -->
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
         <TextView
             android:id="@+id/tituloPagina"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cardápio"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/botaoAdmin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+<<<<<<< HEAD
             android:layout_marginStart="28dp"
             android:layout_marginTop="100dp"
             android:text="Cardápio"
@@ -165,33 +186,37 @@
     </FrameLayout>
 
     <!-- Filtros de Categoria -->
+=======
+            android:text="Admin"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+    <!-- Filtros por categoria -->
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     <HorizontalScrollView
-        android:id="@+id/categoriasScroll"
+        android:id="@+id/filtrosLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:scrollbars="none"
-        android:clipToPadding="false"
-        android:fillViewport="false"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
         <LinearLayout
-            android:id="@+id/categoriasContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp">
+            android:padding="8dp">
 
-            <!-- Botão Todos -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/btnTodos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="36dp"
                 android:text="Todos"
+<<<<<<< HEAD
                 android:fontFamily="@font/poppins_bold"
                 android:textColor="@color/white"
                 android:textSize="14sp"
@@ -231,11 +256,19 @@
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.button.MaterialButton
+=======
+                android:textSize="12sp"
+                android:onClick="mostrarTudo"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
                 android:id="@+id/btnBebidas"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="36dp"
                 android:text="Bebidas"
+<<<<<<< HEAD
                 android:fontFamily="@font/poppins_bold"
                 android:textColor="@color/brown"
                 android:textSize="14sp"
@@ -251,11 +284,17 @@
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="10dp"/>
+=======
+                android:textSize="12sp"
+                android:onClick="mostrarBebidas"
+                android:layout_marginEnd="8dp" />
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDoces"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <Button
+                android:id="@+id/btnPratos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
+<<<<<<< HEAD
                 android:layout_height="40dp"
                 android:text="Doces"
                 android:fontFamily="@font/poppins_bold"
@@ -273,11 +312,19 @@
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"
                 android:layout_marginEnd="10dp"/>
+=======
+                android:layout_height="36dp"
+                android:text="Pratos"
+                android:textSize="12sp"
+                android:onClick="mostrarPratosPrincipais"
+                android:layout_marginEnd="8dp" />
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMarmitas"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <Button
+                android:id="@+id/btnSobremesas"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
+<<<<<<< HEAD
                 android:layout_height="40dp"
                 android:text="Marmitas"
                 android:fontFamily="@font/poppins_bold"
@@ -294,11 +341,37 @@
                 app:strokeColor="@color/brown"
                 app:strokeWidth="1.5dp"
                 app:cornerRadius="10dp"/>
+=======
+                android:layout_height="36dp"
+                android:text="Sobremesas"
+                android:textSize="12sp"
+                android:onClick="mostrarSobremesas"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnEntradas"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Entradas"
+                android:textSize="12sp"
+                android:onClick="mostrarEntradas"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnLanches"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Lanches"
+                android:textSize="12sp"
+                android:onClick="mostrarLanches" />
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
         </LinearLayout>
-
     </HorizontalScrollView>
 
+<<<<<<< HEAD
     <!-- Divider -->
     <View
         android:id="@+id/divider"
@@ -337,15 +410,25 @@
             tools:listitem="@layout/produto"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+=======
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/filtrosLayout"
+        app:layout_constraintStart_toEndOf="@id/guideEsquerda"
+        app:layout_constraintEnd_toStartOf="@id/guideDireita"
+        app:layout_constraintBottom_toBottomOf="parent">
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 
-    <!-- Navbar fixada na parte inferior -->
-    <include
-        android:id="@+id/includeNavbar"
-        layout="@layout/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <LinearLayout
+            android:id="@+id/boxLista"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

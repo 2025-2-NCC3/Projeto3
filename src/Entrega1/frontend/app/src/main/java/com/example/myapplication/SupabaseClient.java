@@ -10,11 +10,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -37,23 +34,24 @@ public class SupabaseClient {
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
     private static SupabaseClient instance;
-    final OkHttpClient client;
+    private final OkHttpClient client;
     private final Gson gson;
     private final String supabaseUrl;
     private final String supabaseKey;
     private final boolean isConfigured;
-    private final Context context;
-    private String userAccessToken = null;
 
     private SupabaseClient(Context context) {
-        this.context = context.getApplicationContext();
+        // Configurar OkHttpClient com configurações SSL mais permissivas para desenvolvimento
         client = createDevelopmentClient();
         gson = new Gson();
 
-        supabaseUrl = SupabaseConfig.SUPABASE_URL;
-        supabaseKey = SupabaseConfig.SUPABASE_ANON_KEY;
+        // Obtém as configurações do BuildConfig
+        supabaseUrl = BuildConfig.SUPABASE_URL;
+        supabaseKey = BuildConfig.SUPABASE_ANON_KEY;
 
-        isConfigured = supabaseUrl != null && !supabaseUrl.isEmpty() && !supabaseKey.isEmpty();
+        // Verifica se as configurações estão válidas
+        isConfigured = supabaseUrl != null && !supabaseUrl.isEmpty() &&
+                supabaseKey != null && !supabaseKey.isEmpty();
 
         if (isConfigured) {
             Log.d(TAG, "SupabaseClient configurado com sucesso");
@@ -63,40 +61,31 @@ public class SupabaseClient {
         }
     }
 
-    private String getAuthToken() {
-        SessionManager sessionManager = SessionManager.getInstance(context);
-        String token = sessionManager.getAccessToken();
-
-        if (token != null && !token.isEmpty()) {
-            Log.d(TAG, "✓ Usando token do usuário autenticado");
-            return token;
-        }
-
-        Log.w(TAG, "⚠ Nenhum token disponível - usando ANON_KEY");
-        return supabaseKey;
-    }
-
     private OkHttpClient createDevelopmentClient() {
         try {
+            // Criar um trust manager que aceita todos os certificados (APENAS PARA DESENVOLVIMENTO)
             final TrustManager[] trustAllCerts = new TrustManager[] {
                     new X509TrustManager() {
                         @Override
-                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
                         }
 
                         @Override
-                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
                         }
 
                         @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[]{};
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
                         }
                     }
             };
 
+            // Instalar o all-trusting trust manager
             final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new SecureRandom());
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Criar um ssl socket factory com nosso all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -108,7 +97,7 @@ public class SupabaseClient {
                     .hostnameVerifier(new HostnameVerifier() {
                         @Override
                         public boolean verify(String hostname, SSLSession session) {
-                            return true;
+                            return true; // Aceitar todos os hostnames em desenvolvimento
                         }
                     });
 
@@ -117,6 +106,7 @@ public class SupabaseClient {
 
         } catch (Exception e) {
             Log.e(TAG, "Erro ao configurar SSL client, usando configuração padrão", e);
+            // Fallback para configuração padrão
             return new OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
@@ -137,8 +127,6 @@ public class SupabaseClient {
         return isConfigured;
     }
 
-    // ===== MÉTODOS DE AUTENTICAÇÃO =====
-
     public Call signUp(String email, String password, SupabaseCallback<AuthResponse> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -158,6 +146,8 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        Log.d(TAG, "URL da requisição: " + request.url());
+
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -174,10 +164,13 @@ public class SupabaseClient {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
 
                 String responseBody = response.body() != null ? response.body().string() : "";
                 Log.d(TAG, "Resposta signup - Código: " + response.code());
+                Log.d(TAG, "Resposta signup - Body: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -206,6 +199,7 @@ public class SupabaseClient {
                             }
                         }
 
+                        // Traduzir mensagens comuns do Supabase
                         if (errorMessage.contains("already registered")) {
                             errorMessage = "Este email já está registrado";
                         } else if (errorMessage.contains("invalid email")) {
@@ -244,34 +238,36 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        Log.d(TAG, "URL da requisição: " + request.url());
+
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
                     Log.e(TAG, "Erro na requisição de signin", e);
-                    callback.onError("Erro de conexão: " + e.getMessage());
+                    String errorMessage = "Erro de conexão: " + e.getMessage();
+                    if (e.getMessage() != null && e.getMessage().contains("Trust anchor")) {
+                        errorMessage = "Erro de certificado SSL. Verifique sua conexão de internet.";
+                    }
+                    callback.onError(errorMessage);
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
 
                 String responseBody = response.body() != null ? response.body().string() : "";
                 Log.d(TAG, "Resposta signin - Código: " + response.code());
+                Log.d(TAG, "Resposta signin - Body: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
                         AuthResponse authResponse = gson.fromJson(responseBody, AuthResponse.class);
                         if (authResponse != null && authResponse.user != null) {
-                            SessionManager sessionManager = SessionManager.getInstance(context);
-                            sessionManager.saveAccessToken(
-                                    authResponse.accessToken,
-                                    authResponse.expiresIn
-                            );
-
-                            Log.d(TAG, "✓ Token salvo no SessionManager");
                             callback.onSuccess(authResponse);
                         } else {
                             callback.onError("Resposta inválida do servidor");
@@ -304,335 +300,9 @@ public class SupabaseClient {
         return call;
     }
 
-    public void setUserAccessToken(String token) {
-        this.userAccessToken = token;
-        Log.d(TAG, "Token de acesso do usuário definido");
-    }
+    // ===== MÉTODOS PARA PRODUTOS DO CARDÁPIO =====
 
-    public void clearUserAccessToken() {
-        this.userAccessToken = null;
-        Log.d(TAG, "Token de acesso do usuário limpo");
-    }
-
-    public String getUserAccessToken() {
-        return userAccessToken;
-    }
-
-    // ===== MÉTODOS PARA USUÁRIOS =====
-
-    public Call getUserByAuthId(String authUserId, SupabaseCallback<UserData> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users?auth_user_id=eq." + authUserId + "&select=*")
-                .get()
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Log.d(TAG, "Buscando usuário por auth_user_id: " + authUserId);
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                String responseBody = response.body() != null ? response.body().string() : "";
-
-                if (response.isSuccessful()) {
-                    try {
-                        Type listType = new TypeToken<List<UserData>>(){}.getType();
-                        List<UserData> users = gson.fromJson(responseBody, listType);
-
-                        if (users != null && !users.isEmpty()) {
-                            callback.onSuccess(users.get(0));
-                        } else {
-                            callback.onError("Perfil não encontrado");
-                        }
-                    } catch (Exception e) {
-                        callback.onError("Erro ao processar dados");
-                    }
-                } else {
-                    callback.onError("Erro ao buscar perfil");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    public Call createUserWithAuthId(String json, SupabaseCallback<UserData> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users")
-                .post(body)
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Prefer", "return=representation")
-                .build();
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                String responseBody = response.body() != null ? response.body().string() : "";
-
-                if (response.isSuccessful() || response.code() == 201) {
-                    try {
-                        Type listType = new TypeToken<List<UserData>>(){}.getType();
-                        List<UserData> users = gson.fromJson(responseBody, listType);
-
-                        if (users != null && !users.isEmpty()) {
-                            callback.onSuccess(users.get(0));
-                        } else {
-                            callback.onError("Erro ao criar perfil");
-                        }
-                    } catch (Exception e) {
-                        callback.onError("Erro ao processar resposta");
-                    }
-                } else {
-                    callback.onError("Erro ao criar perfil (Código: " + response.code() + ")");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    public Call getUserById(int userId, SupabaseCallback<UserData> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users?id=eq." + userId + "&select=*")
-                .get()
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                String responseBody = response.body() != null ? response.body().string() : "";
-
-                if (response.isSuccessful()) {
-                    try {
-                        Type listType = new TypeToken<List<UserData>>(){}.getType();
-                        List<UserData> users = gson.fromJson(responseBody, listType);
-
-                        if (users != null && !users.isEmpty()) {
-                            callback.onSuccess(users.get(0));
-                        } else {
-                            callback.onError("Usuário não encontrado");
-                        }
-                    } catch (Exception e) {
-                        callback.onError("Erro ao processar dados do usuário");
-                    }
-                } else {
-                    callback.onError("Erro ao buscar usuário (Código: " + response.code() + ")");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    public Call getUserByEmail(String email, SupabaseCallback<UserData> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users?email=eq." + email + "&select=*")
-                .get()
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                String responseBody = response.body() != null ? response.body().string() : "";
-
-                if (response.isSuccessful()) {
-                    try {
-                        Type listType = new TypeToken<List<UserData>>(){}.getType();
-                        List<UserData> users = gson.fromJson(responseBody, listType);
-
-                        if (users != null && !users.isEmpty()) {
-                            callback.onSuccess(users.get(0));
-                        } else {
-                            callback.onError("Usuário não encontrado");
-                        }
-                    } catch (Exception e) {
-                        callback.onError("Erro ao processar dados do usuário");
-                    }
-                } else {
-                    callback.onError("Erro ao buscar usuário (Código: " + response.code() + ")");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    public Call createUser(String nome, String email, String senha, SupabaseCallback<UserData> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        String json = String.format(
-                "{\"nome\":\"%s\",\"email\":\"%s\",\"senha\":\"%s\",\"role\":\"user\"}",
-                nome, email, senha
-        );
-
-        RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users")
-                .post(body)
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Prefer", "return=representation")
-                .build();
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                String responseBody = response.body() != null ? response.body().string() : "";
-
-                if (response.isSuccessful() || response.code() == 201) {
-                    try {
-                        Type listType = new TypeToken<List<UserData>>(){}.getType();
-                        List<UserData> users = gson.fromJson(responseBody, listType);
-
-                        if (users != null && !users.isEmpty()) {
-                            callback.onSuccess(users.get(0));
-                        } else {
-                            UserData userData = new UserData();
-                            userData.nome = nome;
-                            userData.email = email;
-                            userData.role = "user";
-                            callback.onSuccess(userData);
-                        }
-                    } catch (Exception e) {
-                        callback.onError("Erro ao processar resposta");
-                    }
-                } else {
-                    callback.onError("Erro ao criar usuário (Código: " + response.code() + ")");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    public Call updateUserRole(int userId, String newRole, SupabaseCallback<Boolean> callback) {
-        if (!isConfigured) {
-            callback.onError("SupabaseClient não está configurado");
-            return null;
-        }
-
-        String json = "{\"role\":\"" + newRole + "\"}";
-
-        RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder()
-                .url(supabaseUrl + "/rest/v1/users?id=eq." + userId)
-                .patch(body)
-                .addHeader("apikey", supabaseKey)
-                .addHeader("Authorization", "Bearer " + supabaseKey)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                if (!call.isCanceled()) {
-                    callback.onError("Erro de conexão: " + e.getMessage());
-                }
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
-
-                if (response.isSuccessful()) {
-                    callback.onSuccess(true);
-                } else {
-                    callback.onError("Erro ao atualizar role (Código: " + response.code() + ")");
-                }
-            }
-        });
-
-        return call;
-    }
-
-    // ===== MÉTODOS PARA PRODUTOS =====
-
+    // Buscar todos os produtos do cardápio
     public Call getAllProducts(SupabaseCallback<List<Produto>> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -647,20 +317,27 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        Log.d(TAG, "Buscando todos os produtos: " + request.url());
+
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produtos", e);
                     callback.onError("Erro de conexão: " + e.getMessage());
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produtos - Código: " + response.code());
+                Log.d(TAG, "Resposta buscar produtos - Body: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -668,6 +345,7 @@ public class SupabaseClient {
                         List<Produto> produtos = gson.fromJson(responseBody, listType);
                         callback.onSuccess(produtos);
                     } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar lista de produtos", e);
                         callback.onError("Erro ao processar dados dos produtos");
                     }
                 } else {
@@ -679,6 +357,7 @@ public class SupabaseClient {
         return call;
     }
 
+    // Buscar produtos por categoria
     public Call getProductsByCategory(int categoria, SupabaseCallback<List<Produto>> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -693,20 +372,26 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        Log.d(TAG, "Buscando produtos por categoria: " + request.url());
+
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produtos por categoria", e);
                     callback.onError("Erro de conexão: " + e.getMessage());
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar por categoria - Código: " + response.code());
 
                 if (response.isSuccessful()) {
                     try {
@@ -714,6 +399,7 @@ public class SupabaseClient {
                         List<Produto> produtos = gson.fromJson(responseBody, listType);
                         callback.onSuccess(produtos);
                     } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar produtos por categoria", e);
                         callback.onError("Erro ao processar dados dos produtos");
                     }
                 } else {
@@ -725,6 +411,7 @@ public class SupabaseClient {
         return call;
     }
 
+    // Buscar produto por ID
     public Call getProductById(int id, SupabaseCallback<Produto> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -739,20 +426,26 @@ public class SupabaseClient {
                 .addHeader("Content-Type", "application/json")
                 .build();
 
+        Log.d(TAG, "Buscando produto por ID: " + request.url());
+
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao buscar produto por ID", e);
                     callback.onError("Erro de conexão: " + e.getMessage());
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta buscar produto por ID - Código: " + response.code());
 
                 if (response.isSuccessful()) {
                     try {
@@ -765,6 +458,7 @@ public class SupabaseClient {
                             callback.onError("Produto não encontrado");
                         }
                     } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar produto", e);
                         callback.onError("Erro ao processar dados do produto");
                     }
                 } else {
@@ -776,6 +470,7 @@ public class SupabaseClient {
         return call;
     }
 
+<<<<<<< HEAD
     public Call createProduct(Produto produto, SupabaseCallback<Produto> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -988,6 +683,9 @@ public class SupabaseClient {
         return call;
     }
 
+=======
+    // Atualizar estoque de um produto (útil para pedidos)
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     public Call updateProductStock(int id, int novoEstoque, SupabaseCallback<Boolean> callback) {
         if (!isConfigured) {
             callback.onError("SupabaseClient não está configurado");
@@ -995,6 +693,7 @@ public class SupabaseClient {
         }
 
         String json = "{\"estoque\":" + novoEstoque + "}";
+        Log.d(TAG, "Atualizando estoque do produto ID " + id + ": " + json);
 
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
@@ -1010,13 +709,18 @@ public class SupabaseClient {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao atualizar estoque", e);
                     callback.onError("Erro de conexão: " + e.getMessage());
                 }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (call.isCanceled()) return;
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                Log.d(TAG, "Resposta atualizar estoque - Código: " + response.code());
 
                 if (response.isSuccessful()) {
                     callback.onSuccess(true);
@@ -1029,6 +733,7 @@ public class SupabaseClient {
         return call;
     }
 
+<<<<<<< HEAD
     // ===== MÉTODOS PARA UPLOAD DE IMAGENS =====
     public Call uploadProductImage(byte[] imageBytes, String fileName, String bucketName, SupabaseCallback<ImageUploadResponse> callback) {
         if (!isConfigured) {
@@ -1430,6 +1135,9 @@ public class SupabaseClient {
 
     // ===== CLASSES DE MODELO =====
 
+=======
+    // Classes de modelo para requisições
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
     private static class SignUpRequest {
         private final String email;
         private final String password;
@@ -1450,6 +1158,7 @@ public class SupabaseClient {
         }
     }
 
+    // Classes de modelo para respostas
     public static class AuthResponse {
         @SerializedName("access_token")
         public String accessToken;
@@ -1486,23 +1195,191 @@ public class SupabaseClient {
         public String error_description;
     }
 
-    public static class UserData {
-        @SerializedName("id")
-        public Integer id;
+    // Interface de callback
+    public interface SupabaseCallback<T> {
+        void onSuccess(T response);
+        void onError(String error);
+    }
+    // ADICIONE ESTES MÉTODOS AO SEU SupabaseClient.java
+// Coloque-os após os métodos existentes, antes das classes de modelo
 
-        @SerializedName("nome")
-        public String nome;
+// ===== MÉTODOS PARA UPLOAD DE IMAGENS =====
 
-        @SerializedName("email")
-        public String email;
+    // Upload de imagem para o Storage do Supabase
+    public Call uploadProductImage(byte[] imageBytes, String fileName, String bucketName, SupabaseCallback<ImageUploadResponse> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
 
-        @SerializedName("senha")
-        public String senha;
+        // Gerar nome único para a imagem
+        long timestamp = System.currentTimeMillis();
+        String extension = getFileExtension(fileName);
+        String uniqueFileName = "produto_" + timestamp + "." + extension;
 
-        @SerializedName("role")
-        public String role;
+        Log.d(TAG, "Fazendo upload da imagem: " + uniqueFileName + " para bucket: " + bucketName);
+
+        RequestBody body = RequestBody.create(imageBytes, MediaType.parse("image/*"));
+
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + uniqueFileName)
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "image/*")
+                .addHeader("x-upsert", "true")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro no upload da imagem", e);
+                    callback.onError("Erro ao fazer upload: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta upload - Código: " + response.code());
+                Log.d(TAG, "Resposta upload - Body: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    // Construir a URL pública da imagem
+                    String publicUrl = supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + uniqueFileName;
+
+                    ImageUploadResponse uploadResponse = new ImageUploadResponse();
+                    uploadResponse.fileName = uniqueFileName;
+                    uploadResponse.publicUrl = publicUrl;
+                    uploadResponse.bucketName = bucketName;
+
+                    callback.onSuccess(uploadResponse);
+                } else {
+                    try {
+                        ErrorResponse errorResponse = gson.fromJson(responseBody, ErrorResponse.class);
+                        String errorMessage = "Erro no upload da imagem";
+
+                        if (errorResponse != null && errorResponse.error != null) {
+                            errorMessage = errorResponse.error;
+                        }
+
+                        callback.onError(errorMessage + " (Código: " + response.code() + ")");
+                    } catch (Exception e) {
+                        callback.onError("Erro no upload da imagem (Código: " + response.code() + ")");
+                    }
+                }
+            }
+        });
+
+        return call;
     }
 
+    // Verificar se o bucket existe e criar se necessário
+    public Call createBucketIfNotExists(String bucketName, SupabaseCallback<Boolean> callback) {
+        if (!isConfigured) {
+            callback.onError("SupabaseClient não está configurado");
+            return null;
+        }
+
+        // Primeiro, tentar listar buckets para ver se já existe
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/bucket")
+                .get()
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao verificar buckets", e);
+                    callback.onError("Erro ao verificar buckets: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Buckets existentes: " + responseBody);
+
+                // Se o bucket já existe, retorna sucesso
+                if (responseBody.contains("\"name\":\"" + bucketName + "\"")) {
+                    Log.d(TAG, "Bucket " + bucketName + " já existe");
+                    callback.onSuccess(true);
+                    return;
+                }
+
+                // Se não existe, criar o bucket
+                createBucket(bucketName, callback);
+            }
+        });
+
+        return call;
+    }
+
+    private void createBucket(String bucketName, SupabaseCallback<Boolean> callback) {
+        String bucketConfig = "{\"name\":\"" + bucketName + "\",\"public\":true}";
+
+        RequestBody body = RequestBody.create(bucketConfig, JSON);
+        Request request = new Request.Builder()
+                .url(supabaseUrl + "/storage/v1/bucket")
+                .post(body)
+                .addHeader("apikey", supabaseKey)
+                .addHeader("Authorization", "Bearer " + supabaseKey)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (!call.isCanceled()) {
+                    Log.e(TAG, "Erro ao criar bucket", e);
+                    callback.onError("Erro ao criar bucket: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (call.isCanceled()) {
+                    return;
+                }
+
+                Log.d(TAG, "Resposta criar bucket - Código: " + response.code());
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Bucket " + bucketName + " criado com sucesso");
+                    callback.onSuccess(true);
+                } else {
+                    callback.onError("Erro ao criar bucket (Código: " + response.code() + ")");
+                }
+            }
+        });
+    }
+
+    // Método utilitário para obter extensão do arquivo
+    private String getFileExtension(String fileName) {
+        if (fileName != null && fileName.contains(".")) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        }
+        return "jpg"; // extensão padrão
+    }
+
+// ADICIONE ESTA CLASSE NO FINAL DO ARQUIVO, ANTES DO FECHAMENTO DA CLASSE SupabaseClient
+
+    // Classe para resposta do upload de imagem
     public static class ImageUploadResponse {
         public String fileName;
         public String publicUrl;
@@ -1517,6 +1394,7 @@ public class SupabaseClient {
                     '}';
         }
     }
+<<<<<<< HEAD
 
     public Call getActiveProducts(SupabaseCallback<List<Produto>> callback) {
         if (!isConfigured) {
@@ -1668,4 +1546,6 @@ public class SupabaseClient {
         void onSuccess(T response);
         void onError(String error);
     }
+=======
+>>>>>>> 1943653 ([ERIC] Feito ajustes nas pastas e realizado entregas de PI e POO)
 }
