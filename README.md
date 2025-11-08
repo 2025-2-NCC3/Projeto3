@@ -66,6 +66,8 @@ Para resolver esse problema, o projeto propõe o desenvolvimento de um **aplicat
 ┃ ┃ ┣ 📂 frontend
 ┣ 📄 README.md
 ┣ 📄 local.properties
+```
+
 🎯 3. Objetivos
 🎓 Objetivo Geral
 Desenvolver um aplicativo mobile que permita aos alunos da FECAP realizar pedidos e pagamentos antecipados na cantina Comedoria da Tia, aprimorando a experiência de consumo e a gestão interna.
