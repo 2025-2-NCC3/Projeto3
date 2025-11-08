@@ -70,21 +70,28 @@ Raiz do Projeto
 ├── README.md
 └── local.properties
 ```
-📁 backend/ → Código responsável pela integração com o Supabase (API, autenticação e banco de dados).
-📁 frontend/ → Layouts XML, Activities e interface do usuário.
-📁 documentos/ → Relatórios e materiais de entrega do projeto.
+📁 **backend/** → Código responsável pela integração com o Supabase (API, autenticação e banco de dados).  
+📁 **frontend/** → Layouts XML, Activities e interface do usuário.  
+📁 **documentos/** → Relatórios e materiais de entrega do projeto.
 
-🔧 Tecnologias Utilizadas
-Categoria	Tecnologia
-IDE	Android Studio
-Linguagem	Java
-Banco de Dados	Supabase (PostgreSQL + API REST)
-Controle de Versão	Git / GitHub
+---
 
-🚀 Como Executar o Projeto
-📱 Mobile (Android)
-bash
-Copiar código
+## 🔧 Tecnologias Utilizadas
+
+| Categoria | Tecnologia |
+|------------|-------------|
+| **IDE** | Android Studio |
+| **Linguagem** | Java |
+| **Banco de Dados** | Supabase (PostgreSQL + API REST) |
+| **Controle de Versão** | Git / GitHub |
+
+---
+
+## 🚀 Como Executar o Projeto
+
+### 📱 Mobile (Android)
+
+```bash
 # Clonar o repositório
 git clone https://github.com/2025-2-NCC3/Projeto3.git
 
@@ -96,15 +103,23 @@ File > Open > src/Entrega2/frontend
 
 # Rodar no emulador ou dispositivo físico
 Run ▶️
-O app será instalado e exibirá o cardápio atualizado diretamente do banco de dados Supabase.
+```
+O app será instalado e exibirá o cardápio atualizado diretamente do banco de dados **Supabase**.
 
-📌 Status Atual
-✅ Estrutura do projeto organizada
-✅ Banco Supabase conectado
-✅ Layout responsivo em Material Design 3
+---
+
+## 📌 Status Atual
+
+✅ Estrutura do projeto organizada  
+✅ Banco Supabase conectado  
+✅ Layout responsivo em Material Design 3  
 🚧 Implementação de novas telas e funcionalidades em andamento
 
-🎯 Objetivo Acadêmico
-Projeto desenvolvido para o curso de Ciência da Computação - FECAP
-Turma CCOMP3 — Grupo Yanketes
+---
+
+## 🎯 Objetivo Acadêmico
+
+Projeto desenvolvido para o curso de **Ciência da Computação - FECAP**  
+**Turma CCOMP3 — Grupo Yanketes**
+
 
