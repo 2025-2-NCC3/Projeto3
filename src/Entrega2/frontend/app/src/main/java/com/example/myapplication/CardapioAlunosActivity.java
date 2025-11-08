@@ -338,7 +338,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
     }
 
     private void carregarProdutosDoSupabase() {
-        Toast.makeText(this, "Carregando cardápio...", Toast.LENGTH_SHORT).show();
+
 
         supabaseClient.getAllProducts(new SupabaseClient.SupabaseCallback<List<Produto>>() {
             @Override
@@ -352,9 +352,7 @@ public class CardapioAlunosActivity extends AppCompatActivity {
 
                         aplicarFiltros();
 
-                        Toast.makeText(CardapioAlunosActivity.this,
-                                "Cardápio carregado: " + produtos.size() + " itens",
-                                Toast.LENGTH_SHORT).show();
+
                     } catch (Exception e) {
                         Log.e(TAG, "Erro ao processar produtos: " + e.getMessage(), e);
                         Toast.makeText(CardapioAlunosActivity.this,
