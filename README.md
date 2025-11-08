@@ -68,91 +68,89 @@ Para resolver esse problema, o projeto propõe o desenvolvimento de um **aplicat
 ┣ 📄 local.properties
 ```
 
-🎯 3. Objetivos
-🎓 Objetivo Geral
-Desenvolver um aplicativo mobile que permita aos alunos da FECAP realizar pedidos e pagamentos antecipados na cantina Comedoria da Tia, aprimorando a experiência de consumo e a gestão interna.
+# 🎯 3. Objetivos
 
-🎯 Objetivos Específicos
-Reduzir filas durante os intervalos;
+## 🎓 Objetivo Geral
+Desenvolver um aplicativo mobile que permita aos alunos da **FECAP** realizar pedidos e pagamentos antecipados na cantina **Comedoria da Tia**, aprimorando a experiência de consumo e a gestão interna.
 
-Permitir o gerenciamento dinâmico do cardápio;
+---
 
-Facilitar a visualização e retirada de pedidos;
+## 🎯 Objetivos Específicos
+- Reduzir filas durante os intervalos;
+- Permitir o gerenciamento dinâmico do cardápio;
+- Facilitar a visualização e retirada de pedidos;
+- Armazenar dados de usuários e pedidos de forma segura;
+- Proporcionar uma interface simples, intuitiva e agradável.
 
-Armazenar dados de usuários e pedidos de forma segura;
+---
 
-Proporcionar uma interface simples, intuitiva e agradável.
+# ⚙️ 4. Requisitos Funcionais
 
-⚙️ 4. Requisitos Funcionais
-👨‍🎓 Acesso do Aluno
-Cadastro e login de usuário;
+## 👨‍🎓 Acesso do Aluno
+- Cadastro e login de usuário;
+- Visualização do cardápio completo;
+- Realização de pedidos e seleção de itens;
+- Pagamento via aplicativo;
+- Histórico de pedidos realizados.
 
-Visualização do cardápio completo;
+## 👩‍🍳 Acesso da Cantina
+- Login administrativo;
+- Cadastro, edição e exclusão de produtos;
+- Visualização de pedidos em tempo real;
+- Marcação de pedidos como “entregues”.
 
-Realização de pedidos e seleção de itens;
+---
 
-Pagamento via aplicativo;
+# 🔒 5. Requisitos Não Funcionais
+- Compatibilidade com **Android (SDK 24+)**;
+- Banco de dados hospedado no **Supabase**;
+- Interface intuitiva, responsiva e agradável (**UI/UX**);
+- Arquitetura modular em **Java (Android Studio)**;
+- Comunicação segura com o banco de dados remoto (**REST API + HTTPS**).
 
-Histórico de pedidos realizados.
+---
 
-👩‍🍳 Acesso da Cantina
-Login administrativo;
+# 🧰 6. Tecnologias Utilizadas
 
-Cadastro, edição e exclusão de produtos;
+| Categoria | Ferramenta |
+|------------|-------------|
+| **Linguagem** | Java |
+| **IDE** | Android Studio |
+| **Banco de Dados** | Supabase (PostgreSQL + REST API) |
+| **Design** | Figma |
+| **Controle de Versão** | Git e GitHub |
 
-Visualização de pedidos em tempo real;
+---
 
-Marcação de pedidos como “entregues”.
+# 🧩 7. Possíveis Extensões Futuras
+- Notificações push para retirada pronta;
+- Sistema de pontos e fidelidade;
+- Dashboard web administrativo;
+- Favoritos e agendamento de pedidos;
+- Sugestões, avaliações e comentários de produtos.
 
-🔒 5. Requisitos Não Funcionais
-Compatibilidade com Android (SDK 24+);
+---
 
-Banco de dados hospedado no Supabase;
+# 💻 8. Instalação (Android)
+1. Baixe o arquivo **tia-cantina.apk**;
+2. Transfira para o seu celular;
+3. Execute o instalador e permita instalações externas, se necessário;
+4. Abra o app e faça login com sua conta de aluno.
 
-Interface intuitiva, responsiva e agradável (UI/UX);
+---
 
-Arquitetura modular em Java (Android Studio);
+# 🧪 9. Configuração para Desenvolvimento
 
-Comunicação segura com o banco de dados remoto (REST API + HTTPS).
+### Passos para rodar localmente:
 
-🧰 6. Tecnologias Utilizadas
-Categoria	Ferramenta
-Linguagem	Java
-IDE	Android Studio
-Banco de Dados	Supabase (PostgreSQL + REST API)
-Design	Figma
-Controle de Versão	Git e GitHub
-
-🧩 7. Possíveis Extensões Futuras
-Notificações push para retirada pronta;
-
-Sistema de pontos e fidelidade;
-
-Dashboard web administrativo;
-
-Favoritos e agendamento de pedidos;
-
-Sugestões, avaliações e comentários de produtos.
-
-💻 8. Instalação (Android)
-Baixe o arquivo tia-cantina.apk;
-
-Transfira para o seu celular;
-
-Execute o instalador e permita instalações externas, se necessário;
-
-Abra o app e faça login com sua conta de aluno.
-
-🧪 9. Configuração para Desenvolvimento
-Passos para rodar localmente:
-bash
-Copiar código
+```bash
 # Clonar o repositório
 git clone https://github.com/2025-2-NCC3/Projeto3.git
 
 # Abrir o projeto no Android Studio
 # Configurar o arquivo build.gradle com as credenciais do Supabase
-Requisitos:
+```
+# Requisitos:
 Android Studio (Koala 🐨 ou superior)
 
 Java 11+
@@ -161,14 +159,14 @@ Gradle 8+
 
 Emulador Android ou dispositivo físico
 
-📄 10. Licença
+# 📄 10. Licença
 Licenciado sob Creative Commons CC BY 4.0
 Você pode compartilhar e adaptar, desde que dê os devidos créditos aos autores originais.
 
 🔗 Saiba mais sobre a licença
 
 
-🏫 Instituição
+# 🏫 Instituição
 FECAP – Fundação de Comércio Álvares Penteado
 Curso: Ciência da Computação – 3º Semestre (Turma Yanketes)
 
