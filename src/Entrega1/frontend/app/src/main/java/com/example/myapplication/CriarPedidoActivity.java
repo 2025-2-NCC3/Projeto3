@@ -212,23 +212,30 @@ public class CriarPedidoActivity extends AppCompatActivity {
     private void mostrarDialogoSucesso(Pedido pedido) {
         if (isFinishing() || isDestroyed()) return;
 
-        String mensagem = "🎉 Pedido realizado com sucesso!\n\n" +
+        String mensagem = "🎉 Pedido criado com sucesso!\n\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n" +
                 "📝 Código: " + pedido.getCode() + "\n" +
-                "💰 Total: R$ " + String.format(Locale.getDefault(), "%.2f", pedido.getTotal()) + "\n" +
-                "📊 Status: " + pedido.getStatus() + "\n" +
+                "💰 Total: " + PedidoUtils.formatarPreco(pedido.getTotal()) + "\n" +
                 "━━━━━━━━━━━━━━━━━━━━\n\n" +
-                "Acompanhe em 'Meus Pedidos'.";
+                "Prossiga para o pagamento PIX.";
 
         currentDialog = new AlertDialog.Builder(this)
                 .setTitle("✅ Pedido Criado!")
                 .setMessage(mensagem)
-                .setPositiveButton("Ver Meus Pedidos", (dialog, which) -> {
+                .setPositiveButton("💳 Pagar com PIX", (dialog, which) -> {
+                    // Redirecionar para pagamento
+                    Intent intent = new Intent(this, PagamentoPixActivity.class);
+                    intent.putExtra("pedido_id", pedido.getId());
+                    intent.putExtra("valor", pedido.getTotal());
+                    intent.putExtra("access_token", accessToken);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Ver Depois", (dialog, which) -> {
                     Intent intent = new Intent(this, MeusPedidosActivity.class);
                     startActivity(intent);
                     finish();
                 })
-                .setNegativeButton("Voltar", (dialog, which) -> finish())
                 .setCancelable(false)
                 .create();
         currentDialog.show();

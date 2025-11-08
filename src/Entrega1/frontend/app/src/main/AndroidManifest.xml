@@ -48,6 +48,10 @@
         </activity>
         <activity android:name=".AdminPedidoDetalhesActivity">
         </activity>
+        <activity
+            android:name=".PagamentoPixActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
 
 
 

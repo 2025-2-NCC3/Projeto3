@@ -54,4 +54,7 @@ public class Pedido implements Serializable {
             total += item.getQuantity() * item.getPrice();
         }
     }
+    public void setTotal(double total) {
+        this.total = total;
+    }
 }

@@ -55,6 +55,9 @@ public class RegisterActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         togglePassword = findViewById(R.id.togglePassword);
         toggleConfirmPassword = findViewById(R.id.toggleConfirmPassword);
+
+        // ⭐ ADICIONAR ESTA LINHA - Inicializar o checkbox
+        checkboxTerms = findViewById(R.id.checkboxTerms);
     }
 
     private void setupListeners() {
@@ -200,34 +203,42 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean validateInputs(String nome, String email, String password, String confirmPassword) {
         if (nome.isEmpty()) {
             editTextNome.setError("Nome é obrigatório");
+            editTextNome.requestFocus();
             return false;
         }
 
         if (email.isEmpty()) {
             editTextEmail.setError("Email é obrigatório");
+            editTextEmail.requestFocus();
             return false;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             editTextEmail.setError("Email inválido");
+            editTextEmail.requestFocus();
             return false;
         }
 
         if (password.isEmpty()) {
             editTextPassword.setError("Senha é obrigatória");
+            editTextPassword.requestFocus();
             return false;
         }
 
         if (password.length() < 6) {
             editTextPassword.setError("Senha deve ter pelo menos 6 caracteres");
+            editTextPassword.requestFocus();
             return false;
         }
 
         if (!password.equals(confirmPassword)) {
             editTextConfirmPassword.setError("Senhas não coincidem");
+            editTextConfirmPassword.requestFocus();
             return false;
         }
-        if (!checkboxTerms.isChecked()) {
+
+        // ⭐ VERIFICAÇÃO MELHORADA - Só valida se o checkbox existir no layout
+        if (checkboxTerms != null && !checkboxTerms.isChecked()) {
             Toast.makeText(this, "Você deve aceitar os Termos de Uso para continuar", Toast.LENGTH_SHORT).show();
             return false;
         }

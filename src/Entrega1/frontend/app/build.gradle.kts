@@ -46,6 +46,8 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.zxing:core:3.5.1")
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("androidx.appcompat:appcompat:1.7.0")
     implementation ("com.google.android.material:material:1.12.0")
