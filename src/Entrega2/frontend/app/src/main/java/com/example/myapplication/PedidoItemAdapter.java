@@ -32,7 +32,9 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         PedidoItem item = itens.get(position);
-        holder.bind(item);
+
+        boolean isUltimoItem = (position == itens.size() - 1);
+        holder.bind(item, isUltimoItem);
     }
 
     @Override
@@ -56,6 +58,7 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
         private TextView txtPrecoUnitario;
         private TextView txtSubtotalItem;
         private TextView txtQuantidade;
+        private View divider;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,9 +67,10 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
             txtPrecoUnitario = itemView.findViewById(R.id.txtPrecoUnitario);
             txtSubtotalItem = itemView.findViewById(R.id.txtSubtotalItem);
             txtQuantidade = itemView.findViewById(R.id.txtQuantidade);
+            divider = itemView.findViewById(R.id.divider);
         }
 
-        public void bind(PedidoItem item) {
+        public void bind(PedidoItem item, boolean isUltimoItem) {
             // Nome do produto - com fallback
             String nomeProduto = item.getProductName();
             if (nomeProduto == null || nomeProduto.isEmpty()) {
@@ -86,6 +90,9 @@ public class PedidoItemAdapter extends RecyclerView.Adapter<PedidoItemAdapter.It
             // Subtotal (quantidade * preço)
             double subtotal = item.getSubtotal();
             txtSubtotalItem.setText(String.format(Locale.getDefault(), "R$ %.2f", subtotal));
+
+
+            divider.setVisibility(isUltimoItem ? View.GONE : View.VISIBLE);
 
             // Log para debug
             android.util.Log.d("OrderItemAdapter", "Binding item: " + nomeProduto +

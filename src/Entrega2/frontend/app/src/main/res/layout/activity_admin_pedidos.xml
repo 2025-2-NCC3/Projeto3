@@ -258,7 +258,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_pedido"/>
+            tools:listitem="@layout/item_pedido_admin"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

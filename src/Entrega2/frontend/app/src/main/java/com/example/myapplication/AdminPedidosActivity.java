@@ -414,6 +414,9 @@ public class AdminPedidosActivity extends AppCompatActivity {
                 // Proteger contra valores null
                 holder.tvCodigoPedido.setText(pedido.getCode() != null ? pedido.getCode() : "N/A");
 
+                holder.tvNomeAluno.setText(pedido.getStudentName() != null ?
+                        pedido.getStudentName() : "Aluno ID: " + pedido.getStudentId());
+
                 holder.tvDataPedido.setText(pedido.getCreatedAt() != null ?
                         PedidoUtils.formatarData(pedido.getCreatedAt()) : "Data não disponível");
 
@@ -450,12 +453,13 @@ public class AdminPedidosActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvCodigoPedido, tvDataPedido, tvValorTotal, tvStatus, tvStatusIcon;
+            TextView tvCodigoPedido, tvNomeAluno, tvDataPedido, tvValorTotal, tvStatus, tvStatusIcon;  // ✅ ADICIONE tvNomeAluno AQUI
             CardView cardStatus;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 tvCodigoPedido = itemView.findViewById(R.id.tvCodigoPedido);
+                tvNomeAluno = itemView.findViewById(R.id.tvNomeAluno);
                 tvDataPedido = itemView.findViewById(R.id.tvDataPedido);
                 tvValorTotal = itemView.findViewById(R.id.tvValorTotal);
                 tvStatus = itemView.findViewById(R.id.tvStatus);
