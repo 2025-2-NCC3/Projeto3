@@ -27,8 +27,12 @@ public class PixPagamentoManager {
     private Gson gson;
     private SessionManager sessionManager;
 
-    // ⚠️ IMPORTANTE: Substitua pela sua chave do Mercado Pago
-    private static final String MERCADO_PAGO_ACCESS_TOKEN = "APP_USR-8207515989216625-110619-1f94f06ac21a47d5e6beb38481f0e6bb-2043562450";
+
+    //Chave real
+
+     private static final String MERCADO_PAGO_ACCESS_TOKEN = "APP_USR-8207515989216625-110619-1f94f06ac21a47d5e6beb38481f0e6bb-2043562450";
+    //Chave Teste
+    // private static final String MERCADO_PAGO_ACCESS_TOKEN = "TEST-8207515989216625-110619-ae4fca109e7e92522ba0d1ec50976e2f-2043562450";
     private static final String MERCADO_PAGO_BASE_URL = "https://api.mercadopago.com/v1";
 
     private PixPagamentoManager(Context context) {
