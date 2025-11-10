@@ -42,19 +42,16 @@ public class SupabasePedidoManager {
         return instance;
     }
 
-    // ✅ ATUALIZADO: createOrder → createPedido
     public Call createPedido(PedidoRequest pedidoRequest, String accessToken, PedidoCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
-        // Criar Pedido a partir do PedidoRequest
         Pedido pedido = new Pedido();
         pedido.setStudentId(pedidoRequest.getStudentId());
         pedido.setStudentName(pedidoRequest.getStudentName());
 
-        // Adicionar itens ao pedido
         for (PedidoItemRequest itemRequest : pedidoRequest.getItems()) {
             Log.d(TAG, "========== ITEM REQUEST ==========");
             Log.d(TAG, "Produto ID: " + itemRequest.getProductId());
@@ -76,7 +73,6 @@ public class SupabasePedidoManager {
             pedido.addItem(item);
         }
 
-        // Converter para formato do Supabase
         PedidoSupabaseRequest supabaseRequest = new PedidoSupabaseRequest(pedido);
         String json = gson.toJson(supabaseRequest);
         Log.d(TAG, "Criando pedido: " + json);
@@ -200,15 +196,19 @@ public class SupabasePedidoManager {
         });
     }
 
-    // ✅ ATUALIZADO: getStudentOrders → getStudentPedidos
+
     public Call getStudentPedidos(String studentId, String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
+        // select=*,users(nome) faz o JOIN com a tabela users
+        String url = BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id_usuario=eq." + studentId +
+                "&select=*,users(nome)&order=id.desc";
+
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id_usuario=eq." + studentId + "&order=id.desc")
+                .url(url)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -228,6 +228,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta getStudentPedidos: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -255,7 +256,6 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // ✅ ATUALIZADO: updateOrderStatus → updatePedidoStatus
     public Call updatePedidoStatus(String pedidoId, String newStatus, String accessToken, PedidoCallback callback) {
         StatusUpdateRequest statusRequest = new StatusUpdateRequest(newStatus);
         String json = gson.toJson(statusRequest);
@@ -311,16 +311,13 @@ public class SupabasePedidoManager {
         Pedido pedido = new Pedido();
 
         try {
-            // Definir ID usando reflection
             java.lang.reflect.Field idField = Pedido.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(pedido, response.id);
 
-            // Definir createdAt usando reflection
             java.lang.reflect.Field createdAtField = Pedido.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);
 
-            // Converter string ISO 8601 para Date
             if (response.createdAt != null) {
                 try {
                     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
@@ -332,12 +329,10 @@ public class SupabasePedidoManager {
                 }
             }
 
-            // Definir code usando reflection
             java.lang.reflect.Field codeField = Pedido.class.getDeclaredField("code");
             codeField.setAccessible(true);
             codeField.set(pedido, response.code != null ? response.code : "PED" + response.id.substring(0, Math.min(6, response.id.length())));
 
-            // Definir total usando reflection
             java.lang.reflect.Field totalField = Pedido.class.getDeclaredField("total");
             totalField.setAccessible(true);
             totalField.set(pedido, response.totalAmount);
@@ -346,14 +341,18 @@ public class SupabasePedidoManager {
             Log.e(TAG, "Erro ao definir campos do pedido", e);
         }
 
-        // Campos públicos normais
         pedido.setStudentId(String.valueOf(response.idUsuario));
         pedido.setStatus(response.status);
+
+
+        if (response.users != null && response.users.nome != null) {
+            pedido.setStudentName(response.users.nome);
+        }
 
         return pedido;
     }
 
-    // Classes para requisições e respostas
+
     private static class PedidoSupabaseRequest {
         @SerializedName("id_usuario")
         public String idUsuario;
@@ -387,6 +386,11 @@ public class SupabasePedidoManager {
         }
     }
 
+
+    private static class UserData {
+        public String nome;
+    }
+
     private static class PedidoSupabaseResponse {
         public String id;
 
@@ -402,6 +406,8 @@ public class SupabasePedidoManager {
         public String createdAt;
 
         public String code;
+
+        public UserData users;
     }
 
     private static class StatusUpdateRequest {
@@ -412,7 +418,6 @@ public class SupabasePedidoManager {
         }
     }
 
-    // ✅ ATUALIZADO: Callbacks renomeados
     public interface PedidoCallback {
         void onSuccess(Pedido pedido);
         void onError(String error);
@@ -429,8 +434,10 @@ public class SupabasePedidoManager {
             return null;
         }
 
+        String url = BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId + "&select=*,users(nome)";
+
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?id=eq." + pedidoId)
+                .url(url)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -450,6 +457,9 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "========== GET PEDIDO BY ID ==========");
+                Log.d(TAG, "Código HTTP: " + response.code());
+                Log.d(TAG, "Response Body: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -457,7 +467,15 @@ public class SupabasePedidoManager {
                         List<PedidoSupabaseResponse> pedidosResponse = gson.fromJson(responseBody, listType);
 
                         if (pedidosResponse != null && !pedidosResponse.isEmpty()) {
-                            Pedido pedido = convertSupabaseResponseToPedido(pedidosResponse.get(0));
+                            PedidoSupabaseResponse resposta = pedidosResponse.get(0);
+                            Log.d(TAG, "ID Pedido: " + resposta.id);
+                            Log.d(TAG, "ID Usuario: " + resposta.idUsuario);
+                            Log.d(TAG, "Users object: " + (resposta.users != null ? "EXISTS" : "NULL"));
+                            if (resposta.users != null) {
+                                Log.d(TAG, "Nome do usuário: " + resposta.users.nome);
+                            }
+
+                            Pedido pedido = convertSupabaseResponseToPedido(resposta);
                             getPedidoItems(pedidoId, accessToken, pedido, callback);
                         } else {
                             callback.onError("Pedido não encontrado");
@@ -475,15 +493,16 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // ✅ ATUALIZADO: getAllOrders → getAllPedidos
     public Call getAllPedidos(String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
+        String url = BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?select=*,users(nome)&order=created_at.desc";
+
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?order=created_at.desc")
+                .url(url)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -503,6 +522,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta getAllPedidos: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -531,20 +551,21 @@ public class SupabasePedidoManager {
         return call;
     }
 
-    // ✅ ATUALIZADO: confirmOrderPickup → confirmPedidoPickup
     public Call confirmPedidoPickup(String pedidoId, String accessToken, PedidoCallback callback) {
         return updatePedidoStatus(pedidoId, "RETIRADO", accessToken, callback);
     }
 
-    // ✅ ATUALIZADO: getOrdersByStatus → getPedidosByStatus
     public Call getPedidosByStatus(String status, String accessToken, PedidosCallback callback) {
         if (!supabaseClient.isConfigured()) {
             callback.onError("SupabaseClient não está configurado");
             return null;
         }
 
+        String url = BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?status=eq." + status +
+                "&select=*,users(nome)&order=created_at.desc";
+
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/pedidos?status=eq." + status + "&order=created_at.desc")
+                .url(url)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -564,6 +585,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta getPedidosByStatus: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -591,9 +613,28 @@ public class SupabasePedidoManager {
         return call;
     }
 
+    private static class ProductData {
+        public String nome;
+    }
+
+    private static class PedidoItemSupabaseResponse {
+        public int id;
+        @SerializedName("id_pedido")
+        public int idPedido;
+        @SerializedName("id_produto")
+        public int idProduto;
+        public int quantidade;
+        @SerializedName("preco_produto")
+        public double precoProduto;
+
+        public ProductData produtos;
+    }
     private void getPedidoItems(String pedidoId, String accessToken, Pedido pedido, PedidoCallback callback) {
+        String url = BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + pedidoId +
+                "&select=*,produtos(nome)";
+
         Request request = new Request.Builder()
-                .url(BuildConfig.SUPABASE_URL + "/rest/v1/itens_pedido?id_pedido=eq." + pedidoId)
+                .url(url)
                 .get()
                 .addHeader("apikey", BuildConfig.SUPABASE_ANON_KEY)
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -613,6 +654,7 @@ public class SupabasePedidoManager {
                 if (call.isCanceled()) return;
 
                 String responseBody = response.body() != null ? response.body().string() : "";
+                Log.d(TAG, "Resposta getPedidoItems: " + responseBody);
 
                 if (response.isSuccessful()) {
                     try {
@@ -621,9 +663,14 @@ public class SupabasePedidoManager {
 
                         if (itemsResponse != null) {
                             for (PedidoItemSupabaseResponse itemResponse : itemsResponse) {
+                                String productName = "";
+                                if (itemResponse.produtos != null && itemResponse.produtos.nome != null) {
+                                    productName = itemResponse.produtos.nome;
+                                }
+
                                 PedidoItem item = new PedidoItem(
                                         String.valueOf(itemResponse.idProduto),
-                                        itemResponse.nomeProduto,
+                                        productName,
                                         itemResponse.quantidade,
                                         itemResponse.precoProduto
                                 );
@@ -645,18 +692,5 @@ public class SupabasePedidoManager {
 
     public Call cancelPedido(String pedidoId, String accessToken, PedidoCallback callback) {
         return updatePedidoStatus(pedidoId, "CANCELADO", accessToken, callback);
-    }
-
-    private static class PedidoItemSupabaseResponse {
-        public int id;
-        @SerializedName("id_pedido")
-        public int idPedido;
-        @SerializedName("id_produto")
-        public int idProduto;
-        @SerializedName("nome_produto")
-        public String nomeProduto;
-        public int quantidade;
-        @SerializedName("preco_produto")
-        public double precoProduto;
     }
 }

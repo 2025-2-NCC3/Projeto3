@@ -33,6 +33,7 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
 
     private Pedido currentPedido;
     private String pedidoId;
+    private PedidoItemAdapter itemAdapter;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", new Locale("pt", "BR"));
     private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
@@ -64,6 +65,9 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
 
         recyclerViewItems = findViewById(R.id.recyclerViewItems);
         recyclerViewItems.setLayoutManager(new LinearLayoutManager(this));
+
+        itemAdapter = new PedidoItemAdapter(this);
+        recyclerViewItems.setAdapter(itemAdapter);
 
         btnConfirmarRetirada = findViewById(R.id.btnConfirmarRetirada);
         btnCancelarPedido = findViewById(R.id.btnCancelarPedido);
@@ -135,12 +139,12 @@ public class AdminPedidoDetalhesActivity extends AppCompatActivity {
         tvOrderTotal.setText(currencyFormat.format(pedido.getTotal()));
 
         // Configurar adapter dos itens
-        PedidoItemAdapter itemAdapter = new PedidoItemAdapter(this);
         if (pedido.getItems() != null && !pedido.getItems().isEmpty()) {
             itemAdapter.atualizarItens(pedido.getItems());
+            Log.d(TAG, "✅ Adapter atualizado com " + pedido.getItems().size() + " itens");
+        } else {
+            Log.e(TAG, "⚠️ PEDIDO SEM ITENS!");
         }
-        recyclerViewItems.setAdapter(itemAdapter);
-
         // Configurar botões baseado no status
         updateButtonsVisibility(pedido.getStatus());
     }
